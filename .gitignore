@@ -1,0 +1,7 @@
+/Docs
+/task_dang_lam.md
+venv/
+.env
+__pycache__/
+*.faiss
+*.pkl
