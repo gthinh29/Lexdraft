@@ -89,7 +89,7 @@ Toàn bộ chạy trong 1 tiến trình duy nhất (không tách microservices),
 │ - FAISS: law_index      │                       │ Gemini API (LLM)          │
 │ - FAISS: template_index │                       │ - Sinh bản nháp hợp đồng  │
 │ - FAISS: contract_index │                       │ - Phân tích điều khoản    │
-│ - BM25 (keyword search) │                       │ - Trả lời hội thoại Q&A   │
+│ - Lọc Metadata (Điều)   │                       │ - Trả lời hội thoại Q&A   │
 └──────────────────────────┘                       └───────────────────────────┘
 ```
 
@@ -100,17 +100,17 @@ Toàn bộ chạy trong 1 tiến trình duy nhất (không tách microservices),
 
 ### 3.3. Bảng công nghệ (Tech Stack)
 
-| Layer | Công nghệ | Vai trò & Lý do |
-|---|---|---|
-| Ngôn ngữ | Python 3.10 | Toàn bộ backend xử lý |
-| Giao diện | Streamlit | UI & chatbot interface |
-| Điều phối | LangChain | Orchestration luồng retrieval -> prompt -> gen |
-| **Embedding** | `bkai-foundation-models/vietnamese-bi-encoder` | Mã hóa văn bản tiếng Việt. **Lý do chọn:** Tối ưu tiếng Việt, nhẹ, chạy tốt CPU, không mất phí API như `text-embedding-3` hay đòi hỏi GPU như `Qwen3-Embedding`. |
-| Vector DB | FAISS | Lưu trữ & tìm kiếm ngữ nghĩa (Cosine similarity) |
-| Keyword search | `rank_bm25` | Khớp từ khóa / số Điều-Khoản |
-| LLM | Gemini API | Sinh văn bản. Dùng 1 model duy nhất để giảm phức tạp, đủ đáp ứng cả 3 module |
-| Đọc File | `pdfplumber`, `PyPDF`, `python-docx` | Trích xuất text |
-| Đánh giá | Ragas | Đo lường hệ thống tự động |
+**Mục tiêu:** Tối ưu hóa thời gian phát triển (16 ngày), đảm bảo hiệu năng và dễ dàng triển khai.
+
+| Phân lớp (Layer) | Công nghệ sử dụng | Vai trò trong hệ thống & Lý do chọn |
+| :--- | :--- | :--- |
+| **Giao diện (UI)** | `Streamlit` | Xây dựng giao diện Web nhanh chóng (Upload file, Form nhập liệu, Khung chat). Code hoàn toàn bằng Python, bỏ qua độ phức tạp của HTML/CSS/JS. |
+| **Điều phối (Orchestration)** | `LangChain` | Bộ khung xương sống để nối luồng xử lý: File -> Cắt text -> Embedding -> Vector DB -> Prompt -> LLM. |
+| **Xử lý File (Parser)** | `pdfplumber`, `python-docx` | Đọc và trích xuất text thuần từ file hợp đồng PDF và Word. (Giới hạn xử lý file text chuẩn, bỏ qua OCR ảnh scan để tiết kiệm thời gian). |
+| **Cơ sở dữ liệu (Vector DB)** | `FAISS` (bản CPU) | Lưu trữ Vector. Sử dụng tính năng **Lọc siêu dữ liệu (Metadata Filtering)** dựa trên số Điều/Khoản để thay thế thuật toán Hybrid Search, giúp truy xuất chính xác mà không cần code phức tạp. |
+| **Mô hình Nhúng (Embedding)** | **Gemini API** (`text-embedding-004`) | Chuyển văn bản thành vector. Gọi thẳng API đám mây giúp quá trình xử lý hàng ngàn trang luật diễn ra trong vài giây, loại bỏ hoàn toàn rủi ro tràn RAM khi chạy mô hình Local. |
+| **Mô hình Sinh (LLM)** | **Gemini API** (`gemini-2.5-flash`) | Thực hiện phân tích rủi ro, sinh văn bản hợp đồng và hội thoại hỏi-đáp. Dùng chung hệ sinh thái với API Embedding để dễ dàng quản lý biến môi trường. |
+| **Kiểm thử (Evaluation)** | `ragas` | Tự động đánh giá chất lượng RAG (Context Precision, Context Recall, Faithfulness, Answer Relevancy). Phục vụ việc lấy số liệu minh chứng cho báo cáo thực tập. |
 
 ### 3.4. Cấu trúc thư mục dự án
 ```text
@@ -150,7 +150,7 @@ Hoạt động TỰ ĐỘNG (One-shot) khi upload hợp đồng (PDF/DOCX) hoặ
 1. `risk_assessment/service.py` nhận request.
 2. `shared/document_reader.py` & `chunking.py` trích xuất, chia Điều/Khoản, nhúng vào `contract_index` (phiên hiện tại).
 3. Lặp qua TỪNG điều khoản:
-   - `risk_assessment/retrieval.py` tìm luật bằng Hybrid (FAISS + BM25) trong `law_index`.
+   - `risk_assessment/retrieval.py` tìm luật bằng FAISS (có Metadata Filtering) trong `law_index`.
    - `risk_assessment/prompts.py` ghép prompt đối chiếu.
    - LLM phân tích, gợi ý rủi ro và trích dẫn.
 4. Trả về mảng: [Điều khoản, Rủi ro, Trích dẫn căn cứ]. Kết quả lưu làm context cho Module 3.
@@ -218,7 +218,9 @@ CÂU HỎI: {query}"""
 ### 6.2. Các lưu ý triển khai khác
 | Vấn đề | Giải pháp |
 |---|---|
-| Semantic search bỏ sót số Điều chính xác | Kết hợp BM25 (keyword) song song với FAISS (Semantic) (Hybrid search) |
+| Lỗi 429 Rate Limit khi dùng Gemini API (Free tier) | Áp dụng chiến thuật **Chia lô và Ngủ (Batching & Sleeping)** trong quá trình nạp dữ liệu (indexing) để tránh quá tải. |
+| Regex chia chunk trượt chữ "Điều" làm mất dữ liệu khi lọc Metadata | **Mở rộng Pattern Regex** (viết hoa/thường, dấu câu); thêm **Cơ chế Fallback** (gán `"Quy định chung"` nếu không có Điều); **Test mù (Blind Test)** (in ra terminal kiểm tra kỹ trước khi gọi API trả phí). |
+| Semantic search bỏ sót số Điều chính xác | Sử dụng Metadata Filtering của FAISS để lọc chính xác số Điều/Khoản thay vì Hybrid Search |
 | LLM trích dẫn sai số Điều | Luôn ép metadata (article) đi cùng chunk, không cho LLM tự "nhớ" số Điều |
 | 3 module dễ code lẫn lộn | Giữ kỷ luật: mọi lệnh gọi qua `service.py`, không gọi thẳng file nội bộ của nhau |
 | Quản lý phiên hội thoại | Module 3 có `chat_session.py` gắn với session tương ứng, không đặt file này bên trong `risk_assessment` |

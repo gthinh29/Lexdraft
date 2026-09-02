@@ -21,7 +21,7 @@ Hệ thống được thiết kế theo kiến trúc **Modular Monolith**, bao g
 2. 🔍 **Module Gợi ý rủi ro (Risk Assessment - One-shot Pipeline)**
    - Cho phép tải lên hợp đồng có sẵn dưới dạng PDF hoặc DOCX.
    - Tự động trích xuất, chia Điều/Khoản (`Structure-aware chunking`).
-   - Đối chiếu quy định pháp luật bằng công nghệ **Hybrid Search (FAISS + BM25)**.
+   - Đối chiếu quy định pháp luật bằng **FAISS** (sử dụng Metadata Filtering để truy xuất chính xác số Điều/Khoản).
    - Gợi ý rủi ro cho **toàn bộ hợp đồng** kèm theo trích dẫn căn cứ pháp lý cụ thể.
 
 3. 💬 **Module Chatbot Hỏi-Đáp (Q&A)**
@@ -32,14 +32,13 @@ Hệ thống được thiết kế theo kiến trúc **Modular Monolith**, bao g
 
 Hệ thống tuân thủ nghiêm ngặt chuẩn **Modular Monolith**, phân tách ranh giới rõ ràng thông qua `service.py`.
 
-- **Ngôn ngữ & Framework:** Python 3.10, Streamlit (Frontend).
-- **Orchestration:** LangChain.
-- **LLM:** Google Gemini API (Tắt chế độ *extended thinking* và áp dụng Zero-shot strict prompt để chống Hallucination).
-- **Embedding:** `bkai-foundation-models/vietnamese-bi-encoder` (Tối ưu cho Tiếng Việt).
-- **Vector Database:** FAISS (Mã hóa ngữ nghĩa - Semantic Search).
-- **Keyword Search:** `rank_bm25` (Bù đắp sai số cho FAISS).
-- **Xử lý tài liệu:** `pdfplumber`, `python-docx`.
-- **Đánh giá hệ thống:** Ragas (Đo lường các chỉ số *Context Precision/Recall, Faithfulness, Answer Relevancy*).
+- **Giao diện (UI):** Streamlit.
+- **Điều phối (Orchestration):** LangChain.
+- **Xử lý File (Parser):** `pdfplumber`, `python-docx`.
+- **Cơ sở dữ liệu (Vector DB):** FAISS (bản CPU, sử dụng Metadata Filtering thay thế Hybrid Search).
+- **Mô hình Nhúng (Embedding):** Gemini API (`text-embedding-004`).
+- **Mô hình Sinh (LLM):** Gemini API (`gemini-2.5-flash`).
+- **Kiểm thử (Evaluation):** `ragas`.
 
 ## 🚀 Hướng dẫn Cài đặt & Chạy dự án (Local Setup)
 

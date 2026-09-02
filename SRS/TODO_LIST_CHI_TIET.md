@@ -64,7 +64,7 @@ Khi nhận một task, **KHÔNG** quăng toàn bộ file cho AI. Hãy làm theo 
 ### PHẦN 1 & 2: KHỞI TẠO DỰ ÁN VÀ QUY TRÌNH (Làm chung)
 - [ ] **1.1.** (BẮT BUỘC) Cả 2 thành viên đọc kỹ `CONTRIBUTING.md`, `SRS_He_Thong.md` và file Todo này. Thống nhất và tuân thủ nghiêm ngặt quy tắc Branch, Commit, Logging trong `CONTRIBUTING.md`.
 - [ ] **2.1.** Khởi tạo repo Git, tạo `.gitignore` loại trừ `venv/`, `.env`, `__pycache__/`, `*.faiss`, `*.pkl`.
-- [ ] **2.2.** Khởi tạo `venv` và file `requirements.txt` (thêm `streamlit, langchain, faiss-cpu, sentence-transformers, pdfplumber, python-docx, rank_bm25, google-generativeai, ragas, python-dotenv`).
+- [ ] **2.2.** Khởi tạo `venv` và file `requirements.txt` (thêm `streamlit, langchain, faiss-cpu, pdfplumber, python-docx, google-generativeai, ragas, python-dotenv`).
 - [ ] **2.3.** Tạo cấu trúc thư mục chuẩn: `data/raw/`, `data/faiss_index/`, `modules/drafting/`, `modules/risk_assessment/`, `modules/chatbot_qa/`, `modules/shared/`, `scripts/`, `evaluation/`.
 - [ ] **2.4.** Tạo file `config.py` để dùng `os.getenv()` nạp key Gemini và lưu đường dẫn cố định.
 
@@ -76,18 +76,19 @@ Khi nhận một task, **KHÔNG** quăng toàn bộ file cho AI. Hãy làm theo 
 - [ ] **3.2.** Viết hàm `read_docx(file_path)` dùng `python-docx`.
 - [ ] **3.3.** Viết hàm `read_document(file_path)` làm controller bọc 2 hàm trên dựa vào đuôi file.
 - [ ] **3.4.** Trong `chunking.py`, viết hàm `chunk_by_article(text, source_metadata)`.
-- [ ] **3.5.** Áp dụng Regex `r"(Điều\s+\d+[\.:]?.*?)(?=Điều\s+\d+|\Z)"` để chia text.
-- [ ] **3.6.** Format output của hàm chunking thành mảng các dict: `[{"content": "...", "metadata": {"article": "Điều 1", "source": "Luật DS"}}]`. (Xử lý fallback nếu không có chữ Điều).
+- [ ] **3.5.** Áp dụng Regex mở rộng để chia text, bao quát các trường hợp viết hoa/viết thường và dấu câu (vd: `Điều 1.`, `Điều 1:`, `ĐIỀU 1`).
+- [ ] **3.6.** Format output của hàm chunking thành mảng các dict: `[{"content": "...", "metadata": {"article": "Điều 1", "source": "Luật DS"}}]`. Cài đặt **Cơ chế Fallback**: nếu đoạn không chứa chữ Điều, gán `{"article": "Quy định chung"}`.
+- [ ] **3.7.** Thực hiện **Test mù (Blind Test)**: Chạy thử hàm Regex và `print()` toàn bộ kết quả ra Terminal để kiểm tra bằng mắt thường việc cắt Điều và gán Metadata trước khi kích hoạt gọi API Embedding.
 
 ---
 
-### PHẦN 4: EMBEDDING & FAISS HYBRID SEARCH (DEV B)
+### PHẦN 4: EMBEDDING & FAISS METADATA FILTERING (DEV B)
 **Vị trí:** `modules/shared/embedding.py`
-- [ ] **4.1.** Viết class `VectorDB`. Trong hàm `__init__`, load model `bkai-foundation-models/vietnamese-bi-encoder` bằng SentenceTransformers.
-- [ ] **4.2.** Viết hàm `create_index(chunks)`: lấy list text từ chunks, mã hóa thành vector và nạp vào FAISS. Lưu `rank_bm25` index song song.
-- [ ] **4.3.** Viết hàm `save_index(path)`: lưu file `.faiss` cho vector và file `.pkl` để giữ BM25 + Metadata của chunks (cực kỳ quan trọng để truy xuất ngược).
+- [ ] **4.1.** Viết class `VectorDB`. Trong hàm `__init__`, cấu hình **Gemini API** (`text-embedding-004`) để làm embedding model.
+- [ ] **4.2.** Viết hàm `create_index(chunks)`: lấy list text từ chunks, mã hóa thành vector và nạp vào FAISS cùng với metadata (số Điều/Khoản).
+- [ ] **4.3.** Viết hàm `save_index(path)`: lưu file `.faiss` cho vector và file `.pkl` để giữ Metadata của chunks (cực kỳ quan trọng để truy xuất ngược).
 - [ ] **4.4.** Viết hàm `load_index(path)`: Load lại `.faiss` và `.pkl`.
-- [ ] **4.5.** Viết hàm `hybrid_search(query, top_k=5)`: Lấy điểm Cosine từ FAISS, điểm từ BM25, chuẩn hóa min-max (normalize), cộng lại (tỷ lệ 50-50 hoặc 70-30), trả về top K chunk (chứa cả text và metadata).
+- [ ] **4.5.** Viết hàm `search_with_metadata(query, metadata_filter, top_k=5)`: Thực hiện tìm kiếm semantic với FAISS, kết hợp **lọc siêu dữ liệu (Metadata Filtering)** theo số Điều/Khoản, trả về top K chunk (chứa cả text và metadata).
 
 ---
 
@@ -95,8 +96,9 @@ Khi nhận một task, **KHÔNG** quăng toàn bộ file cho AI. Hãy làm theo 
 **Vị trí:** `scripts/build_index.py` (Script chạy độc lập 1 lần)
 - [ ] **5.1.** Viết script đọc toàn bộ file luật trong `data/raw/law/`.
 - [ ] **5.2.** Gọi `read_document()` và `chunk_by_article()` (Phần 3) cho từng file.
-- [ ] **5.3.** Đưa toàn bộ mảng chunks tổng vào `create_index()` và `save_index()` (Phần 4) lưu ra `data/faiss_index/law_index`.
-- [ ] **5.4.** Làm tương tự cho thư mục `data/raw/templates/` -> lưu ra `template_index`.
+- [ ] **5.3.** Áp dụng chiến thuật **Chia lô và Ngủ (Batching & Sleeping)** để xử lý lỗi Rate Limit (429) của Gemini API: cắt mảng chunks tổng thành các lô nhỏ (vd: 10 chunk/lần), dùng `time.sleep(5)` giữa các lô, hoặc dùng `max_retries` của LangChain.
+- [ ] **5.4.** Đưa tuần tự các lô vào `create_index()` và gọi `save_index()` (Phần 4) để lưu ra `data/faiss_index/law_index`.
+- [ ] **5.5.** Làm tương tự cho thư mục `data/raw/templates/` -> lưu ra `template_index`.
 
 ---
 
