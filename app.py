@@ -15,7 +15,7 @@ import uuid
 from pathlib import Path
 
 # Đảm bảo thư mục gốc dự án luôn nằm trong sys.path khi chạy streamlit
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
+PROJECT_ROOT = Path(__file__).resolve().parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
@@ -34,7 +34,7 @@ except ImportError:
 try:
     from modules.risk_assessment import (
         service as risk_assessment_service,
-    )  # Phần 8 - chưa build
+    )
 except ImportError:
     risk_assessment_service = None
 
@@ -189,12 +189,16 @@ def render_risk_report(risk_report) -> None:
 def render_citations(citations) -> None:
     if not citations:
         return
-    with st.expander("📚 Trích dẫn căn cứ"):
+    with st.expander("📚 Trích dẫn căn cứ pháp lý"):
         for c in citations:
             if isinstance(c, dict):
                 label = c.get("article", "N/A")
                 source = c.get("source", "N/A")
-                st.markdown(f"- {label} ({source})")
+                score = c.get("score")
+                score_str = (
+                    f" `(độ tương đồng: {score:.2f})`" if score is not None else ""
+                )
+                st.markdown(f"- **{label}** — *{source}*{score_str}")
             else:
                 st.markdown(f"- {c}")
 
