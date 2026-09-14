@@ -52,6 +52,31 @@
       "expire_date": null,
       "replaced_by": "Luật Thương mại 2005 (số 36/2005/QH11) - Văn bản hợp nhất mới nhất VBHN 113/VBHN-VPQH (2025)",
       "note": "Không tồn tại văn bản 'Luật Thương mại 2020'. Đây là lỗi pháp lý kinh điển trong các hợp đồng mẫu không rõ nguồn gốc"
+    },
+    {
+      "id": "bo_luat_dan_su_2005",
+      "keywords": [
+        "Bộ luật Dân sự 2005",
+        "Bộ luật Dân sự số 33/2005/QH11",
+        "33/2005/QH11",
+        "Luật số 33/2005/QH11",
+        "BLDS 2005"
+      ],
+      "status": "Hết hiệu lực",
+      "expire_date": "01/01/2017",
+      "replaced_by": "Bộ luật Dân sự 2015 (Luật số 91/2015/QH13)",
+      "note": "Hết hiệu lực từ 01/01/2017 theo Điều 688 Bộ luật Dân sự 2015"
+    },
+    {
+      "id": "luat_thuong_mai_1997",
+      "keywords": [
+        "Luật Thương mại 1997",
+        "Luật Thương mại năm 1997"
+      ],
+      "status": "Hết hiệu lực",
+      "expire_date": "01/01/2006",
+      "replaced_by": "Luật Thương mại 2005 (Luật số 36/2005/QH11)",
+      "note": "Hết hiệu lực từ 01/01/2006 theo Luật Thương mại 2005"
     }
   ]
 }

@@ -17,6 +17,7 @@ Tuân thủ:
 import logging
 import os
 import pickle
+import re
 import time
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -28,11 +29,11 @@ from config import Config
 logger = logging.getLogger(__name__)
 
 DEFAULT_EMBEDDING_MODEL = getattr(
-    Config, "EMBEDDING_MODEL_NAME", "models/text-embedding-004"
+    Config, "EMBEDDING_MODEL_NAME", "models/gemini-embedding-001"
 )
 EMBEDDING_DIMENSION = 768
-BATCH_SIZE = 10
-SLEEP_BETWEEN_BATCHES = 1.0
+BATCH_SIZE = 50
+SLEEP_BETWEEN_BATCHES = 2.0
 
 
 class VectorDB:
@@ -71,23 +72,24 @@ class VectorDB:
     def _embed_texts(
         self,
         texts: List[str],
-        task_type: str = "retrieval_document",
-        max_retries: int = 3,
+        task_type: Optional[str] = None,
+        max_retries: int = 5,
         base_delay: float = 2.0,
     ) -> np.ndarray:
         """
-        Embed danh sách text thành ma trận numpy (N, 768) qua Gemini API.
-        Áp dụng batching và retry exponential backoff chống lỗi 429.
+        Gửi batch văn bản lên API để lấy vector embedding.
+        Tự động chia batch theo BATCH_SIZE và retry khi gặp 429 / Rate Limit.
         """
         if not texts:
             return np.empty((0, self.dimension), dtype=np.float32)
 
-        # Chuẩn hóa tên model: nếu có prefix 'models/', bỏ đi nếu dùng google.genai
-        clean_model = self.model_name
-        if clean_model.startswith("models/"):
-            clean_model = clean_model.replace("models/", "")
+        clean_model = (
+            self.model_name[len("models/") :]
+            if self.model_name.startswith("models/")
+            else self.model_name
+        )
 
-        all_embeddings = []
+        all_embeddings: List[List[float]] = []
 
         for i in range(0, len(texts), BATCH_SIZE):
             batch = texts[i : i + BATCH_SIZE]
@@ -99,10 +101,20 @@ class VectorDB:
                     if self._is_new_sdk:
                         if not hasattr(self, "_client") or self._client is None:
                             self._init_embedder()
-                        # Dùng google.genai models.embed_content
+                        from google.genai import types
+
+                        cfg = types.EmbedContentConfig(
+                            task_type=task_type.upper() if task_type else None,
+                            output_dimensionality=self.dimension,
+                        )
+                        contents_batch = [
+                            types.Content(parts=[types.Part.from_text(text=t)])
+                            for t in batch
+                        ]
                         response = self._client.models.embed_content(
                             model=clean_model,
-                            contents=batch,
+                            contents=contents_batch,
+                            config=cfg,
                         )
                         for emb in response.embeddings:
                             all_embeddings.append(emb.values)
@@ -127,9 +139,17 @@ class VectorDB:
                         or "quota" in err_msg
                         or "resource_exhausted" in err_msg
                     ):
-                        wait_sec = base_delay * (2**attempt) + 1.0
+                        # Tìm thời gian retry do Google khuyến cáo trong thông báo lỗi (vd: 'retry in 48s' hoặc 'retrydelay: 48s')
+                        delay_match = re.search(
+                            r"retry\s*(?:in|delay)?[:\s]+(\d+(?:\.\d+)?)s?", err_msg
+                        )
+                        if delay_match:
+                            wait_sec = float(delay_match.group(1)) + 3.0
+                        else:
+                            wait_sec = max(base_delay * (2**attempt) + 5.0, 45.0)
+
                         logger.warning(
-                            "Embedding API gặp 429/quota. Đang ngủ %.1fs (lần %d/%d)...",
+                            "Embedding API gặp 429/quota. Đang ngủ %.1fs để hồi phục quota (lần %d/%d)...",
                             wait_sec,
                             attempt + 1,
                             max_retries,

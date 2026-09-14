@@ -23,7 +23,11 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 import config  # noqa: E402
-from modules.shared.chunking import chunk_by_article  # noqa: E402
+from modules.shared.chunking import (  # noqa: E402
+    chunk_by_article,
+    extract_law_header,
+    extract_template_header,
+)
 from modules.shared.document_reader import read_document  # noqa: E402
 from modules.shared.embedding import VectorDB  # noqa: E402
 
@@ -42,25 +46,33 @@ logger = logging.getLogger("build_index")
 
 def process_directory(raw_dir: Path) -> List[Dict[str, Any]]:
     """
-    Duyệt toàn bộ file (.docx, .pdf) trong thư mục, đọc text và cắt theo Điều/Khoản.
+    Duyệt toàn bộ file Markdown (.md) trong thư mục (ưu tiên thư mục con .md),
+    đọc text và cắt theo Điều/Khoản.
     """
     if not raw_dir.exists():
         logger.warning("Thư mục '%s' không tồn tại.", raw_dir)
         return []
 
-    valid_extensions = (".docx", ".doc", ".pdf")
-    files = [
-        f
-        for f in raw_dir.glob("**/*")
-        if f.is_file() and f.suffix.lower() in valid_extensions
-    ]
+    # Ưu tiên tìm trong thư mục con .md nếu có (vd: data/raw/law/.md)
+    md_subfolder = raw_dir / ".md"
+    search_dir = md_subfolder if md_subfolder.exists() else raw_dir
+
+    files = sorted(
+        [
+            f
+            for f in search_dir.glob("**/*.md")
+            if f.is_file() and not f.name.startswith("~") and not f.name.startswith(".")
+        ]
+    )
 
     if not files:
-        logger.warning("Không tìm thấy file hợp lệ nào trong '%s'.", raw_dir)
+        logger.warning("Không tìm thấy file .md hợp lệ nào trong '%s'.", search_dir)
         return []
 
     all_chunks: List[Dict[str, Any]] = []
-    logger.info("Tìm thấy %d file trong '%s'. Bắt đầu xử lý...", len(files), raw_dir)
+    logger.info(
+        "Tìm thấy %d file .md trong '%s'. Bắt đầu xử lý...", len(files), search_dir
+    )
 
     for file_path in files:
         logger.info("--> Đang đọc file: %s", file_path.name)
@@ -72,13 +84,45 @@ def process_directory(raw_dir: Path) -> List[Dict[str, Any]]:
                 )
                 continue
 
+            # Phân biệt xử lý metadata giữa Mẫu Hợp Đồng và Văn Bản Luật
+            is_template = "template" in str(raw_dir).lower()
+            if is_template:
+                tpl_header = extract_template_header(text, filename=file_path.name)
+                enriched_metadata = {
+                    "source": file_path.name,
+                    "doc_name": file_path.stem.lower(),
+                    **{
+                        k: v for k, v in tpl_header.items() if v is not None and v != ""
+                    },
+                }
+                logger.info(
+                    "    Mẫu: %s | Căn cứ: %d văn bản | Thẩm định: %s",
+                    tpl_header.get("template_name", "?"),
+                    len(tpl_header.get("legal_bases", [])),
+                    tpl_header.get("basis_validity", "?"),
+                )
+            else:
+                law_header = extract_law_header(text, filename=file_path.name)
+                enriched_metadata = {
+                    "source": file_path.name,
+                    "doc_name": file_path.stem.lower(),
+                    "doc_type": "law",
+                    **{k: v for k, v in law_header.items() if v},
+                }
+                logger.info(
+                    "    Pháp lý: %s | Số: %s | Hiệu lực: %s%s",
+                    law_header.get("law_name", "?"),
+                    law_header.get("law_number", "?"),
+                    law_header.get("effective_date", "?"),
+                    f" (VBHN {law_header.get('vbhn_number') or law_header.get('consolidated_year', '')})"
+                    if law_header.get("is_consolidated")
+                    else "",
+                )
+
             # Chunk theo cấu trúc Điều/Khoản
             chunks = chunk_by_article(
                 text=text,
-                source_metadata={
-                    "source": file_path.name,
-                    "doc_name": file_path.stem.lower(),
-                },
+                source_metadata=enriched_metadata,
             )
             logger.info(
                 "    Trích xuất thành công %d chunks từ '%s'.",

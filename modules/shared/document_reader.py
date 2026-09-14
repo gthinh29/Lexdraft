@@ -72,12 +72,26 @@ def read_docx(file_path: PathLike) -> str:
     return "\n".join(paragraphs)
 
 
-def read_document(file_path: PathLike) -> str:
+def read_md(file_path: PathLike) -> str:
     """
-    Controller: tự động chọn hàm đọc phù hợp dựa theo đuôi file.
+    Đọc toàn bộ text từ file Markdown (.md) hoặc text (.txt) với UTF-8.
 
     Args:
-        file_path: đường dẫn tới file .pdf hoặc .docx
+        file_path: đường dẫn tới file .md hoặc .txt
+
+    Returns:
+        Toàn bộ nội dung text của file.
+    """
+    file_path = Path(file_path)
+    return file_path.read_text(encoding="utf-8")
+
+
+def read_document(file_path: PathLike) -> str:
+    """
+    Controller: tự động chọn hàm đọc phù hợp dựa theo đuôi file (.pdf, .docx, .md).
+
+    Args:
+        file_path: đường dẫn tới file .pdf, .docx hoặc .md
 
     Returns:
         Text thô trích xuất từ file.
@@ -97,8 +111,10 @@ def read_document(file_path: PathLike) -> str:
         return read_pdf(file_path)
     elif suffix == ".docx":
         return read_docx(file_path)
+    elif suffix in (".md", ".txt"):
+        return read_md(file_path)
     else:
         raise ValueError(
             f"Định dạng file không được hỗ trợ: '{suffix}' (file: {file_path.name}). "
-            "Hệ thống chỉ hỗ trợ .pdf và .docx."
+            "Hệ thống hỗ trợ .pdf, .docx và .md."
         )
