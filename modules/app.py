@@ -9,11 +9,17 @@ Chạy: streamlit run app.py
 
 import io
 import logging
+import sys
 import tempfile
 import uuid
 from pathlib import Path
 
-import streamlit as st
+# Đảm bảo thư mục gốc dự án luôn nằm trong sys.path khi chạy streamlit
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
+import streamlit as st  # noqa: E402
 
 try:
     from modules.drafting import service as drafting_service
@@ -26,7 +32,9 @@ except ImportError:
     chatbot_service = None
 
 try:
-    from modules.risk_assessment import service as risk_assessment_service  # Phần 8 - chưa build
+    from modules.risk_assessment import (
+        service as risk_assessment_service,
+    )  # Phần 8 - chưa build
 except ImportError:
     risk_assessment_service = None
 
@@ -35,7 +43,9 @@ try:
 except ImportError:
     DocxDocument = None
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 logger = logging.getLogger(__name__)
 
 st.set_page_config(page_title="Trợ lý Hợp đồng Dịch vụ", page_icon="📄", layout="wide")
@@ -96,6 +106,10 @@ if "last_draft" not in st.session_state:
 if "last_risk_report" not in st.session_state:
     st.session_state.last_risk_report = None
 
+if "last_expired_alerts" not in st.session_state:
+    # Kết quả cảnh báo văn bản hết hiệu lực từ Tiered Validation (Pre-check)
+    st.session_state.last_expired_alerts = []
+
 
 # ---------------------------------------------------------------------------
 # 10.1: Sidebar điều hướng 3 tab
@@ -110,9 +124,17 @@ page = st.sidebar.radio(
 
 with st.sidebar.expander("Trạng thái hệ thống"):
     st.write(f"session_id: `{st.session_state.session_id[:8]}...`")
-    st.write("law_index:", "✅" if warmup_status.get("law_index") else "⚠️ chưa sẵn sàng")
-    st.write("template_index:", "✅" if warmup_status.get("template_index") else "⚠️ chưa sẵn sàng")
-    st.write("Module Gợi ý rủi ro (Phần 8):", "✅" if risk_assessment_service else "⚠️ chưa build")
+    st.write(
+        "law_index:", "✅" if warmup_status.get("law_index") else "⚠️ chưa sẵn sàng"
+    )
+    st.write(
+        "template_index:",
+        "✅" if warmup_status.get("template_index") else "⚠️ chưa sẵn sàng",
+    )
+    st.write(
+        "Module Gợi ý rủi ro (Phần 8):",
+        "✅" if risk_assessment_service else "⚠️ chưa build",
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -141,7 +163,9 @@ def render_risk_report(risk_report) -> None:
     Format kỳ vọng (Phần 8): [{"dieu_khoan": ..., "rui_ro": ..., "can_cu": [...]}]
     """
     if not risk_report:
-        st.info("Chưa có báo cáo rủi ro (Module Gợi ý rủi ro - Phần 8 - có thể chưa sẵn sàng).")
+        st.info(
+            "Chưa có báo cáo rủi ro (Module Gợi ý rủi ro - Phần 8 - có thể chưa sẵn sàng)."
+        )
         return
 
     for i, item in enumerate(risk_report, start=1):
@@ -175,22 +199,18 @@ def render_citations(citations) -> None:
                 st.markdown(f"- {c}")
 
 
-def sync_context_to_chatbot(risk_report, contract_chunks=None) -> None:
+def sync_context_to_chatbot(risk_results, contract_chunks=None) -> None:
     """
     Đồng bộ ngữ cảnh hợp đồng vừa có (từ soạn thảo hoặc upload) sang chatbot,
     để chuyển phiên sang Chế độ A ngay lập tức.
     """
-    if chatbot_service is None or not risk_report:
+    if chatbot_service is None or not risk_results:
         return
     try:
         chatbot_service.attach_contract_context(
             session_id=st.session_state.session_id,
-            # TODO: risk_assessment.service.analyze_contract (Phần 8) hiện chỉ trả
-            # về mảng rủi ro, chưa trả kèm contract_chunks. Khi Phần 8 hoàn thiện,
-            # nên trả thêm contract_chunks để chatbot Chế độ A search được đúng
-            # nội dung hợp đồng, không chỉ dựa vào risk_report tóm tắt.
             contract_chunks=contract_chunks or [],
-            risk_report=risk_report,
+            risk_report=risk_results,
         )
     except Exception:
         logger.exception("Không thể đồng bộ context sang chatbot_qa.")
@@ -201,7 +221,9 @@ def sync_context_to_chatbot(risk_report, contract_chunks=None) -> None:
 # ---------------------------------------------------------------------------
 if page == "📝 Soạn thảo":
     st.header("📝 Soạn thảo hợp đồng dịch vụ")
-    st.caption("Điền thông tin bên dưới, hệ thống sẽ sinh bản nháp kèm gợi ý rủi ro tự động.")
+    st.caption(
+        "Điền thông tin bên dưới, hệ thống sẽ sinh bản nháp kèm gợi ý rủi ro tự động."
+    )
 
     with st.form("drafting_form"):
         contract_type = st.text_input(
@@ -291,30 +313,77 @@ elif page == "📤 Upload Hợp đồng":
         if risk_assessment_service is None:
             st.error("Module Gợi ý rủi ro (Phần 8) chưa sẵn sàng.")
         else:
-            with st.spinner("Đang trích xuất, đối chiếu luật và phân tích từng điều khoản..."):
+            with st.spinner(
+                "Đang trích xuất, đối chiếu luật và phân tích từng điều khoản..."
+            ):
                 tmp_path = None
                 try:
                     # risk_assessment.service (Phần 8) đọc file qua document_reader,
                     # nên cần ghi tạm ra đĩa trước khi truyền path vào.
                     suffix = Path(uploaded_file.name).suffix
-                    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp_file:
+                    with tempfile.NamedTemporaryFile(
+                        delete=False, suffix=suffix
+                    ) as tmp_file:
                         tmp_file.write(uploaded_file.getvalue())
                         tmp_path = tmp_file.name
 
-                    risk_report = risk_assessment_service.analyze_contract(
+                    analysis_result = risk_assessment_service.analyze_contract(
                         file_path_or_text=tmp_path,
                         session_id=st.session_state.session_id,
                     )
-                    st.session_state.last_risk_report = risk_report
-                    sync_context_to_chatbot(risk_report)
+                    # analyze_contract trả về dict: {expired_law_alerts, risk_results}
+                    expired_alerts = analysis_result.get("expired_law_alerts", [])
+                    risk_results = analysis_result.get("risk_results", [])
+
+                    st.session_state.last_risk_report = risk_results
+                    st.session_state.last_expired_alerts = expired_alerts
+                    sync_context_to_chatbot(risk_results)
                 except Exception:
                     logger.exception("Lỗi khi phân tích rủi ro hợp đồng upload.")
-                    st.error("Đã có lỗi xảy ra khi phân tích hợp đồng, vui lòng thử lại.")
+                    st.error(
+                        "Đã có lỗi xảy ra khi phân tích hợp đồng, vui lòng thử lại."
+                    )
                 finally:
                     if tmp_path:
                         Path(tmp_path).unlink(missing_ok=True)
 
-    if st.session_state.last_risk_report:
+    if st.session_state.last_risk_report or st.session_state.get("last_expired_alerts"):
+        # --- Banner cảnh báo văn bản hết hiệu lực (Tiered Validation) ---
+        expired_alerts = st.session_state.get("last_expired_alerts", [])
+        if expired_alerts:
+            st.error(
+                f"🚨 **Phát hiện {len(expired_alerts)} văn bản pháp luật có vấn đề về hiệu lực!** "
+                "Hợp đồng có thể đang viện dẫn luật đã hết hiệu lực hoặc không tồn tại. "
+                "Vui lòng kiểm tra ngay trước khi ký kết."
+            )
+            with st.expander(
+                "📋 Xem chi tiết cảnh báo hiệu lực văn bản", expanded=True
+            ):
+                for i, alert in enumerate(expired_alerts, 1):
+                    # Chọn màu/icon theo nguồn cảnh báo
+                    label = alert.get("confidence_label", "")
+                    status = alert.get("status", "Hết hiệu lực")
+                    law_ref = alert.get("law_ref", "N/A")
+                    replaced_by = alert.get("replaced_by") or "Chưa xác định"
+                    expire_date = alert.get("expire_date") or "Không rõ"
+                    note = alert.get("note", "")
+
+                    st.markdown(f"**Cảnh báo #{i}** — {label}")
+                    st.markdown(
+                        f"- **Văn bản trong hợp đồng:** `{law_ref}`  \n"
+                        f"- **Trạng thái:** {status}  \n"
+                        f"- **Ngày hết hiệu lực:** {expire_date}  \n"
+                        f"- **Văn bản thay thế:** {replaced_by}  \n"
+                        + (f"- **Ghi chú:** {note}" if note else "")
+                    )
+                    if i < len(expired_alerts):
+                        st.divider()
+        else:
+            st.success(
+                "✅ Không phát hiện văn bản pháp luật nào hết hiệu lực trong hợp đồng."
+            )
+
+        # --- Kết quả phân tích rủi ro từng Điều khoản ---
         st.subheader("⚖️ Kết quả phân tích rủi ro")
         render_risk_report(st.session_state.last_risk_report)
 
@@ -326,9 +395,13 @@ elif page == "💬 Chatbot":
     st.header("💬 Hỏi đáp pháp luật hợp đồng")
 
     if st.session_state.last_risk_report:
-        st.success("Đang ở **Chế độ A**: chatbot có ngữ cảnh hợp đồng & báo cáo rủi ro vừa phân tích.")
+        st.success(
+            "Đang ở **Chế độ A**: chatbot có ngữ cảnh hợp đồng & báo cáo rủi ro vừa phân tích."
+        )
     else:
-        st.info("Đang ở **Chế độ B**: chatbot chỉ tra cứu luật chung (chưa có hợp đồng nào được soạn/upload).")
+        st.info(
+            "Đang ở **Chế độ B**: chatbot chỉ tra cứu luật chung (chưa có hợp đồng nào được soạn/upload)."
+        )
 
     for turn in st.session_state.chat_history_ui:
         with st.chat_message(turn["role"]):
@@ -341,7 +414,9 @@ elif page == "💬 Chatbot":
         if chatbot_service is None:
             st.error("Module Chatbot chưa sẵn sàng.")
         else:
-            st.session_state.chat_history_ui.append({"role": "user", "text": user_message})
+            st.session_state.chat_history_ui.append(
+                {"role": "user", "text": user_message}
+            )
             with st.chat_message("user"):
                 st.markdown(user_message)
 
@@ -359,7 +434,11 @@ elif page == "💬 Chatbot":
                         render_citations(citations)
 
                         st.session_state.chat_history_ui.append(
-                            {"role": "assistant", "text": answer, "citations": citations}
+                            {
+                                "role": "assistant",
+                                "text": answer,
+                                "citations": citations,
+                            }
                         )
                     except RuntimeError as e:
                         error_msg = f"Hệ thống chưa sẵn sàng: {e}"
