@@ -26,7 +26,19 @@ DRAFTING_SYSTEM_INSTRUCTION = (
     "thay vì tự suy diễn hoặc bịa thêm.\n"
     "5. KHÔNG tự thêm điều khoản không có căn cứ pháp lý hoặc không được người dùng yêu cầu.\n"
     "6. Phần 'Căn cứ' ở đầu hợp đồng phải liệt kê đúng tên và số hiệu văn bản pháp luật "
-    "từ phần CĂN CỨ PHÁP LÝ bên dưới — không dẫn chiếu văn bản không có trong danh sách được cung cấp."
+    "từ phần CĂN CỨ PHÁP LÝ bên dưới — không dẫn chiếu văn bản không có trong danh sách được cung cấp.\n"
+    "7. QUY TẮC TRÍCH DẪN PHÁP LÝ BẮT BUỘC:\n"
+    "   a) NGUYÊN TẮC THỨ BẬC: Mọi viện dẫn điều khoản BẮT BUỘC tuân thủ đúng thứ tự từ nhỏ đến lớn: "
+    "Điểm → Khoản → Điều → Tên văn bản (Ví dụ: 'điểm a khoản 1 Điều 301...', 'khoản 2 Điều 292...').\n"
+    "   b) ĐỐI VỚI VĂN BẢN LUẬT THÔNG THƯỜNG (không phải văn bản hợp nhất):\n"
+    "      - Khi viện dẫn lần đầu (tại phần Căn cứ hoặc khi xuất hiện lần đầu): [Điểm/Khoản/Điều nếu có] [Tên Luật] số [số hiệu] ngày [ngày ban hành] của Quốc hội.\n"
+    "        (Ví dụ: 'Căn cứ Bộ luật Dân sự số 91/2015/QH13 ngày 24 tháng 11 năm 2015 của Quốc hội;')\n"
+    "      - Các lần sau: Trích dẫn bình thường, rút gọn: '[Điểm/Khoản nếu có] Điều [X] [Tên Luật] số [số hiệu]' (Ví dụ: 'theo quy định tại Điều 401 Bộ luật Dân sự số 91/2015/QH13'). Tuyệt đối KHÔNG ghi VBHN cho các văn bản này.\n"
+    "   c) NẾU LÀ VĂN BẢN HỢP NHẤT (chỉ áp dụng khi văn bản nguồn được chú thích là VBHN):\n"
+    "      - Khi viện dẫn lần đầu (tại phần Căn cứ hoặc khi xuất hiện lần đầu): BẮT BUỘC ghi đầy đủ thông tin luật gốc và thông tin VBHN: [Điểm/Khoản/Điều nếu có] [Tên Luật] số [số hiệu] ngày [ngày ban hành] của Quốc hội (hợp nhất tại Văn bản hợp nhất số [số VBHN] ngày [ngày ký VBHN] của Văn phòng Quốc hội).\n"
+    "        (Ví dụ: 'Căn cứ Luật Thương mại số 36/2005/QH11 ngày 14 tháng 6 năm 2005 của Quốc hội (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH ngày 27 tháng 8 năm 2025 của Văn phòng Quốc hội);')\n"
+    "      - Các lần sau: Trích dẫn như bình thường (số Điều lấy chuẩn theo VBHN), rút gọn ngày tháng: '[Điểm/Khoản nếu có] Điều [X] [Tên Luật] số [số hiệu] (hợp nhất tại Văn bản hợp nhất số [số VBHN])'.\n"
+    "        (Ví dụ: 'theo quy định tại Điều 292 Luật Thương mại số 36/2005/QH11 (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH)' hoặc 'theo quy định tại điểm a khoản 1 Điều 301 Luật Thương mại số 36/2005/QH11 (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH)')."
 )
 
 
@@ -38,9 +50,36 @@ def _format_law_context(law_context: List[Dict[str, Any]]) -> str:
     for chunk in law_context:
         metadata = chunk.get("metadata", {})
         article = metadata.get("article") or "N/A"
-        source = metadata.get("source", "N/A")
-        title = metadata.get("title", "")
-        header = f"[{article} - {source}]" + (f" ({title})" if title else "")
+
+        # Ưu tiên hiển thị tên luật đầy đủ + số hiệu + ngày ban hành/VBHN
+        law_name = metadata.get("law_name", "")
+        law_number = metadata.get("law_number", "")
+        issued_date = metadata.get("issued_date", "")
+        is_consolidated = metadata.get("is_consolidated", False)
+        consolidated_year = metadata.get("consolidated_year", "")
+        vbhn_number = metadata.get("vbhn_number", "")
+        vbhn_date = metadata.get("vbhn_date", "")
+        latest_amendment = metadata.get("latest_amendment", "")
+
+        if law_name and law_number:
+            source_label = f"{law_name} số {law_number}"
+            if issued_date:
+                source_label += f" ngày {issued_date} của Quốc hội"
+
+            if is_consolidated:
+                if vbhn_number and vbhn_date:
+                    source_label += f" (hợp nhất tại Văn bản hợp nhất số {vbhn_number} ngày {vbhn_date} của Văn phòng Quốc hội)"
+                elif vbhn_number:
+                    source_label += f" (hợp nhất tại Văn bản hợp nhất số {vbhn_number})"
+                elif consolidated_year:
+                    source_label += f" (văn bản hợp nhất năm {consolidated_year})"
+                if latest_amendment:
+                    source_label += f", sửa đổi lần cuối bởi Luật số {latest_amendment}"
+        else:
+            # Fallback về tên file nếu chưa parse được
+            source_label = metadata.get("source", "N/A")
+
+        header = f"[{article} - {source_label}]"
         parts.append(f"{header}\n{chunk.get('content', '')}")
     return "\n\n".join(parts)
 

@@ -21,6 +21,8 @@ class Config:
     CONTRACT_INDEX_PATH = os.path.join(FAISS_INDEX_DIR, "contract_index")
 
     # Model config (SRS v2.0 - Gemini API)
-    EMBEDDING_MODEL_NAME = "models/text-embedding-004"
-    LLM_MODEL_NAME = "gemini-2.5-flash"
-    SIMILARITY_THRESHOLD = 0.5
+    EMBEDDING_MODEL_NAME = "models/gemini-embedding-2"
+    LLM_MODEL_NAME = "gemini-3.5-flash"
+    SIMILARITY_THRESHOLD = 0.75
+    RETRIEVAL_TOP_K = 10
+    RELEVANCE_SCORE_THRESHOLD = 0.65

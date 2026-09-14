@@ -22,8 +22,8 @@ from config import Config
 logger = logging.getLogger(__name__)
 
 # Default model name & similarity threshold
-DEFAULT_LLM_MODEL = getattr(Config, "LLM_MODEL_NAME", "gemini-2.5-flash")
-DEFAULT_SIMILARITY_THRESHOLD = 0.5
+DEFAULT_LLM_MODEL = getattr(Config, "LLM_MODEL_NAME", "gemini-3.5-flash")
+DEFAULT_SIMILARITY_THRESHOLD = getattr(Config, "SIMILARITY_THRESHOLD", 0.75)
 
 
 def _get_api_key() -> str:
@@ -148,15 +148,25 @@ def extract_citations_from_chunks(
     for chunk in retrieved_chunks:
         metadata = chunk.get("metadata", {})
         article = metadata.get("article") or metadata.get("article_number") or "N/A"
-        source = metadata.get("source") or metadata.get("doc_name") or "N/A"
+        law_name = metadata.get("law_name", "")
+        law_number = metadata.get("law_number", "")
+        vbhn_number = metadata.get("vbhn_number", "")
 
-        key = (str(article), str(source))
+        if law_name and law_number:
+            source_display = f"{law_name} số {law_number}"
+            if vbhn_number:
+                source_display += f" (VBHN {vbhn_number})"
+        else:
+            source_display = metadata.get("source") or metadata.get("doc_name") or "N/A"
+
+        key = (str(article), str(source_display))
         if key not in seen:
             seen.add(key)
             citations.append(
                 {
                     "article": str(article),
-                    "source": str(source),
+                    "source": str(source_display),
+                    "raw_file": metadata.get("source", ""),
                     "title": metadata.get("title", ""),
                     "score": chunk.get("score"),
                 }
@@ -168,7 +178,7 @@ def extract_citations_from_chunks(
 def generate_grounded_response(
     query: str,
     retrieved_chunks: List[Dict[str, Any]],
-    threshold: float = DEFAULT_SIMILARITY_THRESHOLD,
+    threshold: Optional[float] = None,
     client: Optional[GeminiClient] = None,
 ) -> Dict[str, Any]:
     """
@@ -182,6 +192,12 @@ def generate_grounded_response(
         3. Gọi Gemini sinh câu trả lời.
         4. Trả về format: {"answer": str, "citations": list, "refusal": bool}
     """
+    active_threshold = (
+        threshold
+        if threshold is not None
+        else getattr(Config, "SIMILARITY_THRESHOLD", 0.75)
+    )
+
     # 6.3: Code logic Threshold
     if not retrieved_chunks:
         logger.info("Không có retrieved_chunks nào được cung cấp.")
@@ -195,23 +211,23 @@ def generate_grounded_response(
     scores = [c.get("score") for c in retrieved_chunks if c.get("score") is not None]
     if scores:
         max_score = max(scores)
-        if max_score < threshold:
+        if max_score < active_threshold:
             logger.info(
                 "Điểm tương đồng cao nhất (%.3f) nhỏ hơn ngưỡng (%.3f). Từ chối sinh câu trả lời.",
                 max_score,
-                threshold,
+                active_threshold,
             )
             return {
                 "answer": (
-                    f"Không tìm thấy căn cứ pháp lý phù hợp (độ tin cậy cao nhất đạt {max_score:.2f}, "
-                    f"dưới ngưỡng an toàn {threshold:.2f}). Vui lòng tra cứu hoặc tham vấn trực tiếp chuyên gia pháp lý."
+                    "Hiện tại trong cơ sở dữ liệu pháp luật về hợp đồng dịch vụ của hệ thống chưa có quy định về vấn đề này. "
+                    "Bạn vui lòng tra cứu thêm các văn bản pháp luật chuyên ngành liên quan hoặc tham vấn chuyên gia pháp lý."
                 ),
                 "citations": [],
                 "refusal": True,
             }
 
     # 6.5: Trích xuất metadata tạo citations
-    citations = extract_citations_from_chunks(retrieved_chunks)
+    raw_citations = extract_citations_from_chunks(retrieved_chunks)
 
     # 6.4: Gọi client sinh phản hồi
     if client is None:
@@ -219,15 +235,49 @@ def generate_grounded_response(
 
     try:
         answer = client.generate_text(query)
+
+        # Lọc thông minh: Chỉ giữ lại những căn cứ pháp lý THỰC SỰ được LLM trích dẫn trong câu trả lời
+        used_citations = []
+        import re
+
+        for c in raw_citations:
+            article = c.get("article", "")
+            art_match = re.search(r"\d+", article)
+            if art_match:
+                art_num = art_match.group()
+                if re.search(rf"\b[Đđ]iều\s+{art_num}\b", answer):
+                    used_citations.append(c)
+                    continue
+            if article and article.lower() in answer.lower():
+                used_citations.append(c)
+
+        # Chỉ giữ lại các căn cứ thực sự được LLM trích dẫn trong câu trả lời (nếu không dùng điều nào thì để rỗng)
+        final_citations = used_citations
+
         return {
             "answer": answer,
-            "citations": citations,
+            "citations": final_citations,
             "refusal": False,
         }
     except Exception as e:
         logger.exception("Lỗi khi gọi LLM sinh grounded response: %s", e)
+        err_str = str(e)
+        if "404" in err_str:
+            clean_err = (
+                "Mô hình AI hiện tại không khả dụng hoặc đã thay đổi phiên bản trên hệ thống Google Gemini. "
+                "Hệ thống đã tự động ghi nhận để điều chỉnh."
+            )
+        elif "429" in err_str or "RESOURCE_EXHAUSTED" in err_str:
+            clean_err = "Hệ thống đang quá tải hoặc tạm thời hết hạn mức gọi AI (Rate Limit/Quota). Vui lòng đợi trong giây lát và thử lại."
+        elif "API_KEY" in err_str.upper() or "UNAUTHENTICATED" in err_str:
+            clean_err = "Khóa API (GEMINI_API_KEY) không hợp lệ hoặc đã hết hạn. Vui lòng kiểm tra lại cấu hình."
+        else:
+            clean_err = (
+                "Đã xảy ra lỗi khi kết nối với mô hình AI. Vui lòng thử lại sau."
+            )
+
         return {
-            "answer": f"Đã xảy ra lỗi khi kết nối với mô hình AI: {str(e)}",
-            "citations": citations,
+            "answer": f"⚠️ **Lỗi hệ thống:** {clean_err}",
+            "citations": [],  # Bắt buộc rỗng khi gặp lỗi, không hiển thị căn cứ khi chưa có phản hồi từ AI
             "refusal": True,
         }

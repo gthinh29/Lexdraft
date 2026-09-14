@@ -54,7 +54,9 @@ def _get_law_db():
     return _law_db
 
 
-def retrieve_template(contract_type_query: str, top_k: int = 1) -> Optional[Dict[str, Any]]:
+def retrieve_template(
+    contract_type_query: str, top_k: int = 1
+) -> Optional[Dict[str, Any]]:
     """
     Lấy mẫu hợp đồng phù hợp nhất từ template_index.
 
@@ -77,16 +79,19 @@ def retrieve_template(contract_type_query: str, top_k: int = 1) -> Optional[Dict
     return hits[0]
 
 
-def retrieve_relevant_law(query: str, top_k: int = 5) -> List[Dict[str, Any]]:
+def retrieve_relevant_law(
+    query: str, top_k: Optional[int] = None
+) -> List[Dict[str, Any]]:
     """
     Lấy các điều luật liên quan từ law_index để làm căn cứ soạn thảo.
 
     Args:
         query: mô tả loại hợp đồng / nội dung cần đối chiếu luật.
-        top_k: số chunk luật lấy về (SRS 6.1 khuyến nghị giữ ở mức 3-5).
+        top_k: số chunk luật lấy về (mặc định cấu hình RETRIEVAL_TOP_K).
 
     Returns:
         Danh sách chunk luật (content + metadata).
     """
+    limit = top_k or getattr(getattr(config, "Config", config), "RETRIEVAL_TOP_K", 8)
     db = _get_law_db()
-    return db.hybrid_search(query, top_k=top_k)
+    return db.hybrid_search(query, top_k=limit)
