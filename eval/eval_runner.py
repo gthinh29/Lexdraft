@@ -94,42 +94,77 @@ class EvaluationRunner:
     def compute_rule_metrics(
         self, samples: List[GoldenSample], results: List[EvalSampleResult]
     ) -> Dict[str, float]:
-        """Tính toán các chỉ số kiểm chứng căn cứ trước khi đưa qua LLM Evaluator."""
+        """Tính toán các chỉ số kiểm chứng căn cứ và tỷ lệ từ chối an toàn."""
         sample_map = {s.id: s for s in samples}
         total = len(results)
         if total == 0:
             return {}
 
-        law_match_count = 0
+        fact_total = 0
+        fact_match_count = 0
+        negative_total = 0
+        safe_refusal_count = 0
         has_context_count = 0
+
+        refusal_keywords = [
+            "chưa có quy định",
+            "không có quy định",
+            "không tìm thấy",
+            "tham vấn chuyên gia",
+            "hết hiệu lực",
+            "không còn giá trị",
+        ]
 
         for r in results:
             golden = sample_map.get(r.id)
             if not golden:
                 continue
 
-            # Kiểm tra xem ít nhất 1 expected_law có xuất hiện trong câu trả lời hoặc trích dẫn không
+            is_negative = "negative" in golden.category.lower()
+
+            # Kiểm tra trích dẫn luật mong đợi
             expected = golden.expected_laws
-            if not expected:
-                law_match_count += 1
+            matched_expected_law = any(
+                law.lower() in r.system_answer.lower()
+                or any(law.lower() in _format_citation(c).lower() for c in r.citations)
+                for law in expected
+            )
+
+            # Kiểm tra từ chối an toàn khi out-of-domain / negative
+            is_safe_refusal = any(
+                kw in r.system_answer.lower() for kw in refusal_keywords
+            )
+
+            if is_negative:
+                negative_total += 1
+                if matched_expected_law or is_safe_refusal:
+                    safe_refusal_count += 1
             else:
-                matched = any(
-                    law.lower() in r.system_answer.lower()
-                    or any(
-                        law.lower() in _format_citation(c).lower() for c in r.citations
-                    )
-                    for law in expected
-                )
-                if matched:
-                    law_match_count += 1
+                fact_total += 1
+                if matched_expected_law:
+                    fact_match_count += 1
 
             if len(r.retrieved_contexts) > 0:
                 has_context_count += 1
 
+        fact_rate = round(fact_match_count / fact_total, 4) if fact_total > 0 else 1.0
+        safe_rate = (
+            round(safe_refusal_count / negative_total, 4) if negative_total > 0 else 1.0
+        )
+        overall_compliance = (
+            round((fact_match_count + safe_refusal_count) / total, 4)
+            if total > 0
+            else 0.0
+        )
+
         return {
             "total_samples": total,
+            "fact_samples": fact_total,
+            "negative_samples": negative_total,
             "retrieval_success_rate": round(has_context_count / total, 4),
-            "law_citation_match_rate": round(law_match_count / total, 4),
+            "fact_citation_match_rate": fact_rate,
+            "safe_refusal_rate": safe_rate,
+            "overall_compliance_rate": overall_compliance,
         }
 
     def export_reports(

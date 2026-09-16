@@ -67,16 +67,24 @@ def main():
     metrics = runner.compute_rule_metrics(samples, results)
     csv_report = runner.export_reports(results, metrics)
 
-    print("\n" + "=" * 55)
-    print("TONG KET KET QUA DANH GIA:")
-    print(f"   - Tong so cau hoi kiem thu:        {metrics.get('total_samples', 0)}")
+    print("\n" + "=" * 62)
+    print("TONG KET KET QUA DANH GIA RAG:")
     print(
-        f"   - Ty le truy xuat co Context:      {metrics.get('retrieval_success_rate', 0.0) * 100:.1f}%"
+        f"   - Tong so cau hoi kiem thu:             {metrics.get('total_samples', 0)} (Fact: {metrics.get('fact_samples', 0)}, Negative: {metrics.get('negative_samples', 0)})"
     )
     print(
-        f"   - Ty le trich dan dung Dieu luat:  {metrics.get('law_citation_match_rate', 0.0) * 100:.1f}%"
+        f"   - Ty le truy xuat co Context:           {metrics.get('retrieval_success_rate', 0.0) * 100:.1f}%"
     )
-    print("=" * 55)
+    print(
+        f"   - Do chinh xac trich dan Luat (Fact):   {metrics.get('fact_citation_match_rate', 0.0) * 100:.1f}%"
+    )
+    print(
+        f"   - Tu choi an toan / Chong bia dat:      {metrics.get('safe_refusal_rate', 0.0) * 100:.1f}%"
+    )
+    print(
+        f"   - Ty le tuan thu tong the (Overall):    {metrics.get('overall_compliance_rate', 0.0) * 100:.1f}%"
+    )
+    print("=" * 62)
     print(f"Bao cao chi tiet da duoc luu tai:\n   -> {csv_report}\n")
 
 

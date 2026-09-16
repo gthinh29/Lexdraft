@@ -112,4 +112,5 @@ class TestEvaluationRunner:
             metrics = runner.compute_rule_metrics(sample_golden_data[:1], results)
             assert metrics["total_samples"] == 1
             assert metrics["retrieval_success_rate"] == 1.0
-            assert metrics["law_citation_match_rate"] == 1.0
+            assert metrics["fact_citation_match_rate"] == 1.0
+            assert metrics["overall_compliance_rate"] == 1.0
