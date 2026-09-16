@@ -65,10 +65,10 @@ class GeminiClient:
 
             # Config cho google.genai
             config_args = {"temperature": self.temperature, "top_p": 0.95}
-            if self.thinking_budget == 0:
+            if self.thinking_budget and self.thinking_budget > 0:
                 try:
                     config_args["thinking_config"] = types.ThinkingConfig(
-                        thinking_budget=0
+                        thinking_budget=self.thinking_budget
                     )
                 except Exception:
                     pass
@@ -116,9 +116,18 @@ class GeminiClient:
                     or "quota" in error_str
                     or "resource_exhausted" in error_str
                 ):
-                    sleep_time = base_delay * (2**attempt)
+                    import re
+
+                    retry_match = re.search(
+                        r"retry in (\d+(?:\.\d+)?)s", str(e), re.IGNORECASE
+                    )
+                    if retry_match:
+                        sleep_time = min(float(retry_match.group(1)) + 1.0, 45.0)
+                    else:
+                        sleep_time = base_delay * (2**attempt)
+
                     logger.warning(
-                        "Gemini API rate limit (429/quota). Đang ngủ %.1fs trước khi thử lại (lần %d/%d)...",
+                        "Gemini API rate limit (429/quota). Đang chờ %.1fs trước khi thử lại (lần %d/%d)...",
                         sleep_time,
                         attempt + 1,
                         max_retries,
@@ -133,7 +142,10 @@ class GeminiClient:
             max_retries,
             last_exception,
         )
-        raise last_exception or RuntimeError("Không thể nhận phản hồi từ Gemini API.")
+        raise RuntimeError(
+            "Google Gemini API Free Tier Quota Exceeded (Lỗi 429: Vượt quá giới hạn gọi API). "
+            "Vui lòng đợi khoảng 30-40 giây sau đó bấm thử lại."
+        )
 
 
 def extract_citations_from_chunks(

@@ -22,7 +22,7 @@ class Config:
 
     # Model config (SRS v2.0 - Gemini API)
     EMBEDDING_MODEL_NAME = "models/gemini-embedding-2"
-    LLM_MODEL_NAME = "gemini-3.5-flash"
+    LLM_MODEL_NAME = "gemini-3.5-flash-lite"
     SIMILARITY_THRESHOLD = 0.75
     RETRIEVAL_TOP_K = 10
     RELEVANCE_SCORE_THRESHOLD = 0.65
