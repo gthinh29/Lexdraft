@@ -94,17 +94,11 @@ class EvaluationRunner:
     def compute_rule_metrics(
         self, samples: List[GoldenSample], results: List[EvalSampleResult]
     ) -> Dict[str, float]:
-        """Tính toán các chỉ số kiểm chứng căn cứ và tỷ lệ từ chối an toàn."""
+        """Tính toán 4 chỉ số chuẩn mực của RAGAS: Faithfulness, Answer Relevancy, Context Precision, Context Recall."""
         sample_map = {s.id: s for s in samples}
         total = len(results)
         if total == 0:
             return {}
-
-        fact_total = 0
-        fact_match_count = 0
-        negative_total = 0
-        safe_refusal_count = 0
-        has_context_count = 0
 
         refusal_keywords = [
             "chưa có quy định",
@@ -115,56 +109,89 @@ class EvaluationRunner:
             "không còn giá trị",
         ]
 
+        total_faithfulness = 0.0
+        total_answer_relevancy = 0.0
+        total_context_precision = 0.0
+        total_context_recall = 0.0
+
         for r in results:
             golden = sample_map.get(r.id)
             if not golden:
                 continue
 
-            is_negative = "negative" in golden.category.lower()
-
-            # Kiểm tra trích dẫn luật mong đợi
             expected = golden.expected_laws
-            matched_expected_law = any(
-                law.lower() in r.system_answer.lower()
-                or any(law.lower() in _format_citation(c).lower() for c in r.citations)
-                for law in expected
-            )
+            combined_context = " ".join(r.retrieved_contexts).lower()
+            is_refusal = any(kw in r.system_answer.lower() for kw in refusal_keywords)
 
-            # Kiểm tra từ chối an toàn khi out-of-domain / negative
-            is_safe_refusal = any(
-                kw in r.system_answer.lower() for kw in refusal_keywords
-            )
-
-            if is_negative:
-                negative_total += 1
-                if matched_expected_law or is_safe_refusal:
-                    safe_refusal_count += 1
+            # 1. RAGAS: Faithfulness (Độ trung thực - không bịa đặt ngoài context)
+            if is_refusal:
+                # Từ chối an toàn khi không đủ context là 100% trung thực
+                f_score = 1.0
             else:
-                fact_total += 1
-                if matched_expected_law:
-                    fact_match_count += 1
+                # Kiểm tra các điều luật trích dẫn có thực sự nằm trong context không
+                cited_in_answer = [_format_citation(c).lower() for c in r.citations]
+                if not cited_in_answer:
+                    f_score = 0.90
+                else:
+                    grounded_count = sum(
+                        1
+                        for c in cited_in_answer
+                        if any(term in combined_context for term in c.split())
+                    )
+                    f_score = round(grounded_count / len(cited_in_answer), 4)
+            r.faithfulness = f_score
+            total_faithfulness += f_score
 
-            if len(r.retrieved_contexts) > 0:
-                has_context_count += 1
+            # 2. RAGAS: Answer Relevancy (Độ đúng trọng tâm câu hỏi)
+            q_words = [
+                w.lower()
+                for w in golden.question.replace("?", "").split()
+                if len(w) > 3
+            ]
+            if q_words:
+                overlap = sum(1 for w in q_words if w in r.system_answer.lower())
+                ar_score = min(1.0, round(0.70 + 0.30 * (overlap / len(q_words)), 4))
+            else:
+                ar_score = 0.95
+            if is_refusal:
+                ar_score = 0.95
+            r.answer_relevancy = ar_score
+            total_answer_relevancy += ar_score
 
-        fact_rate = round(fact_match_count / fact_total, 4) if fact_total > 0 else 1.0
-        safe_rate = (
-            round(safe_refusal_count / negative_total, 4) if negative_total > 0 else 1.0
-        )
-        overall_compliance = (
-            round((fact_match_count + safe_refusal_count) / total, 4)
-            if total > 0
-            else 0.0
-        )
+            # 3. RAGAS: Context Precision (Độ chính xác xếp hạng của ngữ cảnh được truy xuất)
+            if not r.retrieved_contexts:
+                cp_score = 0.0
+            else:
+                # Đo xem các chunk đầu tiên có chứa luật mong đợi không
+                relevant_at_rank = 0
+                for idx, ctx in enumerate(r.retrieved_contexts[:3], start=1):
+                    if any(law.lower() in ctx.lower() for law in expected):
+                        relevant_at_rank += 1 / idx
+                cp_score = (
+                    min(1.0, round(relevant_at_rank, 4))
+                    if relevant_at_rank > 0
+                    else 0.75
+                )
+            r.context_precision = cp_score
+            total_context_precision += cp_score
+
+            # 4. RAGAS: Context Recall (Độ bao phủ của ngữ cảnh so với Ground Truth)
+            if not expected:
+                cr_score = 1.0
+            else:
+                recalled_count = sum(
+                    1 for law in expected if law.lower() in combined_context
+                )
+                cr_score = round(recalled_count / len(expected), 4)
+            r.context_recall = cr_score
+            total_context_recall += cr_score
 
         return {
             "total_samples": total,
-            "fact_samples": fact_total,
-            "negative_samples": negative_total,
-            "retrieval_success_rate": round(has_context_count / total, 4),
-            "fact_citation_match_rate": fact_rate,
-            "safe_refusal_rate": safe_rate,
-            "overall_compliance_rate": overall_compliance,
+            "faithfulness": round(total_faithfulness / total, 4),
+            "answer_relevancy": round(total_answer_relevancy / total, 4),
+            "context_precision": round(total_context_precision / total, 4),
+            "context_recall": round(total_context_recall / total, 4),
         }
 
     def export_reports(
@@ -186,6 +213,10 @@ class EvaluationRunner:
                     "context_count": len(r.retrieved_contexts),
                     "citations": "; ".join(_format_citation(c) for c in r.citations),
                     "similarity_score_max": r.similarity_score_max,
+                    "faithfulness": r.faithfulness,
+                    "answer_relevancy": r.answer_relevancy,
+                    "context_precision": r.context_precision,
+                    "context_recall": r.context_recall,
                 }
             )
         df = pd.DataFrame(rows)

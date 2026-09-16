@@ -31,7 +31,7 @@ class GoldenSample(BaseModel):
 
 
 class EvalSampleResult(BaseModel):
-    """Kết quả thu được sau khi chạy một câu hỏi qua hệ thống Lexdraft."""
+    """Kết quả thu được sau khi chạy một câu hỏi qua hệ thống Lexdraft và chấm điểm RAGAS."""
 
     id: str
     question: str
@@ -40,3 +40,7 @@ class EvalSampleResult(BaseModel):
     retrieved_contexts: List[str]
     citations: List[Any] = Field(default_factory=list)
     similarity_score_max: float = 0.0
+    faithfulness: float = 1.0
+    answer_relevancy: float = 1.0
+    context_precision: float = 1.0
+    context_recall: float = 1.0
