@@ -66,20 +66,43 @@ def _format_law_context(law_chunks: List[Dict[str, Any]]) -> str:
     return "\n\n".join(parts)
 
 
-def build_risk_prompt(dieu_khoan_text: str, law_context: List[Dict[str, Any]]) -> str:
+def build_risk_prompt(
+    dieu_khoan_text: str,
+    law_context: List[Dict[str, Any]],
+    expired_law_alerts: List[Dict[str, Any]] = None,
+) -> str:
     """
     Ghép prompt phân tích rủi ro cho một Điều khoản hợp đồng.
 
     Args:
         dieu_khoan_text: Nội dung đầy đủ của Điều khoản cần phân tích.
         law_context: Danh sách các chunk điều luật liên quan (từ retrieval.py).
+        expired_law_alerts: Danh sách các cảnh báo luật hết hiệu lực (từ law_validity_checker.py).
 
     Returns:
         Prompt hoàn chỉnh gửi cho LLM.
     """
     formatted_law = _format_law_context(law_context)
 
-    prompt = f"""{RISK_ASSESSMENT_INSTRUCTION}
+    expired_warning_block = ""
+    if expired_law_alerts:
+        warnings = []
+        for alert in expired_law_alerts:
+            law_name = alert.get("law_ref", "")
+            status = alert.get("status", "")
+            replaced = alert.get("replaced_by")
+            msg = f"- {law_name} ({status})"
+            if replaced:
+                msg += f". Đã bị thay thế bởi: {replaced}"
+            warnings.append(msg)
+
+        expired_warning_block = (
+            "\nCẢNH BÁO TỪ HỆ THỐNG: Trong hợp đồng này có viện dẫn các văn bản pháp luật ĐÃ HẾT HIỆU LỰC sau đây:\n"
+            + "\n".join(warnings)
+            + "\n\nTUYỆT ĐỐI LƯU Ý: Nếu Điều khoản bên dưới có nhắc đến hoặc áp dụng các văn bản đã hết hiệu lực này, ĐÓ LÀ MỘT RỦI RO PHÁP LÝ NGHIÊM TRỌNG. Bạn BẮT BUỘC phải chỉ ra rủi ro này và yêu cầu thay thế bằng văn bản mới (nếu có).\n"
+        )
+
+    prompt = f"""{RISK_ASSESSMENT_INSTRUCTION}{expired_warning_block}
 
 CĂN CỨ PHÁP LÝ LIÊN QUAN:
 {formatted_law}
@@ -91,5 +114,88 @@ YÊU CẦU ĐẦU RA:
 - Nhận xét rủi ro: [Ghi rõ rủi ro hoặc ghi 'Không phát hiện rủi ro pháp lý rõ ràng']
 - Căn cứ pháp lý đối chiếu: [Điều luật cụ thể từ CĂN CỨ ở trên]
 - Đề xuất điều chỉnh (nếu có rủi ro): [Nêu phương án sửa đổi câu chữ cụ thể để bên sử dụng hợp đồng tự bảo vệ mình]"""
+
+    return prompt
+
+
+def build_batch_risk_prompt(
+    articles: list,
+    expired_law_alerts: List[Dict[str, Any]] = None,
+) -> str:
+    """
+    Ghép prompt phân tích rủi ro cho TẤT CẢ điều khoản trong 1 lần gọi LLM.
+
+    Args:
+        articles: list of dicts, mỗi phần tử gồm:
+            {
+                "label": "Điều 1",
+                "content": "...",
+                "law_chunks": [...],   # chunks từ retrieval
+            }
+
+    Returns:
+        Prompt hoàn chỉnh gửi LLM 1 lần cho toàn bộ hợp đồng.
+        LLM phải trả về từng phần cách nhau bằng dấu phân cách chuẩn:
+            ===DIEU_1===
+            [đánh giá]
+            ===DIEU_2===
+            [đánh giá]
+            ...
+    """
+    # Gộp tất cả law_chunks của các điều lại (deduplicate theo nội dung)
+    seen_contents = set()
+    merged_law_chunks = []
+    for art in articles:
+        for chunk in art.get("law_chunks", []):
+            key = chunk.get("content", "")[:100]
+            if key not in seen_contents:
+                seen_contents.add(key)
+                merged_law_chunks.append(chunk)
+
+    formatted_law = _format_law_context(merged_law_chunks)
+
+    articles_block = ""
+    for i, art in enumerate(articles, 1):
+        articles_block += (
+            f"\n===DIEU_{i}===\n"
+            f"Tên điều khoản: {art['label']}\n"
+            f"Nội dung:\n{art['content'].strip()}\n"
+        )
+
+    expired_warning_block = ""
+    if expired_law_alerts:
+        warnings = []
+        for alert in expired_law_alerts:
+            law_name = alert.get("law_ref", "")
+            status = alert.get("status", "")
+            replaced = alert.get("replaced_by")
+            msg = f"- {law_name} ({status})"
+            if replaced:
+                msg += f". Đã bị thay thế bởi: {replaced}"
+            warnings.append(msg)
+
+        expired_warning_block = (
+            "\nCẢNH BÁO TỪ HỆ THỐNG: Trong hợp đồng này có viện dẫn các văn bản pháp luật ĐÃ HẾT HIỆU LỰC sau đây:\n"
+            + "\n".join(warnings)
+            + "\n\nTUYỆT ĐỐI LƯU Ý: Khi đánh giá các Điều khoản bên dưới, nếu thấy có viện dẫn hoặc áp dụng các văn bản đã hết hiệu lực này (đặc biệt là ở Phần Lời Mở Đầu/Căn Cứ), ĐÓ LÀ MỘT RỦI RO PHÁP LÝ NGHIÊM TRỌNG. Bạn BẮT BUỘC phải chỉ ra rủi ro này và yêu cầu thay thế bằng văn bản mới (nếu có).\n"
+        )
+
+    prompt = f"""{RISK_ASSESSMENT_INSTRUCTION}{expired_warning_block}
+
+CĂN CỨ PHÁP LÝ LIÊN QUAN (dùng chung cho toàn bộ hợp đồng):
+{formatted_law}
+
+CÁC ĐIỀU KHOẢN HỢP ĐỒNG CẦN ĐÁNH GIÁ:
+{articles_block}
+
+YÊU CẦU ĐẦU RA — BẮT BUỘC tuân thủ định dạng sau, KHÔNG thêm bất kỳ tiêu đề nào khác:
+Với MỖI điều khoản, bắt đầu bằng dòng ===DIEU_<số>_KET_QUA=== rồi viết đánh giá ngay bên dưới.
+Ví dụ:
+===DIEU_1_KET_QUA===
+- Nhận xét rủi ro: ...
+- Căn cứ pháp lý: ...
+- Đề xuất: ...
+===DIEU_2_KET_QUA===
+..."""
 
     return prompt

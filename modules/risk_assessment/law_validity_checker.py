@@ -247,9 +247,60 @@ def _check_tier3(law_name: str) -> Optional[Dict[str, Any]]:
     return None
 
 
-# ---------------------------------------------------------------------------
-# Trích xuất văn bản được dẫn chiếu trong hợp đồng
-# ---------------------------------------------------------------------------
+def _check_tier3_batch(law_names: List[str]) -> List[Dict[str, Any]]:
+    """
+    Cấp 3 Batch: Hỏi LLM 1 lần với TẤT CẢ văn bản còn lại.
+    N văn bản = 1 API call thay vì N calls.
+    """
+    if not law_names:
+        return []
+
+    from modules.shared.llm_client import GeminiClient
+
+    law_list_str = "\n".join(f'{i+1}. "{name}"' for i, name in enumerate(law_names))
+    prompt = f"""Bạn là chuyên gia pháp lý Việt Nam.
+Xác định xem các văn bản pháp luật sau có còn hiệu lực không.
+
+{law_list_str}
+
+Trả lời mảng JSON (không thêm nội dung khác):
+[
+  {{"index": 1, "is_expired": true/false, "status": "Hết hiệu lực"|"Còn hiệu lực"|"Không xác định", "replaced_by": null, "reason": "..."}}
+]
+Nếu không chắc đặt is_expired=false. Không bịa số hiệu văn bản."""
+
+    try:
+        client = GeminiClient()
+        raw = client.generate_text(prompt)
+        json_match = re.search(r"\[.*\]", raw, re.DOTALL)
+        if not json_match:
+            return []
+        results = json.loads(json_match.group())
+        alerts = []
+        for item in results:
+            if (
+                item.get("is_expired") is True
+                and item.get("status") != "Không xác định"
+            ):
+                idx = item.get("index", 1) - 1
+                law_ref = law_names[idx] if 0 <= idx < len(law_names) else "N/A"
+                alerts.append(
+                    {
+                        "source": "tier3_llm_fallback",
+                        "confidence": "~80%",
+                        "confidence_label": "🟡 Cần xác minh (suy luận của AI)",
+                        "law_ref": law_ref,
+                        "status": item.get("status", "Có thể hết hiệu lực"),
+                        "expire_date": None,
+                        "replaced_by": item.get("replaced_by"),
+                        "note": f"AI nhận định: {item.get('reason', '')}. ⚠️ Vui lòng xác minh lại.",
+                    }
+                )
+        return alerts
+    except Exception as e:
+        logger.warning("Cấp 3 batch: Lỗi khi hỏi LLM: %s", e)
+        return []
+
 
 _LAW_REFERENCE_PATTERN = re.compile(
     r"(?:Căn cứ|Theo|Dựa trên|Phù hợp với|Tuân thủ)\s+"
@@ -347,6 +398,7 @@ def check_expired_laws(
     )
 
     alerts: List[Dict[str, Any]] = []
+    unresolved: List[str] = []  # Văn bản Cấp 1+2 không xử lý được → gửi batch cho Cấp 3
 
     for law_name in law_refs:
         # --- Cấp 1: Danh mục kiểm duyệt (Ground Truth tuyệt đối) ---
@@ -356,7 +408,7 @@ def check_expired_laws(
                 "Cấp 1 phát hiện vi phạm: '%s' → %s", law_name, result["status"]
             )
             alerts.append(result)
-            continue  # Đã có kết quả chắc chắn, không cần kiểm tra tiếp
+            continue
 
         # --- Cấp 2: Trích xuất từ Điều khoản thi hành của luật mới ---
         result = _check_tier2(law_name, law_index_chunks)
@@ -367,16 +419,19 @@ def check_expired_laws(
             alerts.append(result)
             continue
 
-        # --- Cấp 3: LLM Fallback (Kết quả cần xác minh) ---
-        if enable_llm_fallback:
-            result = _check_tier3(law_name)
-            if result:
+        # Chưa có kết quả từ Cấp 1+2 → đưa vào danh sách chờ batch
+        unresolved.append(law_name)
+
+    # --- Cấp 3: Hỏi LLM 1 lần cho TẤT CẢ văn bản chưa giải quyết được ---
+    if enable_llm_fallback and unresolved:
+        logger.info("Cấp 3 batch: Hỏi LLM 1 lần cho %d văn bản...", len(unresolved))
+        tier3_alerts = _check_tier3_batch(unresolved)
+        alerts.extend(tier3_alerts)
+        if tier3_alerts:
+            for a in tier3_alerts:
                 logger.info(
-                    "Cấp 3 (AI) phát hiện vi phạm có thể có: '%s' → %s",
-                    law_name,
-                    result["status"],
+                    "Cấp 3 (AI) phát hiện: '%s' → %s", a["law_ref"], a["status"]
                 )
-                alerts.append(result)
 
     logger.info(
         "Hoàn tất kiểm tra hiệu lực: %d/%d văn bản có vấn đề.",
