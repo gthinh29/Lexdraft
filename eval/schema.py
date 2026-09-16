@@ -4,7 +4,7 @@ Pydantic schemas cho bộ dữ liệu đánh giá (Golden Dataset) và kết qu�
 Đảm bảo tính hợp lệ, đầy đủ của dữ liệu trước khi đưa vào pipeline đánh giá.
 """
 
-from typing import List, Optional
+from typing import Any, List, Optional
 from pydantic import BaseModel, Field
 
 
@@ -38,5 +38,5 @@ class EvalSampleResult(BaseModel):
     ground_truth: str
     system_answer: str
     retrieved_contexts: List[str]
-    citations: List[str] = Field(default_factory=list)
+    citations: List[Any] = Field(default_factory=list)
     similarity_score_max: float = 0.0

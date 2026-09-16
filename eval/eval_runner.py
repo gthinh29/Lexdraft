@@ -11,7 +11,7 @@ Runner chính thực thi pipeline đánh giá RAG trong Lexdraft:
 import json
 import logging
 from pathlib import Path
-from typing import Dict, List
+from typing import Any, Dict, List
 
 import pandas as pd
 from eval.dataset_manager import DatasetManager
@@ -22,6 +22,15 @@ from modules.chatbot_qa.service import handle_chat
 logger = logging.getLogger(__name__)
 
 DEFAULT_REPORT_DIR = Path("data/eval")
+
+
+def _format_citation(c: Any) -> str:
+    """Format một item citation từ dict hoặc str sang dạng chuỗi dễ đọc."""
+    if isinstance(c, dict):
+        art = c.get("article", "")
+        law = c.get("law_name") or c.get("source") or ""
+        return f"{art} ({law})".strip() if law else (art or str(c))
+    return str(c)
 
 
 class EvaluationRunner:
@@ -106,7 +115,9 @@ class EvaluationRunner:
             else:
                 matched = any(
                     law.lower() in r.system_answer.lower()
-                    or any(law.lower() in c.lower() for c in r.citations)
+                    or any(
+                        law.lower() in _format_citation(c).lower() for c in r.citations
+                    )
                     for law in expected
                 )
                 if matched:
@@ -138,7 +149,7 @@ class EvaluationRunner:
                     "ground_truth": r.ground_truth,
                     "system_answer": r.system_answer,
                     "context_count": len(r.retrieved_contexts),
-                    "citations": "; ".join(r.citations),
+                    "citations": "; ".join(_format_citation(c) for c in r.citations),
                     "similarity_score_max": r.similarity_score_max,
                 }
             )
