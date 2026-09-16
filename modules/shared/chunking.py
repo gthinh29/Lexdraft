@@ -357,6 +357,10 @@ def chunk_by_article(
     return chunks
 
 
+# Alias for backward compatibility
+chunk_contract_by_articles = chunk_by_article
+
+
 # ---------------------------------------------------------------------------
 # Phần 3.7 - BLIND TEST: chạy trực tiếp file này để in kết quả chunking ra
 # terminal, kiểm tra bằng mắt việc cắt Điều và gán metadata có đúng không,
