@@ -1,89 +1,75 @@
+"""app.py
+
+Lexdraft — Legal Contract Drafting & Risk Assessment System
+Hệ thống Hỗ trợ Soạn thảo và Gợi ý Rủi ro Hợp đồng Dịch vụ bằng LLM kết hợp RAG.
+
+Entry point ứng dụng Streamlit (Modular Architecture).
 """
-app.py
 
-Entry point Streamlit cho hệ thống hỗ trợ soạn thảo & gợi ý rủi ro hợp đồng
-dịch vụ (Phần 10.1 - 10.5).
-
-Chạy: streamlit run app.py
-"""
-
-import io
 import logging
 import sys
-import tempfile
 import uuid
 from pathlib import Path
 
-# Đảm bảo thư mục gốc dự án luôn nằm trong sys.path khi chạy streamlit
 PROJECT_ROOT = Path(__file__).resolve().parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 import streamlit as st  # noqa: E402
 
-try:
-    from modules.drafting import service as drafting_service
-except ImportError:
-    drafting_service = None
+from ui.pages import page_chatbot, page_drafting, page_home, page_risk  # noqa: E402
+from ui.styles import inject_styles  # noqa: E402
 
 try:
-    from modules.chatbot_qa import service as chatbot_service
+    from modules.chatbot_qa import service as chatbot_service  # noqa: E402
 except ImportError:
     chatbot_service = None
 
 try:
-    from modules.risk_assessment import (
-        service as risk_assessment_service,
-    )
+    from modules.risk_assessment import service as risk_assessment_service  # noqa: E402
 except ImportError:
     risk_assessment_service = None
-
-try:
-    from docx import Document as DocxDocument
-except ImportError:
-    DocxDocument = None
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
 
-st.set_page_config(page_title="Trợ lý Hợp đồng Dịch vụ", page_icon="📄", layout="wide")
+# ---------------------------------------------------------------------------
+# Streamlit Page Config & Styles
+# ---------------------------------------------------------------------------
+st.set_page_config(
+    page_title="Lexdraft — Legal Contract Drafting & Risk Assessment System",
+    page_icon="⚖️",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
+
+inject_styles()
 
 
 # ---------------------------------------------------------------------------
-# 10.2: Nạp 1 lần các FAISS index nặng khi app khởi động (@st.cache_resource).
+# Warmup VectorDB
 # ---------------------------------------------------------------------------
-@st.cache_resource(show_spinner="Đang nạp cơ sở tri thức (FAISS index)...")
-def warmup_indexes() -> dict:
-    """
-    Kích hoạt sớm việc load law_index / template_index ngay khi app start,
-    thay vì đợi tới lượt gọi service đầu tiên của người dùng (giảm độ trễ
-    lần thao tác đầu). Mỗi module (drafting, chatbot_qa) tự cache VectorDB
-    ở cấp module-level trong retrieval.py riêng của nó - hàm này chỉ "chạm"
-    vào để trigger load sớm.
-    """
+@st.cache_resource(show_spinner="Đang nạp dữ liệu pháp luật FAISS VectorDB...")
+def warmup_indexes():
     status = {"law_index": False, "template_index": False}
-
-    if drafting_service is None:
-        return status
-
     try:
-        from modules.drafting import retrieval as drafting_retrieval
+        from modules.risk_assessment import law_validity_checker as lvc
+        from modules.risk_assessment import retrieval
 
-        drafting_retrieval._get_law_db()
+        retrieval._get_law_db()
+        lvc.check_expired_laws("Luật Thương mại 2005")
         status["law_index"] = True
-    except Exception:
-        logger.warning("Chưa load được law_index (Phần 4/5 có thể chưa sẵn sàng).")
-
+    except Exception:  # noqa: BLE001, S110
+        pass
     try:
-        from modules.drafting import retrieval as drafting_retrieval
+        from modules.drafting import retrieval as dr
 
-        drafting_retrieval._get_template_db()
+        dr._get_template_db()
         status["template_index"] = True
-    except Exception:
-        logger.warning("Chưa load được template_index (Phần 4/5 có thể chưa sẵn sàng).")
-
+    except Exception:  # noqa: BLE001, S110
+        pass
     return status
 
 
@@ -91,369 +77,145 @@ warmup_status = warmup_indexes()
 
 
 # ---------------------------------------------------------------------------
-# Khởi tạo state cho phiên làm việc hiện tại của người dùng.
+# Session State Initialization
 # ---------------------------------------------------------------------------
-if "session_id" not in st.session_state:
-    st.session_state.session_id = str(uuid.uuid4())
+def _init_state():
+    defaults = {
+        "session_id": str(uuid.uuid4()),
+        "chat_history_ui": [],
+        "last_draft": None,
+        "last_risk_report": None,
+        "last_expired_alerts": [],
+        "risk_source_name": None,
+        "page": "📤 Gợi ý Rủi ro Pháp lý",
+        "previous_page": None,
+        "pending_risk_draft": False,
+        "pending_risk_upload": False,
+        "upload_tmp_path": None,
+        "upload_file_name": None,
+        "preview_zoom": 100,
+    }
+    for k, v in defaults.items():
+        if k not in st.session_state:
+            st.session_state[k] = v
 
-if "chat_history_ui" not in st.session_state:
-    # Bản sao hiển thị cho UI - độc lập với ChatSession nội bộ của chatbot_qa (Phần 9).
-    st.session_state.chat_history_ui = []
 
-if "last_draft" not in st.session_state:
-    st.session_state.last_draft = None
-
-if "last_risk_report" not in st.session_state:
-    st.session_state.last_risk_report = None
-
-if "last_expired_alerts" not in st.session_state:
-    # Kết quả cảnh báo văn bản hết hiệu lực từ Tiered Validation (Pre-check)
-    st.session_state.last_expired_alerts = []
-
+_init_state()
 
 # ---------------------------------------------------------------------------
-# 10.1: Sidebar điều hướng 3 tab
+# Page Definitions
 # ---------------------------------------------------------------------------
-st.sidebar.title("📄 Trợ lý Hợp đồng Dịch vụ")
-st.sidebar.caption("Soạn thảo & gợi ý rủi ro hợp đồng dịch vụ dựa trên RAG + Gemini")
+PAGES = {
+    "🏠 Trang chủ": page_home.render,
+    "📤 Gợi ý Rủi ro Pháp lý": page_risk.render,
+    "📝 Hỗ trợ Soạn thảo Hợp đồng": page_drafting.render,
+    "💬 Chatbot Hỏi – Đáp (Q&A)": page_chatbot.render,
+}
 
-page = st.sidebar.radio(
-    "Chọn chức năng",
-    ["📝 Soạn thảo", "📤 Upload Hợp đồng", "💬 Chatbot"],
+# ---------------------------------------------------------------------------
+# Sidebar Navigation
+# ---------------------------------------------------------------------------
+with st.sidebar:
+    st.markdown(
+        "<h2 style='margin:0;padding:12px 0 2px 0;font-size:1.15rem;"
+        "font-weight:700;color:#f1f5f9;'>⚖️ LEXDRAFT</h2>"
+        "<div style='font-size:0.75rem;color:#94a3b8;margin-bottom:12px;'>"
+        "Legal Contract System</div>",
+        unsafe_allow_html=True,
+    )
+    st.divider()
+
+    if "nav_page" in st.session_state:
+        st.session_state["page"] = st.session_state.pop("nav_page")
+
+    page = st.radio(
+        "Chức năng chính",
+        list(PAGES.keys()),
+        key="page",
+        label_visibility="collapsed",
+    )
+
+    # Tự động dọn báo cáo rủi ro khi chuyển sang màn hình Soạn thảo hợp đồng
+    if (
+        page == "📝 Hỗ trợ Soạn thảo Hợp đồng"
+        and st.session_state.get("previous_page") != "📝 Hỗ trợ Soạn thảo Hợp đồng"
+    ):
+        st.session_state.last_risk_report = None
+        st.session_state.last_expired_alerts = []
+        st.session_state.risk_source_name = None
+        st.session_state.pending_risk_draft = False
+        st.session_state.pending_risk_upload = False
+        st.session_state.upload_file_name = None
+        st.session_state.upload_tmp_path = None
+        if chatbot_service:
+            chatbot_service.attach_contract_context(
+                session_id=st.session_state.session_id,
+                contract_chunks=[],
+                risk_report=[],
+            )
+
+    st.session_state["previous_page"] = page
+
+    st.divider()
+    with st.expander("🔧 Trạng thái Hệ thống", expanded=False):
+        st.write(f"Session: `{st.session_state.session_id[:8]}...`")
+        st.write(
+            "FAISS Law Index:",
+            "✅ Active" if warmup_status.get("law_index") else "⚠️ Inactive",
+        )
+        st.write(
+            "Template Index:",
+            "✅ Active" if warmup_status.get("template_index") else "⚠️ Inactive",
+        )
+        st.write(
+            "Risk Assessment:", "✅ Ready" if risk_assessment_service else "⚠️ Disabled"
+        )
+        st.write("LLM Engine:", "🟢 Gemini 3.6 Flash")
+
+    st.divider()
+    if st.button("🗑️ Xóa phiên làm việc", use_container_width=True):
+        for k in ["chat_history_ui", "last_expired_alerts"]:
+            st.session_state[k] = []
+        for k in [
+            "last_draft",
+            "last_risk_report",
+            "risk_source_name",
+            "upload_tmp_path",
+            "upload_file_name",
+        ]:
+            st.session_state[k] = None
+        st.session_state.pending_risk_draft = False
+        st.session_state.pending_risk_upload = False
+        st.session_state.session_id = str(uuid.uuid4())
+        if chatbot_service:
+            chatbot_service.attach_contract_context(
+                session_id=st.session_state.session_id,
+                contract_chunks=[],
+                risk_report=[],
+            )
+        st.rerun()
+
+# ---------------------------------------------------------------------------
+# Header Banner
+# ---------------------------------------------------------------------------
+st.markdown(
+    "<div class='system-header-banner'>"
+    "<div class='system-title'>Lexdraft — Legal Contract Drafting & Risk Assessment System</div>"
+    "<div class='system-subtitle'>Hệ thống Hỗ trợ Soạn thảo và Gợi ý Rủi ro Hợp đồng Dịch vụ bằng LLM kết hợp RAG</div>"
+    "<div class='system-status-pills'>"
+    "<span class='status-pill'>⚡ LLM Engine: Gemini 3.6 Flash</span>"
+    "<span class='status-pill'>📚 Knowledge: FAISS VectorDB (Dân sự & Thương mại)</span>"
+    "<span class='status-pill'>🛡️ Validation: Tiered Expired Laws Checker</span>"
+    "</div>"
+    "</div>",
+    unsafe_allow_html=True,
 )
 
-with st.sidebar.expander("Trạng thái hệ thống"):
-    st.write(f"session_id: `{st.session_state.session_id[:8]}...`")
-    st.write(
-        "law_index:", "✅" if warmup_status.get("law_index") else "⚠️ chưa sẵn sàng"
-    )
-    st.write(
-        "template_index:",
-        "✅" if warmup_status.get("template_index") else "⚠️ chưa sẵn sàng",
-    )
-    st.write(
-        "Module Gợi ý rủi ro (Phần 8):",
-        "✅" if risk_assessment_service else "⚠️ chưa build",
-    )
-
-
 # ---------------------------------------------------------------------------
-# Helper dùng chung
+# Page Routing
 # ---------------------------------------------------------------------------
-def build_docx_bytes(draft_text: str) -> bytes:
-    """Chuyển text bản nháp thành file .docx (bytes) để tải về."""
-    if DocxDocument is None:
-        raise RuntimeError("python-docx chưa được cài đặt (pip install python-docx).")
-
-    document = DocxDocument()
-    for line in draft_text.split("\n"):
-        document.add_paragraph(line)
-
-    buffer = io.BytesIO()
-    document.save(buffer)
-    buffer.seek(0)
-    return buffer.getvalue()
-
-
-def render_risk_report(risk_report) -> None:
-    """
-    Hiển thị báo cáo rủi ro dạng Card/Expander - dùng chung cho Tab Soạn thảo
-    và Tab Upload.
-
-    Format kỳ vọng (Phần 8): [{"dieu_khoan": ..., "rui_ro": ..., "can_cu": [...]}]
-    """
-    if not risk_report:
-        st.info(
-            "Chưa có báo cáo rủi ro (Module Gợi ý rủi ro - Phần 8 - có thể chưa sẵn sàng)."
-        )
-        return
-
-    for i, item in enumerate(risk_report, start=1):
-        dieu_khoan = item.get("dieu_khoan", f"Điều khoản #{i}")
-        rui_ro = item.get("rui_ro", "Không xác định")
-        can_cu = item.get("can_cu", [])
-
-        with st.expander(f"⚖️ {dieu_khoan}"):
-            st.markdown(f"**Đánh giá rủi ro:** {rui_ro}")
-            if can_cu:
-                st.markdown("**Căn cứ pháp lý:**")
-                for cc in can_cu:
-                    if isinstance(cc, dict):
-                        label = cc.get("article", "N/A")
-                        source = cc.get("source", "N/A")
-                        st.markdown(f"- {label} ({source})")
-                    else:
-                        st.markdown(f"- {cc}")
-
-
-def render_citations(citations) -> None:
-    if not citations:
-        return
-    with st.expander("📚 Trích dẫn căn cứ pháp lý"):
-        for c in citations:
-            if isinstance(c, dict):
-                label = c.get("article", "N/A")
-                source = c.get("source", "N/A")
-                score = c.get("score")
-                score_str = (
-                    f" `(độ tương đồng: {score:.2f})`" if score is not None else ""
-                )
-                st.markdown(f"- **{label}** — *{source}*{score_str}")
-            else:
-                st.markdown(f"- {c}")
-
-
-def sync_context_to_chatbot(risk_results, contract_chunks=None) -> None:
-    """
-    Đồng bộ ngữ cảnh hợp đồng vừa có (từ soạn thảo hoặc upload) sang chatbot,
-    để chuyển phiên sang Chế độ A ngay lập tức.
-    """
-    if chatbot_service is None or not risk_results:
-        return
-    try:
-        chatbot_service.attach_contract_context(
-            session_id=st.session_state.session_id,
-            contract_chunks=contract_chunks or [],
-            risk_report=risk_results,
-        )
-    except Exception:
-        logger.exception("Không thể đồng bộ context sang chatbot_qa.")
-
-
-# ---------------------------------------------------------------------------
-# 10.3: TAB SOẠN THẢO
-# ---------------------------------------------------------------------------
-if page == "📝 Soạn thảo":
-    st.header("📝 Soạn thảo hợp đồng dịch vụ")
-    st.caption(
-        "Điền thông tin bên dưới, hệ thống sẽ sinh bản nháp kèm gợi ý rủi ro tự động."
-    )
-
-    with st.form("drafting_form"):
-        contract_type = st.text_input(
-            "Loại hợp đồng *",
-            placeholder="VD: hợp đồng thiết kế website, hợp đồng tư vấn...",
-        )
-
-        col1, col2 = st.columns(2)
-        with col1:
-            party_a = st.text_input("Bên A (Bên thuê dịch vụ)")
-            party_a_address = st.text_input("Địa chỉ Bên A")
-        with col2:
-            party_b = st.text_input("Bên B (Bên cung cấp dịch vụ)")
-            party_b_address = st.text_input("Địa chỉ Bên B")
-
-        scope_of_work = st.text_area("Phạm vi công việc", height=100)
-        contract_value = st.text_input("Giá trị hợp đồng (VNĐ)")
-        duration = st.text_input(
-            "Thời hạn hợp đồng", placeholder="VD: 6 tháng, từ 01/01/2027 đến 30/06/2027"
-        )
-
-        submitted = st.form_submit_button("🚀 Sinh bản nháp")
-
-    if submitted:
-        if not contract_type.strip():
-            st.error("Vui lòng nhập Loại hợp đồng.")
-        elif drafting_service is None:
-            st.error("Module Soạn thảo chưa sẵn sàng.")
-        else:
-            user_input_dict = {
-                "contract_type": contract_type,
-                "session_id": st.session_state.session_id,
-                "ben_a": party_a,
-                "dia_chi_ben_a": party_a_address,
-                "ben_b": party_b,
-                "dia_chi_ben_b": party_b_address,
-                "pham_vi_cong_viec": scope_of_work,
-                "gia_tri_hop_dong": contract_value,
-                "thoi_han": duration,
-            }
-            # Loại field rỗng để prompt gọn hơn, tránh nhiễu LLM.
-            user_input_dict = {k: v for k, v in user_input_dict.items() if v}
-
-            with st.spinner("Đang truy xuất mẫu, luật liên quan và sinh bản nháp..."):
-                try:
-                    result = drafting_service.generate_contract_draft(user_input_dict)
-                    st.session_state.last_draft = result.get("draft")
-                    st.session_state.last_risk_report = result.get("risk_report")
-                    sync_context_to_chatbot(result.get("risk_report"))
-                except RuntimeError as e:
-                    st.error(f"Hệ thống chưa sẵn sàng: {e}")
-                except ValueError as e:
-                    st.error(f"Dữ liệu đầu vào không hợp lệ: {e}")
-                except Exception:
-                    logger.exception("Lỗi không xác định khi sinh bản nháp.")
-                    st.error("Đã có lỗi xảy ra, vui lòng thử lại.")
-
-    if st.session_state.last_draft:
-        st.subheader("📄 Bản nháp hợp đồng")
-        st.text_area("Nội dung", st.session_state.last_draft, height=400)
-
-        try:
-            docx_bytes = build_docx_bytes(st.session_state.last_draft)
-            st.download_button(
-                label="⬇️ Tải về (.docx)",
-                data=docx_bytes,
-                file_name="hop_dong_du_thao.docx",
-                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            )
-        except RuntimeError as e:
-            st.warning(str(e))
-
-        st.subheader("⚠️ Gợi ý rủi ro cho bản nháp")
-        render_risk_report(st.session_state.last_risk_report)
-
-
-# ---------------------------------------------------------------------------
-# 10.4: TAB UPLOAD HỢP ĐỒNG
-# ---------------------------------------------------------------------------
-elif page == "📤 Upload Hợp đồng":
-    st.header("📤 Upload hợp đồng để phân tích rủi ro")
-    st.caption("Hỗ trợ file .pdf (dạng text, không OCR) và .docx.")
-
-    uploaded_file = st.file_uploader("Chọn file hợp đồng", type=["pdf", "docx"])
-
-    if uploaded_file is not None and st.button("🔍 Phân tích rủi ro"):
-        if risk_assessment_service is None:
-            st.error("Module Gợi ý rủi ro (Phần 8) chưa sẵn sàng.")
-        else:
-            with st.spinner(
-                "Đang trích xuất, đối chiếu luật và phân tích từng điều khoản..."
-            ):
-                tmp_path = None
-                try:
-                    # risk_assessment.service (Phần 8) đọc file qua document_reader,
-                    # nên cần ghi tạm ra đĩa trước khi truyền path vào.
-                    suffix = Path(uploaded_file.name).suffix
-                    with tempfile.NamedTemporaryFile(
-                        delete=False, suffix=suffix
-                    ) as tmp_file:
-                        tmp_file.write(uploaded_file.getvalue())
-                        tmp_path = tmp_file.name
-
-                    analysis_result = risk_assessment_service.analyze_contract(
-                        file_path_or_text=tmp_path,
-                        session_id=st.session_state.session_id,
-                    )
-                    # analyze_contract trả về dict: {expired_law_alerts, risk_results}
-                    expired_alerts = analysis_result.get("expired_law_alerts", [])
-                    risk_results = analysis_result.get("risk_results", [])
-
-                    st.session_state.last_risk_report = risk_results
-                    st.session_state.last_expired_alerts = expired_alerts
-                    sync_context_to_chatbot(risk_results)
-                except Exception:
-                    logger.exception("Lỗi khi phân tích rủi ro hợp đồng upload.")
-                    st.error(
-                        "Đã có lỗi xảy ra khi phân tích hợp đồng, vui lòng thử lại."
-                    )
-                finally:
-                    if tmp_path:
-                        Path(tmp_path).unlink(missing_ok=True)
-
-    if st.session_state.last_risk_report or st.session_state.get("last_expired_alerts"):
-        # --- Banner cảnh báo văn bản hết hiệu lực (Tiered Validation) ---
-        expired_alerts = st.session_state.get("last_expired_alerts", [])
-        if expired_alerts:
-            st.error(
-                f"🚨 **Phát hiện {len(expired_alerts)} văn bản pháp luật có vấn đề về hiệu lực!** "
-                "Hợp đồng có thể đang viện dẫn luật đã hết hiệu lực hoặc không tồn tại. "
-                "Vui lòng kiểm tra ngay trước khi ký kết."
-            )
-            with st.expander(
-                "📋 Xem chi tiết cảnh báo hiệu lực văn bản", expanded=True
-            ):
-                for i, alert in enumerate(expired_alerts, 1):
-                    # Chọn màu/icon theo nguồn cảnh báo
-                    label = alert.get("confidence_label", "")
-                    status = alert.get("status", "Hết hiệu lực")
-                    law_ref = alert.get("law_ref", "N/A")
-                    replaced_by = alert.get("replaced_by") or "Chưa xác định"
-                    expire_date = alert.get("expire_date") or "Không rõ"
-                    note = alert.get("note", "")
-
-                    st.markdown(f"**Cảnh báo #{i}** — {label}")
-                    st.markdown(
-                        f"- **Văn bản trong hợp đồng:** `{law_ref}`  \n"
-                        f"- **Trạng thái:** {status}  \n"
-                        f"- **Ngày hết hiệu lực:** {expire_date}  \n"
-                        f"- **Văn bản thay thế:** {replaced_by}  \n"
-                        + (f"- **Ghi chú:** {note}" if note else "")
-                    )
-                    if i < len(expired_alerts):
-                        st.divider()
-        else:
-            st.success(
-                "✅ Không phát hiện văn bản pháp luật nào hết hiệu lực trong hợp đồng."
-            )
-
-        # --- Kết quả phân tích rủi ro từng Điều khoản ---
-        st.subheader("⚖️ Kết quả phân tích rủi ro")
-        render_risk_report(st.session_state.last_risk_report)
-
-
-# ---------------------------------------------------------------------------
-# 10.5: TAB CHATBOT
-# ---------------------------------------------------------------------------
-elif page == "💬 Chatbot":
-    st.header("💬 Hỏi đáp pháp luật hợp đồng")
-
-    if st.session_state.last_risk_report:
-        st.success(
-            "Đang ở **Chế độ A**: chatbot có ngữ cảnh hợp đồng & báo cáo rủi ro vừa phân tích."
-        )
-    else:
-        st.info(
-            "Đang ở **Chế độ B**: chatbot chỉ tra cứu luật chung (chưa có hợp đồng nào được soạn/upload)."
-        )
-
-    for turn in st.session_state.chat_history_ui:
-        with st.chat_message(turn["role"]):
-            st.markdown(turn["text"])
-            render_citations(turn.get("citations"))
-
-    user_message = st.chat_input("Nhập câu hỏi của bạn...")
-
-    if user_message:
-        if chatbot_service is None:
-            st.error("Module Chatbot chưa sẵn sàng.")
-        else:
-            st.session_state.chat_history_ui.append(
-                {"role": "user", "text": user_message}
-            )
-            with st.chat_message("user"):
-                st.markdown(user_message)
-
-            with st.chat_message("assistant"):
-                with st.spinner("Đang tra cứu và soạn câu trả lời..."):
-                    try:
-                        result = chatbot_service.handle_chat(
-                            message=user_message,
-                            session_id=st.session_state.session_id,
-                        )
-                        answer = result.get("answer", "")
-                        citations = result.get("citations", [])
-
-                        st.markdown(answer)
-                        render_citations(citations)
-
-                        st.session_state.chat_history_ui.append(
-                            {
-                                "role": "assistant",
-                                "text": answer,
-                                "citations": citations,
-                            }
-                        )
-                    except RuntimeError as e:
-                        error_msg = f"Hệ thống chưa sẵn sàng: {e}"
-                        st.error(error_msg)
-                        st.session_state.chat_history_ui.append(
-                            {"role": "assistant", "text": error_msg}
-                        )
-                    except Exception:
-                        logger.exception("Lỗi không xác định trong chatbot.")
-                        error_msg = "Đã có lỗi xảy ra, vui lòng thử lại."
-                        st.error(error_msg)
-                        st.session_state.chat_history_ui.append(
-                            {"role": "assistant", "text": error_msg}
-                        )
+render_fn = PAGES.get(page)
+if render_fn:
+    render_fn()
+else:
+    st.error(f"Không tìm thấy trang: {page}")
