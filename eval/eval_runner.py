@@ -16,6 +16,7 @@ from typing import Dict, List
 import pandas as pd
 from eval.dataset_manager import DatasetManager
 from eval.schema import EvalSampleResult, GoldenSample
+from modules.chatbot_qa import retrieval
 from modules.chatbot_qa.service import handle_chat
 
 logger = logging.getLogger(__name__)
@@ -38,17 +39,18 @@ class EvaluationRunner:
 
         for s in samples:
             try:
-                # Gọi chế độ tra cứu quy định pháp luật
+                # 1. Gọi trực tiếp Chatbot Service (Chế độ B: tra cứu luật chung)
                 chat_res = handle_chat(
-                    query=s.question,
-                    mode="knowledge_base",
+                    message=s.question,
                     session_id="ragas_eval_session",
                 )
 
                 system_answer = chat_res.get("answer", "")
-                chunks = chat_res.get("context_chunks", [])
-                retrieved_contexts = [c.get("content", "") for c in chunks]
                 citations = chat_res.get("citations", [])
+
+                # 2. Lấy danh sách context chunks đã được truy xuất từ VectorDB
+                chunks = retrieval.search_context(query=s.question, has_session=False)
+                retrieved_contexts = [c.get("content", "") for c in chunks]
 
                 max_score = 0.0
                 if chunks:
