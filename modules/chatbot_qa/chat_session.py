@@ -54,7 +54,9 @@ class ChatSession:
             text: nội dung tin nhắn (không kèm context RAG).
         """
         if role not in ("user", "model"):
-            raise ValueError(f"role không hợp lệ: '{role}' (chỉ nhận 'user' hoặc 'model').")
+            raise ValueError(
+                f"role không hợp lệ: '{role}' (chỉ nhận 'user' hoặc 'model')."
+            )
 
         self._messages.append(
             {
@@ -79,8 +81,15 @@ class ChatSession:
         """
         Nạp/refresh ngữ cảnh hợp đồng cho phiên (chuyển sang Chế độ A).
         Reset contract_vector_db cũ (nếu có) để buộc build lại với dữ liệu mới nhất.
+        Nếu truyền dữ liệu rỗng -> Chuyển về Chế độ B (tra cứu luật chung).
         """
-        self.has_contract_context = True
-        self.contract_chunks = contract_chunks
-        self.risk_report = risk_report
-        self.contract_vector_db = None
+        if not contract_chunks and not risk_report:
+            self.has_contract_context = False
+            self.contract_chunks = []
+            self.risk_report = None
+            self.contract_vector_db = None
+        else:
+            self.has_contract_context = True
+            self.contract_chunks = contract_chunks
+            self.risk_report = risk_report
+            self.contract_vector_db = None

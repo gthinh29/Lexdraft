@@ -38,7 +38,10 @@ DRAFTING_SYSTEM_INSTRUCTION = (
     "      - Khi viện dẫn lần đầu (tại phần Căn cứ hoặc khi xuất hiện lần đầu): BẮT BUỘC ghi đầy đủ thông tin luật gốc và thông tin VBHN: [Điểm/Khoản/Điều nếu có] [Tên Luật] số [số hiệu] ngày [ngày ban hành] của Quốc hội (hợp nhất tại Văn bản hợp nhất số [số VBHN] ngày [ngày ký VBHN] của Văn phòng Quốc hội).\n"
     "        (Ví dụ: 'Căn cứ Luật Thương mại số 36/2005/QH11 ngày 14 tháng 6 năm 2005 của Quốc hội (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH ngày 27 tháng 8 năm 2025 của Văn phòng Quốc hội);')\n"
     "      - Các lần sau: Trích dẫn như bình thường (số Điều lấy chuẩn theo VBHN), rút gọn ngày tháng: '[Điểm/Khoản nếu có] Điều [X] [Tên Luật] số [số hiệu] (hợp nhất tại Văn bản hợp nhất số [số VBHN])'.\n"
-    "        (Ví dụ: 'theo quy định tại Điều 292 Luật Thương mại số 36/2005/QH11 (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH)' hoặc 'theo quy định tại điểm a khoản 1 Điều 301 Luật Thương mại số 36/2005/QH11 (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH)')."
+    "        (Ví dụ: 'theo quy định tại Điều 292 Luật Thương mại số 36/2005/QH11 (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH)' hoặc 'theo quy định tại điểm a khoản 1 Điều 301 Luật Thương mại số 36/2005/QH11 (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH)').\n"
+    "8. QUY TẮC TRÌNH BÀY VÀ XUỐNG DÒNG (BẮT BUỘC):\n"
+    "   - Mỗi Điều và mỗi khoản con (ví dụ: '1.1.', '1.2.', '11.1.', '11.2.', '11.3.') BẮT BUỘC phải tách ra từng dòng riêng biệt (sử dụng 2 dấu xuống dòng '\\n\\n' giữa các khoản).\n"
+    "   - Tuyệt đối KHÔNG gộp nhiều khoản (ví dụ: KHÔNG viết '11.1. ... 11.2. ... 11.3. ...' chung trên một đoạn văn)."
 )
 
 
