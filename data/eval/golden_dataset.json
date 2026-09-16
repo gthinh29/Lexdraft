@@ -1,0 +1,32 @@
+[
+  {
+    "id": "TC_01",
+    "category": "Fact Retrieval",
+    "question": "Mức phạt vi phạm hợp đồng tối đa trong quan hệ thương mại theo pháp luật Việt Nam là bao nhiêu phần trăm?",
+    "ground_truth": "Theo Điều 301 Luật Thương mại 2005, mức phạt đối với vi phạm nghĩa vụ hợp đồng hoặc tổng mức phạt đối với nhiều vi phạm do các bên thoả thuận trong hợp đồng, nhưng không quá 8% giá trị phần nghĩa vụ hợp đồng bị vi phạm, trừ trường hợp quy định tại Điều 266 của Luật này.",
+    "expected_laws": [
+      "Điều 301",
+      "Luật Thương mại 2005"
+    ]
+  },
+  {
+    "id": "TC_02",
+    "category": "Conditional / Multi-hop",
+    "question": "Trong trường hợp nào một bên được miễn trách nhiệm đối với hành vi vi phạm hợp đồng thương mại?",
+    "ground_truth": "Theo Điều 294 Luật Thương mại 2005, bên vi phạm hợp đồng được miễn trách nhiệm trong các trường hợp: xảy ra trường hợp miễn trách nhiệm mà các bên đã thoả thuận; xảy ra sự kiện bất khả kháng; hành vi vi phạm của một bên hoàn toàn do lỗi của bên kia; hoặc hành vi vi phạm của một bên do thực hiện quyết định của cơ quan quản lý nhà nước có thẩm quyền mà các bên không thể biết được vào thời điểm giao kết hợp đồng.",
+    "expected_laws": [
+      "Điều 294",
+      "Luật Thương mại 2005"
+    ]
+  },
+  {
+    "id": "TC_03",
+    "category": "Negative / Law Validity",
+    "question": "Quy định về thời hạn lập hồ sơ mời thầu theo Luật Đấu thầu số 43/2013/QH13 hiện nay áp dụng như thế nào?",
+    "ground_truth": "Luật Đấu thầu số 43/2013/QH13 đã hết hiệu lực từ ngày 01/01/2024 và được thay thế toàn diện bởi Luật Đấu thầu số 22/2023/QH15. Do đó các quy định của Luật Đấu thầu 2013 không còn giá trị áp dụng cho các hoạt động đấu thầu mới.",
+    "expected_laws": [
+      "Luật Đấu thầu 2023",
+      "22/2023/QH15"
+    ]
+  }
+]

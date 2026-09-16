@@ -431,12 +431,23 @@ Toàn bộ các thay đổi trên đã được phân tách và đẩy lên GitH
 | `888d134` | `feat(drafting)` | Tạo `document_utils.py` đóng gói logic tạo Word và preview A4 HTML |
 | `4f73ca5` | `refactor(ui)` | Modular hóa giao diện Streamlit: tách `styles.py`, thư mục `ui/pages/` và rút gọn `app.py` |
 | `a4f383a` | `feat(ui)` | Đặt `🏠 Trang chủ` làm màn hình khởi đầu mặc định khi khởi động / F5 và khi xóa phiên |
-| `test-commit` | `test(suite)` | Bổ sung bộ 104 unit test tự động phủ 100% các module không qua UI |
+| `8b5ed15` | `test(suite)` | Bổ sung bộ 104 unit test tự động phủ 100% các module không qua UI |
 
 ---
 
 ## 3. Trạng thái vận hành & Automated Tests
-- **Bộ Test Suite (Non-UI):** 104/104 unit tests passed (100% SUCCESS).
+- **Bộ Test Suite (Non-UI):** 109/109 unit tests passed (100% SUCCESS, bao gồm cả module `eval`).
 - **Server Streamlit:** Đang chạy ổn định tại cổng `http://localhost:8501`.
 - **Pre-commit checks:** Tất cả code đều vượt qua kiểm tra định dạng và quy chuẩn của `ruff`.
+
+---
+
+## 4. Module Đánh giá RAGAS & Thẩm định Golden Dataset (`eval/`)
+- **Kiến trúc:**
+  - `eval/schema.py`: Pydantic model (`GoldenSample`, `EvalSampleResult`) ràng buộc chặt chẽ dữ liệu kiểm thử.
+  - `eval/dataset_manager.py`: Nạp, lưu và tự động kiểm tra chất lượng Golden Dataset (chống trùng ID, chống câu hỏi cụt, bắt buộc có Điều luật trích dẫn).
+  - `eval/synthetic_gen.py`: Trích xuất Điều luật thực tế trong vector database để LLM tự sinh câu hỏi và Ground Truth chuẩn mực (Document-grounded), loại bỏ hoàn toàn thiên kiến và ảo giác.
+  - `eval/eval_runner.py`: Thực thi kiểm thử qua Chatbot Service và tính toán các chỉ số Retrieval, Law Citation Match, lưu báo cáo CSV/JSON vào `data/eval/`.
+  - `run_eval.py`: CLI chạy 1 lệnh (`python run_eval.py --validate-only` hoặc `python run_eval.py`).
+
 
