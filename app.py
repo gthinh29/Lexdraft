@@ -87,7 +87,7 @@ def _init_state():
         "last_risk_report": None,
         "last_expired_alerts": [],
         "risk_source_name": None,
-        "page": "📤 Gợi ý Rủi ro Pháp lý",
+        "page": "🏠 Trang chủ",
         "previous_page": None,
         "pending_risk_draft": False,
         "pending_risk_upload": False,
@@ -187,6 +187,7 @@ with st.sidebar:
         st.session_state.pending_risk_draft = False
         st.session_state.pending_risk_upload = False
         st.session_state.session_id = str(uuid.uuid4())
+        st.session_state["page"] = "🏠 Trang chủ"
         if chatbot_service:
             chatbot_service.attach_contract_context(
                 session_id=st.session_state.session_id,
