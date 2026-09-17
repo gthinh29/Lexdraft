@@ -6,6 +6,7 @@ from pathlib import Path
 LOG_DIR = Path(__file__).parent.parent.parent / "logs"
 LOG_DIR.mkdir(exist_ok=True)
 
+
 def setup_logger(name: str) -> logging.Logger:
     """
     Khởi tạo logger chuẩn cho toàn bộ project.
@@ -14,11 +15,11 @@ def setup_logger(name: str) -> logging.Logger:
     logger = setup_logger(__name__)
     """
     logger = logging.getLogger(name)
-    
+
     # Chỉ setup nếu logger chưa có handler để tránh log lặp lại
     if not logger.handlers:
         logger.setLevel(logging.INFO)
-        
+
         formatter = logging.Formatter(
             fmt="%(asctime)s | %(levelname)-8s | %(name)s:%(funcName)s:%(lineno)d - %(message)s",
             datefmt="%Y-%m-%d %H:%M:%S",

@@ -195,6 +195,29 @@ class VectorDB:
         self.index.add(vectors)
         logger.info("Đã tạo FAISS index thành công với %d vectors.", self.index.ntotal)
 
+    def add_chunks(self, new_chunks: List[Dict[str, Any]]) -> None:
+        """
+        Nạp bổ sung danh sách chunks mới vào FAISS index hiện tại.
+        """
+        if not new_chunks:
+            logger.warning("add_chunks được gọi với danh sách chunks rỗng.")
+            return
+
+        if self.index is None:
+            self.create_index(new_chunks)
+            return
+
+        texts = [c.get("content", "") for c in new_chunks]
+        vectors = self._embed_texts(texts, task_type="retrieval_document")
+
+        self.index.add(vectors)
+        self.chunks.extend(new_chunks)
+        logger.info(
+            "Đã nạp bổ sung %d vectors thành công. Tổng số vector hiện tại: %d.",
+            len(new_chunks),
+            self.index.ntotal,
+        )
+
     def save_index(self, path: str) -> None:
         """
         Lưu index và metadata xuống đĩa.

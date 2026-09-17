@@ -91,10 +91,21 @@ class EvaluationRunner:
 
         return results
 
-    def compute_rule_metrics(
+    def compute_rule_based_citation_check(
         self, samples: List[GoldenSample], results: List[EvalSampleResult]
     ) -> Dict[str, float]:
-        """Tính toán 4 chỉ số chuẩn mực của RAGAS: Faithfulness, Answer Relevancy, Context Precision, Context Recall."""
+        """
+        Phương pháp kiểm tra đối chiếu trích dẫn dựa trên luật/heuristic (Rule-based Citation Sanity Check).
+
+        Kiểm tra sơ bộ:
+        - Tỷ lệ trích dẫn luật thực tế so với ngữ cảnh truy xuất.
+        - Tỷ lệ bao phủ điều luật mong đợi (expected_laws) trong context.
+        - Khả năng từ chối an toàn khi luật hết hiệu lực hoặc ngoài phạm vi.
+
+        LƯU Ý: Đây là heuristic sanity check chạy nhanh nội bộ.
+        Để chạy đánh giá RAGAS đầy đủ với LLM Judge (gemini-3.5-flash-lite),
+        hãy sử dụng script chính thức: `evaluation/run_ragas_eval.py`.
+        """
         sample_map = {s.id: s for s in samples}
         total = len(results)
         if total == 0:
@@ -193,6 +204,9 @@ class EvaluationRunner:
             "context_precision": round(total_context_precision / total, 4),
             "context_recall": round(total_context_recall / total, 4),
         }
+
+    # Alias để giữ tương thích ngược với các bài test cũ
+    compute_rule_metrics = compute_rule_based_citation_check
 
     def export_reports(
         self, results: List[EvalSampleResult], metrics: Dict[str, float]

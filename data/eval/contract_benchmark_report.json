@@ -1,0 +1,387 @@
+{
+  "benchmark_suite_size": 5,
+  "total_injected_faults": 13,
+  "total_true_positives": 12,
+  "total_false_negatives": 1,
+  "fault_detection_recall": 0.9231,
+  "total_clean_articles_tested": 23,
+  "total_false_positives": 5,
+  "false_positive_rate": 0.2174,
+  "specificity": 0.7826,
+  "contract_results": [
+    {
+      "id": "CLEAN_1",
+      "name": "HĐ Thiết kế Website (Mẫu chuẩn Thư Viện Pháp Luật)",
+      "type": "clean",
+      "total_articles": 15,
+      "elapsed_seconds": 71.12,
+      "detected_expired_alerts": 0,
+      "detected_critical_risks": 3,
+      "expired_details": [],
+      "risk_details": [
+        {
+          "dieu_khoan": "Điều 2",
+          "rui_ro": "- Nhận xét rủi ro: Phát hiện rủi ro pháp lý liên quan đến nghĩa vụ phát hành hóa đơn tại khoản 2.2 của Điều khoản. Theo quy định pháp luật và thông ti...",
+          "can_cu": [
+            {
+              "article": "Điều 398",
+              "source": "Luật Dân Sự số 91/2015/QH13",
+              "raw_file": "LuatDanSu2015.md",
+              "title": "",
+              "score": 0.6799792051315308
+            },
+            {
+              "article": "Điều 78",
+              "source": "Luật Thương mại số 36/2005/QH11 (VBHN 113/VBHN-VPQH)",
+              "raw_file": "VBHN_Luatthuongmai2025.md",
+              "title": "",
+              "score": 0.6784390807151794
+            }
+          ]
+        },
+        {
+          "dieu_khoan": "Điều 6",
+          "rui_ro": "- **Nhận xét rủi ro:** Phát hiện rủi ro pháp lý tại điểm 6.2.5 khi Bên B cam kết *\"các dữ liệu được chuyển giao không thuộc quyền sở hữu và sử dụng củ...",
+          "can_cu": [
+            {
+              "article": "Điều 4",
+              "source": "Luật Bảo Vệ Dữ Liệu Cá Nhân số 91/2025/QH15",
+              "raw_file": "LuatBaoVeDuLieuCaNhan91_2025.md",
+              "title": "",
+              "score": 0.6870747804641724
+            }
+          ]
+        },
+        {
+          "dieu_khoan": "Điều 12",
+          "rui_ro": "Dựa trên các CĂN CỨ PHÁP LÝ được cung cấp, chuyên gia pháp lý xin đánh giá điều khoản hợp đồng như sau:\n\n- **Nhận xét rủi ro:** Phát hiện rủi ro pháp ...",
+          "can_cu": [
+            {
+              "article": "Điều 418",
+              "source": "Luật Dân Sự số 91/2015/QH13",
+              "raw_file": "LuatDanSu2015.md",
+              "title": "",
+              "score": 0.7845984697341919
+            },
+            {
+              "article": "Điều 302",
+              "source": "Luật Thương mại số 36/2005/QH11 (VBHN 113/VBHN-VPQH)",
+              "raw_file": "VBHN_Luatthuongmai2025.md",
+              "title": "",
+              "score": 0.7697978019714355
+            }
+          ]
+        }
+      ],
+      "false_positives": 3
+    },
+    {
+      "id": "CLEAN_2",
+      "name": "HĐ Dịch vụ Tư vấn ERP (Mẫu chuẩn)",
+      "type": "clean",
+      "total_articles": 8,
+      "elapsed_seconds": 39.1,
+      "detected_expired_alerts": 0,
+      "detected_critical_risks": 2,
+      "expired_details": [],
+      "risk_details": [
+        {
+          "dieu_khoan": "Lời mở đầu",
+          "rui_ro": "Dưới đây là kết quả rà soát pháp lý đối với phần mở đầu (phần căn cứ và chủ thể) của Hợp đồng dịch vụ dựa trên các CĂN CỨ PHÁP LÝ được cung cấp:\n\n- **...",
+          "can_cu": [
+            {
+              "article": "Điều 513",
+              "source": "Luật Dân Sự số 91/2015/QH13",
+              "raw_file": "LuatDanSu2015.md",
+              "title": "",
+              "score": 0.6748254299163818
+            },
+            {
+              "article": "Điều 74",
+              "source": "Luật Thương mại số 36/2005/QH11 (VBHN 113/VBHN-VPQH)",
+              "raw_file": "VBHN_Luatthuongmai2025.md",
+              "title": "",
+              "score": 0.6666526794433594
+            }
+          ]
+        },
+        {
+          "dieu_khoan": "Điều 6",
+          "rui_ro": "- Nhận xét rủi ro: Phát hiện rủi ro pháp lý do điều khoản viện dẫn đến một văn bản luật khác (Bộ luật Dân sự 2015) không thuộc phạm vi các căn cứ pháp...",
+          "can_cu": [
+            {
+              "article": "Điều 294",
+              "source": "Luật Thương mại số 36/2005/QH11 (VBHN 113/VBHN-VPQH)",
+              "raw_file": "VBHN_Luatthuongmai2025.md",
+              "title": "",
+              "score": 0.8206502199172974
+            },
+            {
+              "article": "Điều 295",
+              "source": "Luật Thương mại số 36/2005/QH11 (VBHN 113/VBHN-VPQH)",
+              "raw_file": "VBHN_Luatthuongmai2025.md",
+              "title": "",
+              "score": 0.8090032935142517
+            },
+            {
+              "article": "Điều 296",
+              "source": "Luật Thương mại số 36/2005/QH11 (VBHN 113/VBHN-VPQH)",
+              "raw_file": "VBHN_Luatthuongmai2025.md",
+              "title": "",
+              "score": 0.7848937511444092
+            }
+          ]
+        }
+      ],
+      "false_positives": 2
+    },
+    {
+      "id": "RISKY_1",
+      "name": "HĐ Phát triển Phần mềm (Risky 1)",
+      "type": "risky",
+      "total_articles": 7,
+      "elapsed_seconds": 33.47,
+      "detected_expired_alerts": 2,
+      "detected_critical_risks": 2,
+      "expired_details": [
+        {
+          "type": "expired_law",
+          "law": "",
+          "status": "Hết hiệu lực",
+          "replacement": "",
+          "note": "Theo Điều 47 Luật Chuyển đổi số 2025, Luật CNTT 2006 hết hiệu lực từ 01/07/2026"
+        },
+        {
+          "type": "expired_law",
+          "law": "",
+          "status": "Hết hiệu lực",
+          "replacement": "",
+          "note": "Thay thế toàn bộ bởi Luật số 20/2023/QH15, có hiệu lực từ 01/07/2024"
+        }
+      ],
+      "risk_details": [
+        {
+          "dieu_khoan": "Điều 5",
+          "rui_ro": "- Nhận xét rủi ro: Điều khoản hiện tại có rủi ro pháp lý lớn đối với Bên A vì đưa ra quy định miễn trừ trách nhiệm quá rộng (\"trong mọi trường hợp phá...",
+          "can_cu": [
+            {
+              "article": "Điều 13",
+              "source": "Luật Dân Sự số 91/2015/QH13",
+              "raw_file": "LuatDanSu2015.md",
+              "title": "",
+              "score": 0.7533265352249146
+            },
+            {
+              "article": "Điều 360",
+              "source": "Luật Dân Sự số 91/2015/QH13",
+              "raw_file": "LuatDanSu2015.md",
+              "title": "",
+              "score": 0.7398207187652588
+            }
+          ]
+        },
+        {
+          "dieu_khoan": "Điều 6",
+          "rui_ro": "- Nhận xét rủi ro: Điều khoản hợp đồng hiện tại đang phân chia quyền sở hữu trí tuệ đối với phần mềm (tách bạch giữa \"ý tưởng\" thuộc Bên A và \"mã nguồ...",
+          "can_cu": [
+            {
+              "article": "Điều 39",
+              "source": "Luật Sở hữu trí tuệ số 50/2005/QH11",
+              "raw_file": "VBHN_LuatSoHuuTriTue2026.md",
+              "title": "",
+              "score": 0.728545069694519
+            }
+          ]
+        }
+      ],
+      "injected_faults": 5,
+      "true_positives": 4,
+      "false_negatives": 1
+    },
+    {
+      "id": "RISKY_2",
+      "name": "HĐ Quản trị & Bảo trì Máy chủ Cloud (Risky 2)",
+      "type": "risky",
+      "total_articles": 7,
+      "elapsed_seconds": 35.94,
+      "detected_expired_alerts": 1,
+      "detected_critical_risks": 4,
+      "expired_details": [
+        {
+          "type": "expired_law",
+          "law": "",
+          "status": "Không tồn tại",
+          "replacement": "",
+          "note": "Không tồn tại văn bản 'Luật Thương mại 2020'. Đây là lỗi pháp lý kinh điển trong các hợp đồng mẫu không rõ nguồn gốc"
+        }
+      ],
+      "risk_details": [
+        {
+          "dieu_khoan": "Lời mở đầu",
+          "rui_ro": "Dưới đây là ý kiến đánh giá của chuyên gia pháp lý đối với phần nội dung phần mở đầu (phần căn cứ pháp lý áp dụng) của Hợp đồng dịch vụ quản trị và bả...",
+          "can_cu": [
+            {
+              "article": "Điều 513",
+              "source": "Luật Dân Sự số 91/2015/QH13",
+              "raw_file": "LuatDanSu2015.md",
+              "title": "",
+              "score": 0.6868442296981812
+            },
+            {
+              "article": "Điều 30",
+              "source": "Luật Bảo Vệ Dữ Liệu Cá Nhân số 91/2025/QH15",
+              "raw_file": "LuatBaoVeDuLieuCaNhan91_2025.md",
+              "title": "",
+              "score": 0.6641252636909485
+            }
+          ]
+        },
+        {
+          "dieu_khoan": "Điều 3",
+          "rui_ro": "- **Nhận xét rủi ro:** Phát hiện rủi ro pháp lý bất lợi nghiêm trọng cho Bên B. Điều khoản cho phép Bên A đơn phương chấm dứt hợp đồng \"tại bất kỳ thờ...",
+          "can_cu": [
+            {
+              "article": "Điều 428",
+              "source": "Luật Dân Sự số 91/2015/QH13",
+              "raw_file": "LuatDanSu2015.md",
+              "title": "",
+              "score": 0.7672035694122314
+            },
+            {
+              "article": "Điều 520",
+              "source": "Luật Dân Sự số 91/2015/QH13",
+              "raw_file": "LuatDanSu2015.md",
+              "title": "",
+              "score": 0.7600100636482239
+            }
+          ]
+        },
+        {
+          "dieu_khoan": "Điều 4",
+          "rui_ro": "- **Nhận xét rủi ro:** Điều khoản thỏa thuận mức phạt vi phạm 20% tổng giá trị hợp đồng năm là vượt quá mức trần theo quy định pháp luật (mức tối đa l...",
+          "can_cu": [
+            {
+              "article": "Điều 301",
+              "source": "Luật Thương mại số 36/2005/QH11 (VBHN 113/VBHN-VPQH)",
+              "raw_file": "VBHN_Luatthuongmai2025.md",
+              "title": "",
+              "score": 0.7543072700500488
+            }
+          ]
+        },
+        {
+          "dieu_khoan": "Điều 5",
+          "rui_ro": "Dưới đây là kết quả phân tích điều khoản hợp đồng dựa trên các quy định pháp luật được cung cấp:\n\n* **Nhận xét rủi ro:** Điều khoản này chứa rủi ro ph...",
+          "can_cu": [
+            {
+              "article": "Điều 7",
+              "source": "Luật Bảo Vệ Dữ Liệu Cá Nhân số 91/2025/QH15",
+              "raw_file": "LuatBaoVeDuLieuCaNhan91_2025.md",
+              "title": "",
+              "score": 0.7834244966506958
+            },
+            {
+              "article": "Điều 17",
+              "source": "Luật Bảo Vệ Dữ Liệu Cá Nhân số 91/2025/QH15",
+              "raw_file": "LuatBaoVeDuLieuCaNhan91_2025.md",
+              "title": "",
+              "score": 0.7780250310897827
+            }
+          ]
+        }
+      ],
+      "injected_faults": 4,
+      "true_positives": 4,
+      "false_negatives": 0
+    },
+    {
+      "id": "RISKY_3",
+      "name": "HĐ Digital Marketing & SEO (Risky 3)",
+      "type": "risky",
+      "total_articles": 6,
+      "elapsed_seconds": 32.57,
+      "detected_expired_alerts": 1,
+      "detected_critical_risks": 4,
+      "expired_details": [
+        {
+          "type": "expired_law",
+          "law": "",
+          "status": "Hết hiệu lực",
+          "replacement": "",
+          "note": "Bị thay thế toàn bộ bởi Luật số 19/2023/QH15, có hiệu lực từ 01/07/2024"
+        }
+      ],
+      "risk_details": [
+        {
+          "dieu_khoan": "Điều 1",
+          "rui_ro": "- Nhận xét rủi ro: Phát hiện rủi ro pháp lý liên quan đến nghĩa vụ và quyền hạn khi sử dụng dữ liệu cá nhân của khách hàng. Điều khoản hiện tại chỉ nê...",
+          "can_cu": [
+            {
+              "article": "Điều 28",
+              "source": "Luật Bảo Vệ Dữ Liệu Cá Nhân số 91/2025/QH15",
+              "raw_file": "LuatBaoVeDuLieuCaNhan91_2025.md",
+              "title": "",
+              "score": 0.7459188103675842
+            }
+          ]
+        },
+        {
+          "dieu_khoan": "Điều 2",
+          "rui_ro": "- Nhận xét rủi ro: Điều khoản này có rủi ro pháp lý rất cao. Việc sử dụng công cụ tự động quét, trích xuất thông tin (số điện thoại, email, vị trí địa...",
+          "can_cu": [
+            {
+              "article": "Điều 7",
+              "source": "Luật Bảo Vệ Dữ Liệu Cá Nhân số 91/2025/QH15",
+              "raw_file": "LuatBaoVeDuLieuCaNhan91_2025.md",
+              "title": "",
+              "score": 0.7727870345115662
+            },
+            {
+              "article": "Điều 11",
+              "source": "Luật Bảo Vệ Dữ Liệu Cá Nhân số 91/2025/QH15",
+              "raw_file": "LuatBaoVeDuLieuCaNhan91_2025.md",
+              "title": "",
+              "score": 0.7570618987083435
+            }
+          ]
+        },
+        {
+          "dieu_khoan": "Điều 3",
+          "rui_ro": "Dựa trên yêu cầu và các căn cứ pháp lý được cung cấp, tôi xin đánh giá điều khoản hợp đồng như sau:\n\n- **Nhận xét rủi ro:** \n  Điều khoản thỏa thuận m...",
+          "can_cu": [
+            {
+              "article": "Điều 301",
+              "source": "Luật Thương mại số 36/2005/QH11 (VBHN 113/VBHN-VPQH)",
+              "raw_file": "VBHN_Luatthuongmai2025.md",
+              "title": "",
+              "score": 0.7614941596984863
+            }
+          ]
+        },
+        {
+          "dieu_khoan": "Điều 4",
+          "rui_ro": "- Nhận xét rủi ro: Điều khoản này mang lại sự bất lợi đơn phương và rủi ro pháp lý rất lớn cho Bên A. Việc thỏa thuận miễn trừ toàn bộ trách nhiệm (ba...",
+          "can_cu": [
+            {
+              "article": "Điều 294",
+              "source": "Luật Thương mại số 36/2005/QH11 (VBHN 113/VBHN-VPQH)",
+              "raw_file": "VBHN_Luatthuongmai2025.md",
+              "title": "",
+              "score": 0.7446699738502502
+            },
+            {
+              "article": "Điều 38",
+              "source": "Luật Chuyển Đổi Số số 148/2025/QH15",
+              "raw_file": "LuatChuyenDoiSo2025.md",
+              "title": "",
+              "score": 0.7212545871734619
+            }
+          ]
+        }
+      ],
+      "injected_faults": 4,
+      "true_positives": 4,
+      "false_negatives": 0
+    }
+  ]
+}

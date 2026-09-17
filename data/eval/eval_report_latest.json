@@ -1,0 +1,94 @@
+{
+  "metrics": {
+    "total_samples": 3,
+    "faithfulness": 1.0,
+    "answer_relevancy": 0.9526,
+    "context_precision": 0.9167,
+    "context_recall": 0.3333
+  },
+  "results": [
+    {
+      "id": "TC_01",
+      "question": "Mức phạt vi phạm hợp đồng tối đa trong quan hệ thương mại theo pháp luật Việt Nam là bao nhiêu phần trăm?",
+      "ground_truth": "Theo Điều 301 Luật Thương mại 2005, mức phạt đối với vi phạm nghĩa vụ hợp đồng hoặc tổng mức phạt đối với nhiều vi phạm do các bên thoả thuận trong hợp đồng, nhưng không quá 8% giá trị phần nghĩa vụ hợp đồng bị vi phạm, trừ trường hợp quy định tại Điều 266 của Luật này.",
+      "system_answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin trả lời câu hỏi của bạn dựa trên các quy định được cung cấp như sau:\n\nTheo quy định pháp luật thương mại hiện hành, mức phạt đối với vi phạm nghĩa vụ hợp đồng hoặc tổng mức phạt đối với nhiều vi phạm do các bên thỏa thuận trong hợp đồng **không quá 8%** giá trị phần nghĩa vụ hợp đồng bị vi phạm, trừ trường hợp quy định tại Điều 266 của Luật Thương mại số 36/2005/QH11 (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH).\n\nChi tiết quy định này được thể hiện tại Điều 301 Luật Thương mại số 36/2005/QH11 ngày 14 tháng 6 năm 2005 của Quốc hội (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH ngày 27 tháng 8 năm 2025 của Văn phòng Quốc hội).",
+      "retrieved_contexts": [
+        "Điều 301. Mức phạt vi phạm\n\nMức phạt đối với vi phạm nghĩa vụ hợp đồng hoặc tổng mức phạt đối với nhiều vi phạm do các bên thỏa thuận trong hợp đồng, nhưng không quá 8% giá trị phần nghĩa vụ hợp đồng bị vi phạm, trừ trường hợp quy định tại Điều 266 của Luật này.",
+        "Điều 300. Phạt vi phạm\n\nPhạt vi phạm là việc bên bị vi phạm yêu cầu bên vi phạm trả một khoản tiền phạt do vi phạm hợp đồng nếu trong hợp đồng có thỏa thuận, trừ các trường hợp miễn trách nhiệm quy định tại Điều 294 của Luật này.",
+        "Điều 292. Các loại chế tài trong thương mại\n\n1. Buộc thực hiện đúng hợp đồng.\n\n2. Phạt vi phạm.\n\n3. Buộc bồi thường thiệt hại.\n\n4. Tạm ngừng thực hiện hợp đồng.\n\n5. Đình chỉ thực hiện hợp đồng.\n\n6. Hủy bỏ hợp đồng.\n\n7. Các biện pháp khác do các bên thỏa thuận không trái với nguyên tắc cơ bản của pháp luật Việt Nam, điều ước quốc tế mà Cộng hòa xã hội chủ nghĩa Việt Nam là thành viên và tập quán thương mại quốc tế.",
+        "Điều 418. Thỏa thuận phạt vi phạm\n\n1. Phạt vi phạm là sự thỏa thuận giữa các bên trong hợp đồng, theo đó bên vi phạm nghĩa vụ phải nộp một khoản tiền cho bên bị vi phạm.\n\n2. Mức phạt vi phạm do các bên thỏa thuận, trừ trường hợp luật liên quan có quy định khác.\n\n3. Các bên có thể thỏa thuận về việc bên vi phạm nghĩa vụ chỉ phải chịu phạt vi phạm mà không phải bồi thường thiệt hại hoặc vừa phải chịu phạt vi phạm và vừa phải bồi thường thiệt hại.\n\nTrường hợp các bên có thỏa thuận về phạt vi phạm nhưng không thỏa thuận về việc vừa phải chịu phạt vi phạm và vừa phải bồi thường thiệt hại thì bên vi phạm nghĩa vụ chỉ phải chịu phạt vi phạm.",
+        "Điều 307. Quan hệ giữa chế tài phạt vi phạm và chế tài bồi thường thiệt hại\n\n1. Trường hợp các bên không có thỏa thuận phạt vi phạm thì bên bị vi phạm chỉ có quyền yêu cầu bồi thường thiệt hại, trừ trường hợp Luật này có quy định khác.\n\n2. Trường hợp các bên có thỏa thuận phạt vi phạm thì bên bị vi phạm có quyền áp dụng cả chế tài phạt vi phạm và buộc bồi thường thiệt hại, trừ trường hợp Luật này có quy định khác.",
+        "Điều 302. Bồi thường thiệt hại\n\n1. Bồi thường thiệt hại là việc bên vi phạm bồi thường những tổn thất do hành vi vi phạm hợp đồng gây ra cho bên bị vi phạm.\n\n2. Giá trị bồi thường thiệt hại bao gồm giá trị tổn thất thực tế, trực tiếp mà bên bị vi phạm phải chịu do bên vi phạm gây ra và khoản lợi trực tiếp mà bên bị vi phạm đáng lẽ được hưởng nếu không có hành vi vi phạm.",
+        "Điều 321. Hình thức xử lý vi phạm pháp luật về thương mại\n\n1. Tùy theo tính chất, mức độ vi phạm và hậu quả xảy ra, tổ chức, cá nhân bị xử lý theo một trong các hình thức sau đây:\n\na) Xử phạt theo quy định của pháp luật về xử lý vi phạm hành chính;\n\nb) Trường hợp hành vi vi phạm có đủ yếu tố cấu thành tội phạm thì người vi phạm bị truy cứu trách nhiệm hình sự theo quy định của pháp luật.\n\n2. Trường hợp hành vi vi phạm gây thiệt hại đến lợi ích của Nhà nước, quyền và lợi ích hợp pháp của tổ chức, cá nhân thì phải bồi thường thiệt hại theo quy định của pháp luật.",
+        "Điều 306. Quyền yêu cầu tiền lãi do chậm thanh toán\n\nTrường hợp bên vi phạm hợp đồng chậm thanh toán tiền hàng hay chậm thanh toán thù lao dịch vụ và các chi phí hợp lý khác thì bên bị vi phạm hợp đồng có quyền yêu cầu trả tiền lãi trên số tiền chậm trả đó theo lãi suất nợ quá hạn trung bình trên thị trường tại thời điểm thanh toán tương ứng với thời gian chậm trả, trừ trường hợp có thỏa thuận khác hoặc pháp luật có quy định khác.",
+        "Điều 303. Căn cứ phát sinh trách nhiệm bồi thường thiệt hại\n\nTrừ các trường hợp miễn trách nhiệm quy định tại Điều 294 của Luật này, trách nhiệm bồi thường thiệt hại phát sinh khi có đủ các yếu tố sau đây:\n\n1. Có hành vi vi phạm hợp đồng;\n\n2. Có thiệt hại thực tế;\n\n3. Hành vi vi phạm hợp đồng là nguyên nhân trực tiếp gây ra thiệt hại.",
+        "Điều 293. Áp dụng chế tài trong thương mại đối với vi phạm không cơ bản\n\nTrừ trường hợp có thỏa thuận khác, bên bị vi phạm không được áp dụng chế tài tạm ngừng thực hiện hợp đồng, đình chỉ thực hiện hợp đồng hoặc hủy bỏ hợp đồng đối với vi phạm không cơ bản."
+      ],
+      "citations": [
+        {
+          "article": "Điều 301",
+          "source": "Luật Thương mại số 36/2005/QH11 (VBHN 113/VBHN-VPQH)",
+          "raw_file": "VBHN_Luatthuongmai2025.md",
+          "title": "",
+          "score": 0.7798303365707397
+        }
+      ],
+      "similarity_score_max": 0.7798,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.9077,
+      "context_precision": 1.0,
+      "context_recall": 0.5
+    },
+    {
+      "id": "TC_02",
+      "question": "Trong trường hợp nào một bên được miễn trách nhiệm đối với hành vi vi phạm hợp đồng thương mại?",
+      "ground_truth": "Theo Điều 294 Luật Thương mại 2005, bên vi phạm hợp đồng được miễn trách nhiệm trong các trường hợp: xảy ra trường hợp miễn trách nhiệm mà các bên đã thoả thuận; xảy ra sự kiện bất khả kháng; hành vi vi phạm của một bên hoàn toàn do lỗi của bên kia; hoặc hành vi vi phạm của một bên do thực hiện quyết định của cơ quan quản lý nhà nước có thẩm quyền mà các bên không thể biết được vào thời điểm giao kết hợp đồng.",
+      "system_answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin trả lời câu hỏi của bạn dựa trên các quy định được cung cấp như sau:\n\nTheo quy định pháp luật thương mại hiện hành, một bên vi phạm hợp đồng được miễn trách nhiệm trong các trường hợp sau đây:\n\n1. Xảy ra trường hợp miễn trách nhiệm mà các bên đã thỏa thuận (theo điểm a khoản 1 Điều 294 Luật Thương mại số 36/2005/QH11 ngày 14 tháng 6 năm 2005 của Quốc hội, hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH ngày 27 tháng 8 năm 2025 của Văn phòng Quốc hội);\n2. Xảy ra sự kiện bất khả kháng (theo điểm b khoản 1 Điều 294 Luật Thương mại số 36/2005/QH11 (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH));\n3. Hành vi vi phạm của một bên hoàn toàn do lỗi của bên kia (theo điểm c khoản 1 Điều 294 Luật Thương mại số 36/2005/QH11 (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH));\n4. Hành vi vi phạm của một bên do thực hiện quyết định của cơ quan quản lý nhà nước có thẩm quyền mà các bên không thể biết được vào thời điểm giao kết hợp đồng (theo điểm d khoản 1 Điều 294 Luật Thương mại số 36/2005/QH11 (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH)).\n\nBên cạnh đó, bên vi phạm hợp đồng có nghĩa vụ chứng minh các trường hợp miễn trách nhiệm nêu trên (theo khoản 2 Điều 294 Luật Thương mại số 36/2005/QH11 (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH)).",
+      "retrieved_contexts": [
+        "Điều 294. Các trường hợp miễn trách nhiệm đối với hành vi vi phạm\n\n1. Bên vi phạm hợp đồng được miễn trách nhiệm trong các trường hợp sau đây:\n\na) Xảy ra trường hợp miễn trách nhiệm mà các bên đã thỏa thuận;\n\nb) Xảy ra sự kiện bất khả kháng;\n\nc) Hành vi vi phạm của một bên hoàn toàn do lỗi của bên kia;\n\nd) Hành vi vi phạm của một bên do thực hiện quyết định của cơ quan quản lý nhà nước có thẩm quyền mà các bên không thể biết được vào thời điểm giao kết hợp đồng.\n\n2. Bên vi phạm hợp đồng có nghĩa vụ chứng minh các trường hợp miễn trách nhiệm.",
+        "Điều 351. Trách nhiệm dân sự do vi phạm nghĩa vụ\n\n1. Bên có nghĩa vụ mà vi phạm nghĩa vụ thì phải chịu trách nhiệm dân sự đối với bên có quyền.\n\nVi phạm nghĩa vụ là việc bên có nghĩa vụ không thực hiện nghĩa vụ đúng thời hạn, thực hiện không đầy đủ nghĩa vụ hoặc thực hiện không đúng nội dung của nghĩa vụ.\n\n2. Trường hợp bên có nghĩa vụ không thực hiện đúng nghĩa vụ do sự kiện bất khả kháng thì không phải chịu trách nhiệm dân sự, trừ trường hợp có thỏa thuận khác hoặc pháp luật có quy định khác.\n\n3. Bên có nghĩa vụ không phải chịu trách nhiệm dân sự nếu chứng minh được nghĩa vụ không thực hiện được là hoàn toàn do lỗi của bên có quyền.",
+        "Điều 295. Thông báo và xác nhận trường hợp miễn trách nhiệm\n\n1. Bên vi phạm hợp đồng phải thông báo ngay bằng văn bản cho bên kia về trường hợp được miễn trách nhiệm và những hậu quả có thể xảy ra.\n\n2. Khi trường hợp miễn trách nhiệm chấm dứt, bên vi phạm hợp đồng phải thông báo ngay cho bên kia biết; nếu bên vi phạm không thông báo hoặc thông báo không kịp thời cho bên kia thì phải bồi thường thiệt hại.\n\n3. Bên vi phạm có nghĩa vụ chứng minh với bên bị vi phạm về trường hợp miễn trách nhiệm của mình.",
+        "Điều 303. Căn cứ phát sinh trách nhiệm bồi thường thiệt hại\n\nTrừ các trường hợp miễn trách nhiệm quy định tại Điều 294 của Luật này, trách nhiệm bồi thường thiệt hại phát sinh khi có đủ các yếu tố sau đây:\n\n1. Có hành vi vi phạm hợp đồng;\n\n2. Có thiệt hại thực tế;\n\n3. Hành vi vi phạm hợp đồng là nguyên nhân trực tiếp gây ra thiệt hại.",
+        "Điều 292. Các loại chế tài trong thương mại\n\n1. Buộc thực hiện đúng hợp đồng.\n\n2. Phạt vi phạm.\n\n3. Buộc bồi thường thiệt hại.\n\n4. Tạm ngừng thực hiện hợp đồng.\n\n5. Đình chỉ thực hiện hợp đồng.\n\n6. Hủy bỏ hợp đồng.\n\n7. Các biện pháp khác do các bên thỏa thuận không trái với nguyên tắc cơ bản của pháp luật Việt Nam, điều ước quốc tế mà Cộng hòa xã hội chủ nghĩa Việt Nam là thành viên và tập quán thương mại quốc tế.",
+        "Điều 300. Phạt vi phạm\n\nPhạt vi phạm là việc bên bị vi phạm yêu cầu bên vi phạm trả một khoản tiền phạt do vi phạm hợp đồng nếu trong hợp đồng có thỏa thuận, trừ các trường hợp miễn trách nhiệm quy định tại Điều 294 của Luật này.",
+        "Điều 293. Áp dụng chế tài trong thương mại đối với vi phạm không cơ bản\n\nTrừ trường hợp có thỏa thuận khác, bên bị vi phạm không được áp dụng chế tài tạm ngừng thực hiện hợp đồng, đình chỉ thực hiện hợp đồng hoặc hủy bỏ hợp đồng đối với vi phạm không cơ bản.",
+        "Điều 321. Hình thức xử lý vi phạm pháp luật về thương mại\n\n1. Tùy theo tính chất, mức độ vi phạm và hậu quả xảy ra, tổ chức, cá nhân bị xử lý theo một trong các hình thức sau đây:\n\na) Xử phạt theo quy định của pháp luật về xử lý vi phạm hành chính;\n\nb) Trường hợp hành vi vi phạm có đủ yếu tố cấu thành tội phạm thì người vi phạm bị truy cứu trách nhiệm hình sự theo quy định của pháp luật.\n\n2. Trường hợp hành vi vi phạm gây thiệt hại đến lợi ích của Nhà nước, quyền và lợi ích hợp pháp của tổ chức, cá nhân thì phải bồi thường thiệt hại theo quy định của pháp luật.",
+        "Điều 308. Tạm ngừng thực hiện hợp đồng\n\nTrừ các trường hợp miễn trách nhiệm quy định tại Điều 294 của Luật này, tạm ngừng thực hiện hợp đồng là việc một bên tạm thời không thực hiện nghĩa vụ trong hợp đồng thuộc một trong các trường hợp sau đây:\n\n1. Xảy ra hành vi vi phạm mà các bên đã thỏa thuận là điều kiện để tạm ngừng thực hiện hợp đồng;\n\n2. Một bên vi phạm cơ bản nghĩa vụ hợp đồng.",
+        "Điều 414. Không thực hiện được nghĩa vụ nhưng không do lỗi của các bên\n\nTrong hợp đồng song vụ, nếu một bên không thực hiện được nghĩa vụ mà các bên đều không có lỗi thì bên không thực hiện được nghĩa vụ không có quyền yêu cầu bên kia thực hiện nghĩa vụ đối với mình. Trường hợp một bên đã thực hiện được một phần nghĩa vụ thì có quyền yêu cầu bên kia thực hiện phần nghĩa vụ tương ứng đối với mình."
+      ],
+      "citations": [
+        {
+          "article": "Điều 294",
+          "source": "Luật Thương mại số 36/2005/QH11 (VBHN 113/VBHN-VPQH)",
+          "raw_file": "VBHN_Luatthuongmai2025.md",
+          "title": "",
+          "score": 0.7739725708961487
+        }
+      ],
+      "similarity_score_max": 0.774,
+      "faithfulness": 1.0,
+      "answer_relevancy": 1.0,
+      "context_precision": 1.0,
+      "context_recall": 0.5
+    },
+    {
+      "id": "TC_03",
+      "question": "Quy định về thời hạn lập hồ sơ mời thầu theo Luật Đấu thầu số 43/2013/QH13 hiện nay áp dụng như thế nào?",
+      "ground_truth": "Luật Đấu thầu số 43/2013/QH13 đã hết hiệu lực từ ngày 01/01/2024 và được thay thế toàn diện bởi Luật Đấu thầu số 22/2023/QH15. Do đó các quy định của Luật Đấu thầu 2013 không còn giá trị áp dụng cho các hoạt động đấu thầu mới.",
+      "system_answer": "Hiện tại trong cơ sở dữ liệu pháp luật về hợp đồng dịch vụ của hệ thống chưa có quy định về vấn đề này. Bạn vui lòng tra cứu thêm các văn bản pháp luật chuyên ngành liên quan hoặc tham vấn chuyên gia pháp lý.",
+      "retrieved_contexts": [
+        "Điều 113. Quy định chuyển tiếp\n\nKể từ ngày Luật này có hiệu lực thi hành, các vụ việc phòng vệ thương mại đã được cơ quan nhà nước có thẩm quyền tiếp nhận hồ sơ khiếu nại, điều tra trước ngày Luật này có hiệu lực thì được tiếp tục xem xét, giải quyết theo quy định của Pháp lệnh về Tự vệ trong nhập khẩu hàng hóa nước ngoài vào Việt Nam số 42/2002/PL-UBTVQH10, Pháp lệnh Chống bán phá giá hàng hóa nhập khẩu vào Việt Nam số 20/2004/PL-UBTVQH11, Pháp lệnh Chống trợ cấp hàng hóa nhập khẩu vào Việt Nam số 22/2004/PL-UBTVQH11\".",
+        "Điều 145. Áp dụng cách tính thời hạn\n\n1. Cách tính thời hạn được áp dụng theo quy định của Bộ luật này, trừ trường hợp có thỏa thuận khác hoặc pháp luật có quy định khác.\n\n2. Thời hạn được tính theo dương lịch, trừ trường hợp có thỏa thuận khác.",
+        "Điều 147. Thời điểm bắt đầu thời hạn\n\n1. Khi thời hạn được xác định bằng phút, giờ thì thời hạn được bắt đầu từ thời điểm đã xác định.\n\n2. Khi thời hạn được xác định bằng ngày, tuần, tháng, năm thì ngày đầu tiên của thời hạn không được tính mà tính từ ngày tiếp theo liền kề ngày được xác định.\n\n3. Khi thời hạn bắt đầu bằng một sự kiện thì ngày xảy ra sự kiện không được tính mà tính từ ngày tiếp theo liền kề của ngày xảy ra sự kiện đó.",
+        "Điều 48. Điều khoản chuyển tiếp\n\n1. Chiến lược, chương trình, đề án, dự án, nhiệm vụ công nghệ thông tin, ứng dụng công nghệ thông tin, chuyển đổi số đã được phê duyệt và đang triển khai trước ngày Luật này có hiệu lực thi hành thì được tiếp tục thực hiện theo quy định của Luật Công nghệ thông tin số 67/2006/QH11 và các văn bản quy phạm pháp luật quy định chi tiết Luật Công nghệ thông tin số 67/2006/QH11 cho đến khi kết thúc, trừ trường hợp các bên lựa chọn áp dụng Luật này.\n\n2. Chứng chỉ công nghệ thông tin, chứng chỉ ứng dụng công nghệ thông tin đã được cấp theo Luật Công nghệ thông tin số 67/2006/QH11 và các văn bản quy phạm pháp luật khác có liên quan tiếp tục có hiệu lực cho đến khi hết thời hạn ghi trên chứng chỉ.\n\n3. Đối với các văn bản quy phạm pháp luật quy định chi tiết, quy định biện pháp cụ thể để tổ chức, hướng dẫn thi hành Luật Công nghệ thông tin số 67/2006/QH11 đã được ban hành trước ngày Luật này có hiệu lực thi hành, các Bộ, cơ quan ngang Bộ có trách nhiệm rà soát, công bố hoặc trình cấp có thẩm quyền công bố việc tiếp tục có hiệu lực toàn bộ hoặc một phần theo quy định của Luật Ban hành văn bản quy phạm pháp luật.\n\nLuật này được Quốc hội nước Cộng hòa xã hội chủ nghĩa Việt Nam khóa XV, Kỳ họp thứ 10 thông qua ngày 11 tháng 12 năm 2025.",
+        "Điều 429. Thời hiệu khởi kiện về hợp đồng\n\nThời hiệu khởi kiện để yêu cầu Tòa án giải quyết tranh chấp hợp đồng là 03 năm, kể từ ngày người có quyền yêu cầu biết hoặc phải biết quyền và lợi ích hợp pháp của mình bị xâm phạm.\n\nChương XVI\n\nMỘT SỐ HỢP ĐỒNG THÔNG DỤNG\n\nMục 1. HỢP ĐỒNG MUA BÁN TÀI SẢN"
+      ],
+      "citations": [],
+      "similarity_score_max": 0.6745,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.95,
+      "context_precision": 0.75,
+      "context_recall": 0.0
+    }
+  ]
+}

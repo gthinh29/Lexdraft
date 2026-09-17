@@ -239,7 +239,7 @@ Trong trường hợp Bên A muốn chuyển hosting hay server sang nhà cung c
 
 11.1. Bên B không được tiết lộ bất kì thông tin, tài liệu nào liên quan đến Hợp đồng này và Phụ lục Hợp đồng kèm theo (nếu có); thông tin do Bên A cung cấp; các trao đổi giữa hai Bên không giới hạn bằng văn bản, email hay lời nói. Bảo mật những thông tin được yêu cầu giữ bí mật của Bên A trong suốt quá trình thực hiện và sau khi chấm dứt Hợp đồng này, trừ khi được Bên A đồng ý bằng văn bản.
 
-11.2. Trường hợp Bên B vi phạm quy định về bảo mật thông tin thì Bên A có quyền chấm dứt Hợp đồng này và yêu cầu Bên B hoàn trả toàn bộ số tiền đã nhận của Bên A, đồng thời Bên B phải chịu phạt 8% giá trị Hợp đồng này và bồi thường thiệt hại cho Bên A theo quy định của pháp luật.
+11.2. Trường hợp Bên B vi phạm quy định về bảo mật thông tin thì Bên A có quyền chấm dứt Hợp đồng này và yêu cầu Bên B hoàn trả toàn bộ số tiền đã nhận của Bên A, đồng thời Bên B phải chịu phạt vi phạm với mức không vượt quá 8% giá trị phần nghĩa vụ Hợp đồng bị vi phạm theo quy định của pháp luật thương mại, và bồi thường thiệt hại cho Bên A tương ứng với tổn thất thực tế, trực tiếp phát sinh do hành vi vi phạm gây ra theo quy định của pháp luật.
 
 **ĐIỀU 12. BỒI THƯỜNG THIỆT HẠI VÀ PHẠT VI PHẠM**
 
@@ -251,9 +251,9 @@ Trong trường hợp Bên A muốn chuyển hosting hay server sang nhà cung c
 
 **12.2. Phạt vi phạm**
 
-12.2.1. Trường hợp Bên B chậm bàn giao kết quả công việc cho Bên A thì Bên B bị phạt \[⚫\]% giá trị Hợp đồng/ 01 ngày quá hạn nhưng tổng tiền phạt cộng dồn không quá 8% giá trị Hợp đồng.
+12.2.1. Trường hợp Bên B chậm bàn giao kết quả công việc cho Bên A thì Bên B bị phạt 0,1% giá trị Hợp đồng/ 01 ngày quá hạn nhưng tổng tiền phạt cộng dồn không quá 8% giá trị Hợp đồng.
 
-12.2.2. Trường hợp Bên A không thực hiện đúng nghĩa vụ thanh toán của mình thì Bên A bị phạt \[⚫\]% số tiền chậm trả/ 01 ngày quá hạn nhưng tổng tiền phạt cộng dồn không quá 8% giá trị Hợp đồng.
+12.2.2. Trường hợp Bên A không thực hiện đúng nghĩa vụ thanh toán của mình thì Bên A bị phạt 0,1% số tiền chậm trả/ 01 ngày quá hạn nhưng tổng tiền phạt cộng dồn không quá 8% giá trị Hợp đồng.
 
 12.2.3. Trường hợp một Bên trong Hợp đồng vi phạm bất kì nghĩa vụ nào khác được quy định trong Hợp đồng này mà không khắc phục được trong thời hạn \[⚫\](…..) ngày thì Bên vi phạm phải thanh toán cho Bên bị vi phạm một khoản tiền phạt là \[⚫\]% giá trị Hợp đồng và bồi thường mọi thiệt hại phát sinh (nếu có).
 

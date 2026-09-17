@@ -128,12 +128,14 @@ def extract_law_header(text: str, filename: str = "") -> Dict[str, Any]:
     # Lấy tên luật từ tiêu đề (dòng LUẬT / BỘ LUẬT + dòng tiếp theo)
     if not result["law_name"]:
         title_match = re.search(
-            r"(?:BỘ\s+)?LUẬT\s*\n+([^\n]+)",
+            r"[*#_\s]*(?:BỘ\s+)?LUẬT[*#_\s]*\n+[*#_\s]*([^\n*#_]+)",
             preamble,
             re.IGNORECASE,
         )
         if title_match:
-            result["law_name"] = "Luật " + title_match.group(1).strip().title()
+            clean_name = title_match.group(1).strip()
+            clean_name = re.sub(r"[*#_]", "", clean_name).strip()
+            result["law_name"] = "Luật " + clean_name.title()
 
     # Hiệu lực nếu chưa có: tìm Điều hiệu lực thi hành trong toàn bộ văn bản
     if not result["effective_date"]:
