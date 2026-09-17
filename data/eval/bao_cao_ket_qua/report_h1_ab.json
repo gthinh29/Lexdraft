@@ -1,0 +1,1069 @@
+{
+  "test_name": "Bộ Test 1: Kiểm chứng Giả thiết 1 (A/B Testing: Zero-shot LLM vs. Lexdraft RAG)",
+  "hypothesis": "Việc kết hợp LLM với RAG giúp cải thiện khả năng trả lời các câu hỏi pháp lý liên quan đến hợp đồng dịch vụ so với việc sử dụng LLM không có cơ chế truy xuất.",
+  "summary": {
+    "sample_size": 50,
+    "branch_a_zero_shot": {
+      "law_coverage_rate": 98.0,
+      "article_citation_rate": 100.0,
+      "outdated_hallucination_count": 5
+    },
+    "branch_b_lexdraft_rag": {
+      "law_coverage_rate": 86.0,
+      "article_citation_rate": 88.0,
+      "outdated_hallucination_count": 2
+    }
+  },
+  "details": [
+    {
+      "id": "TC_NEG_01",
+      "category": "Negative / Law Validity",
+      "question": "Hợp đồng dịch vụ ký năm 2026 áp dụng Luật Giao dịch điện tử số 51/2005/QH11 có hợp pháp không?",
+      "ground_truth": "Không hợp pháp. Luật Giao dịch điện tử số 51/2005/QH11 đã hết hiệu lực từ ngày 01/07/2024 và được thay thế toàn bộ bởi Luật Giao dịch điện tử 2023 (Luật số 20/2023/QH15). Hợp đồng cần viện dẫn Luật Giao dịch điện tử 2023.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin trả lời câu hỏi của bạn như sau:\n\n**Hợp đồng dịch vụ ký năm 2026 áp dụng Luật Giao dịch điện tử số 51/2005/QH11 là KHÔNG HỢP PHÁP (về mặt viện dẫn căn cứ pháp lý áp dụng), cụ thể:**\n\n**1. Căn cứ pháp lý:**\n*   **Luật Giao dịch điện tử số 20/2023/QH15** được Quốc hội nước CHXHCN Việt Nam thông qua ngày 22 tháng 6 năm 2023 (có hiệu lực thi hành từ ngày 01 tháng 7 năm 2024).\n*   **Khoản 1 Điều 53 Luật Giao dịch điện tử số 20/2023/QH15** quy định về hiệu lực thi hành: *“Luật này có hiệu lực thi hành từ ngày 01 tháng 7 năm 2024.”*\n*   **Khoản 2 Điều 53 Luật Giao dịch điện tử số 20/2023/QH15** quy định về việc hết hiệu lực của luật cũ: *“Luật Giao dịch điện tử số 51/2005/QH11 hết hiệu lực thi hành kể từ ngày Luật này có hiệu lực thi hành.”*\n\n**2. Phân tích pháp lý:**\n*   Tính đến thời điểm năm 2026, **Luật Giao dịch điện tử số 51/2005/QH11 đã hết hiệu lực toàn bộ** kể từ ngày 01/07/2024. \n*   Do đó, mọi giao dịch điện tử, bao gồm cả việc giao kết và thực hiện hợp đồng dịch vụ có sử dụng phương tiện điện tử được ký kết vào năm 2026, phải tuân thủ và chịu sự điều chỉnh của **Luật Giao dịch điện tử số 20/2023/QH15**.\n*   Việc một hợp đồng ký năm 2026 lại viện dẫn và áp dụng một đạo luật đã hết hiệu lực từ năm 2024 (Luật số 51/2005/QH11) là sai sót về mặt pháp lý. Điều này có thể dẫn đến việc thỏa thuận áp dụng pháp luật trong hợp đồng vô hiệu hoặc không được cơ quan có thẩm quyền (Tòa án, Trọng tài) công nhận khi có tranh chấp xảy ra, bởi vì các quy định tại Luật cũ không còn giá trị pháp lý ràng buộc tại thời điểm năm 2026.",
+        "laws_matched": 2,
+        "laws_total": 3,
+        "article_cited": true,
+        "hallucinated": true
+      },
+      "branch_b_rag": {
+        "answer": "Hiện tại trong cơ sở dữ liệu pháp luật về hợp đồng dịch vụ của hệ thống chưa có quy định về vấn đề này. Bạn vui lòng tra cứu thêm các văn bản pháp luật chuyên ngành liên quan hoặc tham vấn chuyên gia pháp lý.",
+        "citations_count": 0,
+        "laws_matched": 0,
+        "laws_total": 3,
+        "article_cited": false,
+        "hallucinated": false
+      }
+    },
+    {
+      "id": "TC_NEG_02",
+      "category": "Negative / Law Validity",
+      "question": "Sau ngày 01/07/2026, hợp đồng dịch vụ phần mềm còn được viện dẫn Luật Công nghệ thông tin số 67/2006/QH11 không?",
+      "ground_truth": "Không còn được viện dẫn. Theo Điều 47 Luật Chuyển đổi số 2025 (Luật số 148/2025/QH15), Luật Công nghệ thông tin số 67/2006/QH11 chính thức hết hiệu lực kể từ ngày 01/07/2026 và được thay thế bởi Luật Chuyển đổi số 2025.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý về hợp đồng dịch vụ tại Việt Nam, tôi xin trả lời câu hỏi của bạn như sau:\n\n**TRẢ LỜI:**\n\nSau ngày 01/07/2026, hợp đồng dịch vụ phần mềm **KHÔNG CÒN** được viện dẫn Luật Công nghệ thông tin số 67/2006/QH11 đối với các quy định liên quan đến công nghiệp phần mềm (trong đó bao gồm hoạt động sản xuất, kinh doanh sản phẩm và dịch vụ phần mềm). \n\nLý do là vì các quy định pháp luật điều chỉnh về công nghiệp phần mềm tại Luật Công nghệ thông tin số 67/2006/QH11 đã chính thức hết hiệu lực và được thay thế bằng các quy định mới tại **Luật Công nghiệp Công nghệ số**.\n\n---\n\n**CĂN CỨ PHÁP LÝ:**\n\n1. **Luật Công nghệ thông tin số 67/2006/QH11** (đã được Quốc hội nước CHXHCN Việt Nam thông qua ngày 29/06/2006):\n   - **Khoản 2 Điều 79** quy định về hiệu lực thi hành: *“Luật này có hiệu lực thi hành từ ngày 01 tháng 01 năm 2007”*.\n   - **Chương IV (từ Điều 71 đến Điều 75)** của Luật này trước đây quy định cụ thể về công nghiệp phần mềm (bao gồm dịch vụ phần mềm).\n\n2. **Luật Công nghiệp Công nghệ số** (đã được Quốc hội nước CHXHCN Việt Nam thông qua, dự kiến có hiệu lực thi hành toàn diện từ ngày **01/07/2026**):\n   - Luật này được xây dựng nhằm lấp đầy các khoảng trống pháp lý và thay thế các quy định cũ về công nghiệp công nghệ thông tin (bao gồm phần mềm, phần cứng, dịch vụ CNTT) vốn không còn theo kịp sự phát triển của nền kinh tế số.\n   - **Điều khoản thi hành của Luật Công nghiệp Công nghệ số** quy định việc bãi bỏ toàn bộ Chương IV (Công nghiệp công nghệ thông tin) của Luật Công nghệ thông tin số 67/2006/QH11 kể từ ngày Luật Công nghiệp Công nghệ số chính thức có hiệu lực (01/07/2026).\n\n**Lưu ý dành cho chuyên gia soạn thảo hợp đồng:** \nTừ ngày 01/07/2026 trở đi, khi soạn thảo hoặc ký kết các hợp đồng dịch vụ phần mềm, bạn và các bên liên quan cần viện dẫn căn cứ pháp lý mới là **Luật Công nghiệp Công nghệ số** và các văn bản hướng dẫn thi hành liên quan, thay vì viện dẫn Luật Công nghệ thông tin số 67/2006/QH11 như trước đây để đảm bảo tính chính xác và hiệu lực pháp lý của hợp đồng.",
+        "laws_matched": 1,
+        "laws_total": 4,
+        "article_cited": true,
+        "hallucinated": true
+      },
+      "branch_b_rag": {
+        "answer": "Hiện tại trong cơ sở dữ liệu pháp luật về hợp đồng dịch vụ của hệ thống chưa có quy định trực tiếp về việc hợp đồng dịch vụ phần mềm có được viện dẫn Luật Công nghệ thông tin sau ngày 01 tháng 7 năm 2026 hay không. Bạn vui lòng tra cứu thêm các văn bản pháp luật chuyên ngành liên quan hoặc tham vấn chuyên gia pháp lý.",
+        "citations_count": 0,
+        "laws_matched": 0,
+        "laws_total": 4,
+        "article_cited": false,
+        "hallucinated": true
+      }
+    },
+    {
+      "id": "TC_NEG_03",
+      "category": "Negative / Law Validity",
+      "question": "Quy định bảo vệ quyền lợi người tiêu dùng trong hợp đồng dịch vụ có được áp dụng Luật số 59/2010/QH12 hiện nay không?",
+      "ground_truth": "Không. Luật Bảo vệ quyền lợi người tiêu dùng số 59/2010/QH12 đã hết hiệu lực từ ngày 01/07/2024 và bị thay thế toàn bộ bởi Luật Bảo vệ quyền lợi người tiêu dùng 2023 (Luật số 19/2023/QH15).",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin trả lời câu hỏi của bạn như sau:\n\n**KHÔNG.** Luật Bảo vệ quyền lợi người tiêu dùng số 59/2010/QH12 hiện nay **không còn hiệu lực pháp luật** và đã được thay thế. Do đó, các quy định bảo vệ quyền lợi người tiêu dùng trong hợp đồng dịch vụ hiện nay không còn căn cứ vào Luật số 59/2010/QH12.\n\n**Căn cứ pháp lý:**\n\n1. **Về hiệu lực thi hành:**\n   * **Luật Bảo vệ quyền lợi người tiêu dùng số 19/2023/QH15** được Quốc hội nước CHXHCN Việt Nam thông qua ngày 20/06/2023 (có hiệu lực thi hành từ ngày 01/07/2024).\n   * **Điểm a Khoản 1 Điều 79 Luật Bảo vệ quyền lợi người tiêu dùng số 19/2023/QH15** quy định về hiệu lực thi hành như sau: \n     > *\"Luật Bảo vệ quyền lợi người tiêu dùng số 59/2010/QH12 hết hiệu lực kể từ ngày Luật này có hiệu lực thi hành (01/07/2024).\"*\n\n2. **Quy định pháp luật hiện hành áp dụng cho hợp đồng dịch vụ có tiêu dùng:**\n   Hiện nay, việc bảo vệ quyền lợi người tiêu dùng trong các giao dịch nói chung và hợp đồng dịch vụ nói riêng được điều chỉnh bởi **Luật Bảo vệ quyền lợi người tiêu dùng số 19/2023/QH15** (đặc biệt là các quy định về hợp đồng giao kết với người tiêu dùng, hợp đồng theo mẫu, điều kiện giao dịch chung tại Chương III, từ Điều 24 đến Điều 28) và các quy định tương ứng tại **Bộ luật Dân sự số 91/2015/QH13**.\n\nNhư vậy, khi tư vấn hoặc soạn thảo, rà soát hợp đồng dịch vụ có liên quan đến người tiêu dùng ở thời điểm hiện tại, bạn **phải sử dụng Luật số 19/2023/QH15**, tuyệt đối không sử dụng Luật số 59/2010/QH12 đã hết hiệu lực.",
+        "laws_matched": 2,
+        "laws_total": 3,
+        "article_cited": true,
+        "hallucinated": false
+      },
+      "branch_b_rag": {
+        "answer": "Hiện tại trong cơ sở dữ liệu pháp luật về hợp đồng dịch vụ của hệ thống chưa có quy định về vấn đề này. Bạn vui lòng tra cứu thêm các văn bản pháp luật chuyên ngành liên quan hoặc tham vấn chuyên gia pháp lý.",
+        "citations_count": 0,
+        "laws_matched": 0,
+        "laws_total": 3,
+        "article_cited": false,
+        "hallucinated": false
+      }
+    },
+    {
+      "id": "TC_NEG_04",
+      "category": "Negative / Law Validity",
+      "question": "Hợp đồng dịch vụ thương mại ký căn cứ 'Luật Thương mại 2020' thì có giá trị pháp lý không?",
+      "ground_truth": "Không tồn tại văn bản quy phạm pháp luật nào tên là 'Luật Thương mại 2020'. Văn bản pháp luật điều chỉnh quan hệ thương mại hiện hành là Luật Thương mại số 36/2005/QH11 được Quốc hội thông qua ngày 14/06/2005 (đã được hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH năm 2025).",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin trả lời câu hỏi của bạn như sau:\n\n**Trả lời:**\n\nHợp đồng dịch vụ thương mại được ký kết dựa trên căn cứ pháp lý là **\"Luật Thương mại 2020\"** thì **KHÔNG CÓ GIÁ TRỊ PHÁP LÝ** về mặt viện dẫn văn bản, bởi vì **tại Việt Nam hiện nay không tồn tại Luật Thương mại năm 2020.**\n\n**Căn cứ pháp lý và giải thích chi tiết:**\n\n1. **Về tên gọi và hiệu lực của Luật Thương mại tại Việt Nam:**\n   * Luật Thương mại hiện hành đang có hiệu lực thi hành tại Việt Nam là **Luật Thương mại số 36/2005/QH11** được Quốc hội nước Cộng hòa xã hội chủ nghĩa Việt Nam khóa XI, kỳ họp thứ 7 thông qua ngày 14 tháng 6 năm 2005 và có hiệu lực thi hành từ ngày 01 tháng 01 năm 2006.\n   * Do đó, việc viện dẫn \"Luật Thương mại 2020\" là viện dẫn sai tên văn bản và sai số hiệu văn bản luật.\n\n2. **Hậu quả pháp lý của việc viện dẫn sai căn cứ pháp lý:**\n   * **Về hiệu lực của hợp đồng:** Một hợp đồng dịch vụ thương mại không bị vô hiệu toàn bộ *chỉ vì* các bên ghi sai tên hoặc số hiệu văn bản luật trong phần căn cứ, miễn là nội dung thỏa thuận trong hợp đồng không trái với các nguyên tắc cơ bản của pháp luật, không vi phạm điều cấm của luật và không trái đạo đức xã hội (theo **Điều 117 và Điều 123 Bộ luật Dân sự số 91/2015/QH13**). Hợp đồng vẫn phát sinh quyền và nghĩa vụ nếu các bên có đủ năng lực hành vi dân sự và sự tự nguyện.\n   * **Về tính chính xác và chuyên nghiệp:** Việc ghi sai căn cứ pháp lý sẽ dẫn đến sự mơ hồ khi các bên áp dụng pháp luật để giải quyết tranh chấp. Khi đưa ra Tòa án hoặc Trọng tài thương mại, cơ quan giải quyết tranh chấp sẽ căn cứ vào các quy định pháp luật thực tế đang có hiệu lực (Luật Thương mại 2005 và Bộ luật Dân sự 2015) chứ không căn cứ vào tên văn bản do các bên ghi sai.\n\n**Khuyến nghị pháp lý:**\nBạn nên tiến hành sửa đổi, bổ sung hoặc ký phụ lục hợp đồng để đính chính lại phần căn cứ pháp lý cho chính xác. Phần căn cứ pháp lý đúng đối với dịch vụ thương mại phải được viện dẫn theo:\n* **Bộ luật Dân sự số 91/2015/QH13** được Quốc hội thông qua ngày 24 tháng 11 năm 2015;\n* **Luật Thương mại số 36/2005/QH11** được Quốc hội thông qua ngày 14 tháng 6 năm 2005.",
+        "laws_matched": 3,
+        "laws_total": 3,
+        "article_cited": true,
+        "hallucinated": true
+      },
+      "branch_b_rag": {
+        "answer": "Hiện tại trong cơ sở dữ liệu pháp luật về hợp đồng dịch vụ của hệ thống chưa có quy định về vấn đề này. Bạn vui lòng tra cứu thêm các văn bản pháp luật chuyên ngành liên quan hoặc tham vấn chuyên gia pháp lý.",
+        "citations_count": 0,
+        "laws_matched": 0,
+        "laws_total": 3,
+        "article_cited": false,
+        "hallucinated": false
+      }
+    },
+    {
+      "id": "TC_NEG_05",
+      "category": "Negative / Law Validity",
+      "question": "Hợp đồng dịch vụ hiện nay có được áp dụng Bộ luật Dân sự số 33/2005/QH11 không?",
+      "ground_truth": "Không. Bộ luật Dân sự số 33/2005/QH11 đã hết hiệu lực từ ngày 01/01/2017 theo quy định chuyển tiếp tại Điều 688 Bộ luật Dân sự 2015 (Luật số 91/2015/QH13). Mọi giao dịch dân sự hiện nay phải áp dụng Bộ luật Dân sự 2015.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin trả lời câu hỏi của bạn như sau:\n\n**Hợp đồng dịch vụ hiện nay KHÔNG ĐƯỢC ÁP DỤNG Bộ luật Dân sự số 33/2005/QH11.**\n\n**Căn cứ pháp lý và giải thích chi tiết:**\n\n1. **Về hiệu lực pháp luật:**\n   * Bộ luật Dân sự số 33/2005/QH11 đã hết hiệu lực thi hành kể từ ngày 01/01/2017. \n   * Căn cứ theo **Điều 688 Bộ luật Dân sự số 91/2015/QH13** quy định về điều khoản chuyển tiếp: *“Bộ luật này có hiệu lực thi hành từ ngày 01 tháng 01 năm 2017. Bộ luật dân sự số 33/2005/QH11 hết hiệu lực thi hành kể từ ngày Bộ luật này có hiệu lực”*.\n\n2. **Văn bản pháp luật hiện hành đang điều chỉnh:**\n   * Hiện nay, các quan hệ hợp đồng dịch vụ được điều chỉnh bởi **Bộ luật Dân sự số 91/2015/QH13** (được Quốc hội nước CHXHCN Việt Nam thông qua ngày 24/11/2015, có hiệu lực từ ngày 01/01/2017).\n   * Cụ thể, các quy định chung về hợp đồng dịch vụ được quy định tại **Chương XXIX (từ Điều 513 đến Điều 521)** của **Bộ luật Dân sự số 91/2015/QH13**.\n   * Ngoài ra, tùy thuộc vào từng lĩnh vực dịch vụ cụ thể (như dịch vụ viễn thông, thương mại, vận chuyển, y tế, pháp lý...), hợp đồng dịch vụ còn phải tuân theo các luật chuyên ngành tương ứng (ví dụ: Luật Thương mại 2005 đối với dịch vụ thương mại, Luật Các tổ chức tín dụng đối với dịch vụ ngân hàng...).\n\nNhư vậy, khi giao kết, thực hiện hoặc giải quyết tranh chấp liên quan đến hợp đồng dịch vụ ở thời điểm hiện tại, cơ quan nhà nước, tòa án và các bên tham gia phải áp dụng **Bộ luật Dân sự số 91/2015/QH13** và các văn bản pháp luật chuyên ngành hiện hành khác, tuyệt đối không áp dụng Bộ luật Dân sự số 33/2005/QH11 nữa.",
+        "laws_matched": 2,
+        "laws_total": 3,
+        "article_cited": true,
+        "hallucinated": true
+      },
+      "branch_b_rag": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin giải đáp thắc mắc của bạn dựa trên các quy định pháp luật hiện hành như sau:\n\nCăn cứ theo quy định tại khoản 2 Điều 689 Bộ luật Dân sự số 91/2015/QH13 ngày 24 tháng 11 năm 2015 của Quốc hội, **Bộ luật Dân sự số 33/2005/QH11 đã hết hiệu lực** kể từ ngày Bộ luật Dân sự số 91/2015/QH13 có hiệu lực thi hành (ngày 01 tháng 01 năm 2017). \n\nDo đó, hiện nay các hợp đồng dịch vụ không còn được áp dụng Bộ luật Dân sự số 33/2005/QH11 mà sẽ chịu sự điều chỉnh của các quy định pháp luật hiện hành đang có hiệu lực (như Bộ luật Dân sự số 91/2015/QH13 và Luật Thương mại số 36/2005/QH11 cùng các văn bản liên quan).\n\nNếu bạn cần hỗ trợ thêm về các quy định cụ thể của hợp đồng dịch vụ theo pháp luật hiện hành, vui lòng đặt câu hỏi để tôi tiếp tục tư vấn!",
+        "citations_count": 1,
+        "laws_matched": 2,
+        "laws_total": 3,
+        "article_cited": true,
+        "hallucinated": true
+      }
+    },
+    {
+      "id": "TC_NEG_06",
+      "category": "Negative / Law Validity",
+      "question": "Luật Thương mại năm 1997 hiện nay còn hiệu lực áp dụng cho các hoạt động cung ứng dịch vụ thương mại không?",
+      "ground_truth": "Không. Luật Thương mại năm 1997 đã hết hiệu lực thi hành kể từ ngày 01/01/2006 và được thay thế bởi Luật Thương mại số 36/2005/QH11.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin trả lời câu hỏi của bạn như sau:\n\n**Luật Thương mại năm 1997 hiện nay KHÔNG CÒN HIỆU LỰC** áp dụng cho các hoạt động cung ứng dịch vụ thương mại (cũng như các hoạt động thương mại nói chung). \n\n**Căn cứ pháp lý:**\n\n1. **Luật Thương mại số 36/2005/QH11** được Quốc hội nước Cộng hòa xã hội chủ nghĩa Việt Nam khóa XI, kỳ họp thứ 7 thông qua ngày 14 tháng 6 năm 2005, có hiệu lực thi hành từ ngày 01 tháng 1 січня 2006 (trừ trường hợp pháp luật về hội nhập kinh tế quốc tế có quy định khác).\n2. **Điều 243 Luật Thương mại năm 2005** quy định về hiệu lực thi hành như sau:\n   > *\"Luật này có hiệu lực thi hành từ ngày 01 tháng 1 năm 2006.*\n   > *Luật Thương mại ngày 10 tháng 5 năm 1997 hết hiệu lực kể từ ngày Luật này có hiệu lực thi hành.\"*\n\nNhư vậy, hiện nay văn bản pháp luật điều chỉnh chung về hoạt động cung ứng dịch vụ thương mại là **Luật Thương mại năm 2005** (và các văn bản hướng dẫn thi hành liên quan), thay thế hoàn toàn cho Luật Thương mại năm 1997.",
+        "laws_matched": 2,
+        "laws_total": 3,
+        "article_cited": true,
+        "hallucinated": true
+      },
+      "branch_b_rag": {
+        "answer": "Hiện tại trong cơ sở dữ liệu pháp luật về hợp đồng dịch vụ của hệ thống chưa có quy định về vấn đề này. Bạn vui lòng tra cứu thêm các văn bản pháp luật chuyên ngành liên quan hoặc tham vấn chuyên gia pháp lý.",
+        "citations_count": 0,
+        "laws_matched": 0,
+        "laws_total": 3,
+        "article_cited": false,
+        "hallucinated": false
+      }
+    },
+    {
+      "id": "TC_FACT_01",
+      "category": "Fact Retrieval",
+      "question": "Hợp đồng dịch vụ được định nghĩa như thế nào theo Bộ luật Dân sự 2015?",
+      "ground_truth": "Theo Điều 513 Bộ luật Dân sự 2015, hợp đồng dịch vụ là sự thỏa thuận giữa các bên, theo đó bên cung ứng dịch vụ thực hiện công việc cho bên sử dụng dịch vụ, bên sử dụng dịch vụ phải trả tiền dịch vụ cho bên cung ứng dịch vụ.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin trả lời câu hỏi của bạn dựa trên quy định của pháp luật Việt Nam hiện hành như sau:\n\nTheo quy định tại **Bộ luật Dân sự số 91/2015/QH13** được Quốc hội nước CHXHCN Việt Nam thông qua ngày 24/11/2015 (có hiệu lực thi hành từ ngày 01/01/2017), hợp đồng dịch vụ được định nghĩa tại **Khoản 1 Điều 513**, cụ thể như sau:\n\n> *\"Hợp đồng dịch vụ là sự thỏa thuận giữa các bên, theo đó bên cung ứng dịch vụ thực hiện công việc cho bên sử dụng dịch vụ, bên sử dụng dịch vụ phải trả tiền dịch vụ cho bên cung ứng dịch vụ.\"*\n\nBên cạnh đó, để làm rõ hơn bản chất của hợp đồng dịch vụ, **Điều 512** của Bộ luật này cũng quy định về đối tượng của hợp đồng dịch vụ:\n\n> *\"Đối tượng của hợp đồng dịch vụ là công việc có thể thực hiện được, không trái pháp luật, không vi phạm đạo đức xã hội.\"*\n\nTrên đây là căn cứ pháp lý và định nghĩa chính xác về hợp đồng dịch vụ theo pháp luật dân sự Việt Nam. Trân trọng thông tin đến bạn!",
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      },
+      "branch_b_rag": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin giải đáp thắc mắc của bạn dựa trên các quy định pháp luật hiện hành như sau:\n\nTheo quy định tại **Điều 513 Bộ luật Dân sự số 91/2015/QH13 ngày 24 tháng 11 năm 2015 của Quốc hội**, hợp đồng dịch vụ được định nghĩa là sự thỏa thuận giữa các bên, theo đó bên cung ứng dịch vụ thực hiện công việc cho bên sử dụng dịch vụ, và bên sử dụng dịch vụ phải trả tiền dịch vụ cho bên cung ứng dịch vụ. \n\nBên cạnh đó, đối tượng của hợp đồng dịch vụ theo **Điều 514 Bộ luật Dân sự số 91/2015/QH13** là công việc có thể thực hiện được, không vi phạm điều cấm của luật và không trái đạo đức xã hội.\n\nThông tin đến bạn để tham khảo và áp dụng!",
+        "citations_count": 2,
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      }
+    },
+    {
+      "id": "TC_FACT_02",
+      "category": "Fact Retrieval",
+      "question": "Đối tượng của hợp đồng dịch vụ theo Bộ luật Dân sự 2015 phải đáp ứng điều kiện gì?",
+      "ground_truth": "Theo Điều 514 Bộ luật Dân sự 2015, đối tượng của hợp đồng dịch vụ là công việc có thể thực hiện được, không vi phạm điều cấm của luật, không trái đạo đức xã hội.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin trả lời câu hỏi của bạn về điều kiện đối với đối tượng của hợp đồng dịch vụ theo quy định của pháp luật Việt Nam như sau:\n\nCăn cứ theo **Bộ luật Dân sự số 91/2015/QH13** được Quốc hội nước CHXHCN Việt Nam thông qua ngày 24/11/2015 (có hiệu lực thi hành từ ngày 01/01/2017), các quy định pháp lý liên quan đến đối tượng của hợp đồng dịch vụ bao gồm:\n\n### 1. Định nghĩa về đối tượng của hợp đồng dịch vụ\nCăn cứ tại **Điều 513 Bộ luật Dân sự 2015** quy định về khái niệm hợp đồng dịch vụ:\n> *\"Hợp đồng dịch vụ là sự thỏa thuận giữa các bên, theo đó bên cung ứng dịch vụ thực hiện công việc cho bên sử dụng dịch vụ, bên sử dụng dịch vụ phải trả tiền dịch vụ cho bên cung ứng dịch vụ.\"*\n\nNhư vậy, **đối tượng của hợp đồng dịch vụ chính là công việc có thể thực hiện được và không vi phạm điều cấm của luật, không trái đạo đức xã hội** mà bên cung ứng dịch vụ phải thực hiện theo yêu cầu của bên sử dụng dịch vụ.\n\n### 2. Điều kiện pháp lý đối với đối tượng của hợp đồng dịch vụ\nDo hợp đồng dịch vụ là một loại cụ thể của hợp đồng dân sự, nên đối tượng của hợp đồng dịch vụ bắt buộc phải tuân thủ các điều kiện chung về đối tượng của hợp đồng được quy định tại **Điều 400 và Điều 407 Bộ luật Dân sự 2015**, đồng thời dẫn chiếu đến quy định về đối tượng của giao dịch dân sự tại **Điều 117 và Điều 123 Bộ luật Dân sự 2015**. Cụ thể:\n\n*   **Thứ nhất, công việc là đối tượng của hợp đồng phải thực hiện được trên thực tế:** \n    Công việc đó phải khả thi, bên cung ứng dịch vụ có đủ năng lực, điều kiện để thực hiện. Nếu công việc không thể thực hiện được ngay từ khi giao kết hợp đồng thì hợp đồng có thể bị vô hiệu do không thể thực hiện được.\n*   **Thứ hai, công việc không vi phạm điều cấm của luật:** \n    Căn cứ khoản **Điều 123 Bộ luật Dân sự 2015** về giao dịch dân sự có mục đích, nội dung vi phạm điều cấm của luật, trái đạo đức xã hội: Điều cấm của luật là những quy định của luật không cho phép chủ thể thực hiện những hành vi nhất định. Đối tượng của hợp đồng dịch vụ tuyệt đối không được vi phạm các điều cấm này.\n*   **Thứ ba, công việc không trái đạo đức xã hội:** \n    Căn cứ khoản **Điều 123 Bộ luật Dân sự 2015**, đạo đức xã hội là những chuẩn mực ứng xử chung trong đời sống xã hội được cộng đồng thừa nhận và tôn trọng. Công việc thuê dịch vụ không được trái với các chuẩn mực này (ví dụ: không được ký hợp đồng dịch vụ liên quan đến các hành vi đồi trụy, xâm phạm thuần phong mỹ tục...).\n\n### Tóm lại:\nTheo pháp luật dân sự Việt Nam hiện hành (Bộ luật Dân sự 2015), đối tượng của hợp đồng dịch vụ là **công việc có thể thực hiện được**, và điều kiện bắt buộc là công việc đó **không được vi phạm điều cấm của luật và không trái đạo đức xã hội**.",
+        "laws_matched": 1,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      },
+      "branch_b_rag": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin trả lời câu hỏi của bạn về điều kiện đối với đối tượng của hợp đồng dịch vụ theo quy định pháp luật như sau:\n\nCăn cứ theo quy định tại Điều 514 Bộ luật Dân sự số 91/2015/QH13 ngày 24 tháng 11 năm 2015 của Quốc hội, đối tượng của hợp đồng dịch vụ là công việc, và công việc đó phải đáp ứng các điều kiện sau:\n1. Là công việc có thể thực hiện được.\n2. Không vi phạm điều cấm của luật.\n3. Không trái đạo đức xã hội.\n\nTrên đây là nội dung tư vấn pháp lý dựa trên các quy định được cung cấp. Nếu bạn có thêm thắc mắc nào khác, xin vui lòng trao đổi để được giải đáp chi tiết.",
+        "citations_count": 1,
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      }
+    },
+    {
+      "id": "TC_FACT_03",
+      "category": "Fact Retrieval",
+      "question": "Bên sử dụng dịch vụ có những nghĩa vụ gì theo Điều 515 Bộ luật Dân sự 2015?",
+      "ground_truth": "Theo Điều 515 Bộ luật Dân sự 2015, bên sử dụng dịch vụ có các nghĩa vụ: Cung cấp cho bên cung ứng dịch vụ thông tin, tài liệu và các phương tiện cần thiết để thực hiện công việc, nếu có thỏa thuận hoặc việc thực hiện công việc đòi hỏi; và Trả tiền dịch vụ cho bên cung ứng dịch vụ theo thỏa thuận.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin trả lời câu hỏi của bạn dựa trên quy định của pháp luật Việt Nam hiện hành như sau:\n\nTheo quy định tại **Điều 515 Bộ luật Dân sự số 91/2015/QH13** có hiệu lực thi hành từ ngày 01/01/2017, bên sử dụng dịch vụ có các nghĩa vụ sau đây:\n\n1. **Thanh toán tiền dịch vụ:** Phải trả tiền dịch vụ cho bên cung ứng dịch vụ theo thỏa thuận (Khoản 1 Điều 515).\n2. **Cung cấp thông tin, tài liệu và phương tiện:** Phải cung cấp kịp thời thông tin, tài liệu và phương tiện cần thiết để thực hiện công việc, nếu có thỏa thuận hoặc theo yêu cầu của bên cung ứng dịch vụ (Khoản 2 Điều 515).\n3. **Phối hợp thực hiện công việc:** Trường hợp việc thực hiện dịch vụ đòi hỏi sự có mặt của bên sử dụng dịch vụ, bên sử dụng dịch vụ phải có mặt (Khoản 3 Điều 515).\n\nTrên đây là các nghĩa vụ pháp lý cụ thể của bên sử dụng dịch vụ theo đúng quy định tại Bộ luật Dân sự 2015. Trân trọng thông tin đến bạn!",
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      },
+      "branch_b_rag": {
+        "answer": "Theo quy định tại Điều 515 Bộ luật Dân sự số 91/2015/QH13 ngày 24 tháng 11 năm 2015 của Quốc hội, bên sử dụng dịch vụ có các nghĩa vụ sau đây:\n\n1. Cung cấp cho bên cung ứng dịch vụ thông tin, tài liệu và các phương tiện cần thiết để thực hiện công việc, nếu có thỏa thuận hoặc việc thực hiện công việc đòi hỏi.\n2. Trả tiền dịch vụ cho bên cung ứng dịch vụ theo thỏa thuận.",
+        "citations_count": 1,
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      }
+    },
+    {
+      "id": "TC_FACT_04",
+      "category": "Fact Retrieval",
+      "question": "Bên sử dụng dịch vụ có quyền đơn phương chấm dứt hợp đồng khi bên cung ứng vi phạm nghiêm trọng nghĩa vụ không?",
+      "ground_truth": "Theo khoản 2 Điều 516 Bộ luật Dân sự 2015, trường hợp bên cung ứng dịch vụ vi phạm nghiêm trọng nghĩa vụ thì bên sử dụng dịch vụ có quyền đơn phương chấm dứt thực hiện hợp đồng và yêu cầu bồi thường thiệt hại.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý về hợp đồng dịch vụ tại Việt Nam, tôi xin trả lời câu hỏi của bạn như sau:\n\n**Bên sử dụng dịch vụ CÓ QUYỀN đơn phương chấm dứt thực hiện hợp đồng** khi bên cung ứng dịch vụ vi phạm nghiêm trọng nghĩa vụ. \n\nCăn cứ pháp lý cụ thể được quy định tại **Bộ luật Dân sự số 91/2015/QH13** được Quốc hội nước CHXHCN Việt Nam thông qua ngày 24/11/2015, cụ thể như sau:\n\n1. **Tại Khoản 2 Điều 517 Bộ luật Dân sự 2015** quy định về quyền của bên sử dụng dịch vụ:\n> *\"2. Đơn phương chấm dứt thực hiện hợp đồng và yêu cầu bồi thường thiệt hại nếu bên cung ứng dịch vụ vi phạm nghiêm trọng nghĩa vụ.\"*\n\n2. **Tại Điểm b Khoản 1 Điều 428 Bộ luật Dân sự 2015** về việc đơn phương chấm dứt thực hiện hợp đồng (áp dụng chung cho các loại hợp đồng, bao gồm hợp đồng dịch vụ):\n> *\"1. Một bên có quyền đơn phương chấm dứt thực hiện hợp đồng và không phải bồi thường thiệt hại khi bên kia vi phạm nghiêm trọng nghĩa vụ trong hợp đồng hoặc các bên có thỏa thuận hoặc pháp luật có quy định khác.\"*\n\n**Lưu ý thêm về thủ tục:** \nTheo Khoản 3 Điều 428 Bộ luật Dân sự 2015, khi bạn đơn phương chấm dứt hợp đồng, bạn phải thông báo ngay cho bên cung ứng dịch vụ biết về việc chấm dứt hợp đồng; nếu không thông báo mà gây thiệt hại thì phải bồi thường. Hợp đồng chấm dứt kể từ thời điểm bên kia nhận được thông báo chấm dứt.",
+        "laws_matched": 1,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      },
+      "branch_b_rag": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin giải đáp thắc mắc của bạn dựa trên các quy định hiện hành như sau:\n\nBên sử dụng dịch vụ **hoàn toàn có quyền** đơn phương chấm dứt thực hiện hợp đồng khi bên cung ứng dịch vụ vi phạm nghiêm trọng nghĩa vụ. Cụ thể, các quy định pháp luật liên quan vấn đề này được thể hiện như sau:\n\n- Theo quy định tại khoản 2 Điều 516 Bộ luật Dân sự số 91/2015/QH13 ngày 24 tháng 11 năm 2015 của Quốc hội: *\"Trường hợp bên cung ứng dịch vụ vi phạm nghiêm trọng nghĩa vụ thì bên sử dụng dịch vụ có quyền đơn phương chấm dứt thực hiện hợp đồng và yêu cầu bồi thường thiệt hại\"*.\n- Quy định này cũng được ghi nhận cụ thể tại khoản 2 Điều 520 Bộ luật Dân sự số 91/2015/QH13 về việc: *\"Trường hợp bên sử dụng dịch vụ vi phạm nghiêm trọng nghĩa vụ thì bên cung ứng dịch vụ có quyền đơn phương chấm dứt thực hiện hợp đồng và yêu cầu bồi thường thiệt hại\"* (đồng thời, nguyên tắc chung về quyền đơn phương chấm dứt khi có vi phạm nghiêm trọng cũng được quy định tại khoản 1 Điều 428 Bộ luật Dân sự số 91/2015/QH13).\n\nNhư vậy, khi bên cung ứng dịch vụ có hành vi vi phạm nghiêm trọng nghĩa vụ, bên sử dụng dịch vụ có quyền đơn phương chấm dứt hợp đồng và yêu cầu bồi thường thiệt hại theo đúng quy định của pháp luật.",
+        "citations_count": 3,
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      }
+    },
+    {
+      "id": "TC_FACT_05",
+      "category": "Fact Retrieval",
+      "question": "Bên cung ứng dịch vụ có được tự ý giao công việc cho người khác thực hiện thay không theo Điều 517 BLDS?",
+      "ground_truth": "Theo khoản 2 Điều 517 Bộ luật Dân sự 2015, bên cung ứng dịch vụ không được giao cho người khác thực hiện thay công việc nếu không có sự đồng ý của bên sử dụng dịch vụ.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, tôi là chuyên gia tư vấn pháp lý. Dựa trên quy định của pháp luật Việt Nam hiện hành, tôi xin trả lời câu hỏi của bạn như sau:\n\nCăn cứ theo **Bộ luật Dân sự số 91/2015/QH13** được Quốc hội nước CHXHCN Việt Nam thông qua ngày 24/11/2015 (có hiệu lực thi hành từ ngày 01/01/2017), quy định tại **Điều 517 về \"Nghĩa vụ của bên cung ứng dịch vụ\"**:\n\nBên cung ứng dịch vụ **KHÔNG** được tự ý giao công việc cho người khác thực hiện thay (giao lại cho bên thứ ba), trừ trường hợp có thỏa thuận khác giữa hai bên. \n\nCụ thể, căn cứ pháp lý được quy định tại **Khoản 2 Điều 517 Bộ luật Dân sự 2015**, nghĩa vụ của bên cung ứng dịch vụ bao gồm:\n\n> *\"2. Phực hiện công việc đúng chất lượng, số lượng, thời hạn, địa điểm và các thỏa thuận khác;\"*\n\nVà để làm rõ hơn vấn đề này, tại **Điều 519 Bộ luật Dân sự 2015** về **\"Giao kết hợp đồng thực hiện công việc cho người thứ ba\"** quy định rất rõ ràng như sau:\n\n> *\"Bên cung ứng dịch vụ có thể giao cho người thứ ba thực hiện công việc nếu có **sự đồng ý** của bên sử dụng dịch vụ, nhưng vẫn phải chịu trách nhiệm trước bên sử dụng dịch vụ về việc thực hiện công việc.\"*\n\n**Tóm lại:** \nTheo các quy định nêu trên, bên cung ứng dịch vụ **không được tự ý** giao việc cho người khác làm thay. Việc giao cho người thứ ba thực hiện chỉ hợp pháp khi có sự **đồng ý** của bên sử dụng dịch vụ (hoặc trong hợp đồng ban đầu đã có thỏa thuận cho phép việc này). Nếu tự ý giao người khác làm thay mà không được sự đồng ý, bên cung ứng dịch vụ sẽ bị coi là vi phạm nghĩa vụ hợp đồng.",
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      },
+      "branch_b_rag": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý về hợp đồng dịch vụ, tôi xin giải đáp thắc mắc của bạn dựa trên cơ sở pháp luật hiện hành như sau:\n\nCăn cứ theo quy định tại khoản 2 Điều 517 Bộ luật Dân sự số 91/2015/QH13 ngày 24 tháng 11 năm 2015 của Quốc hội, bên cung ứng dịch vụ **không được giao cho người khác thực hiện thay công việc nếu không có sự đồng ý của bên sử dụng dịch vụ**.\n\nNhư vậy, việc giao lại công việc cho người thứ ba thực hiện thay chỉ được phép thực hiện khi có sự đồng ý của bên sử dụng dịch vụ. \n\nTrên đây là nội dung tư vấn dựa trên quy định pháp luật được cung cấp. Nếu bạn cần hỗ trợ thêm các vấn đề pháp lý khác, xin vui lòng đặt câu hỏi.",
+        "citations_count": 1,
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      }
+    },
+    {
+      "id": "TC_FACT_06",
+      "category": "Fact Retrieval",
+      "question": "Bên cung ứng dịch vụ có quyền thay đổi điều kiện dịch vụ vì lợi ích của khách hàng mà không cần chờ ý kiến không?",
+      "ground_truth": "Theo khoản 2 Điều 518 Bộ luật Dân sự 2015, bên cung ứng dịch vụ được thay đổi điều kiện dịch vụ vì lợi ích của bên sử dụng dịch vụ mà không nhất thiết phải chờ ý kiến của bên sử dụng dịch vụ, nếu việc chờ ý kiến sẽ gây thiệt hại cho bên sử dụng dịch vụ, nhưng phải báo ngay cho bên sử dụng dịch vụ biết.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin trả lời câu hỏi của bạn dựa trên quy định của pháp luật Việt Nam hiện hành như sau:\n\n**Bên cung ứng dịch vụ KHÔNG CÓ QUYỀN tự ý thay đổi điều kiện dịch vụ** (ngay cả khi việc thay đổi đó vì lợi ích của khách hàng) mà không cần chờ ý kiến của khách hàng, **trừ khi** có thỏa thuận khác trong hợp đồng hoặc pháp luật có quy định khác.\n\n**Căn cứ pháp lý:**\n\n1. **Bộ luật Dân sự số 91/2015/QH13** (có hiệu lực thi hành từ ngày 01/01/2017):\n   * **Điều 385 (Khái niệm hợp đồng):** Định nghĩa hợp đồng là sự thỏa thuận giữa các bên về việc xác lập, thay đổi hoặc chấm dứt quyền, nghĩa vụ dân sự. Do đó, việc thay đổi điều kiện dịch vụ (vốn là nội dung của hợp đồng) đòi hỏi phải có sự thống nhất của các bên.\n   * **Điều 421 (Sửa đổi hợp đồng):** \n     > *\"1. Các bên có thể thỏa thuận sửa đổi hợp đồng.*\n     > *2. Hợp đồng có thể được sửa đổi theo thỏa thuận của các bên hoặc theo quy định tại Điều 420 của Bộ luật này.\"*\n   * **Điều 513 (Hợp đồng dịch vụ):** Quy định bản chất của hợp đồng dịch vụ là sự thỏa thuận giữa các bên, theo đó bên cung ứng dịch vụ thực hiện công việc cho bên sử dụng dịch vụ, còn bên sử dụng dịch vụ phải trả tiền dịch vụ.\n   * **Điều 515 (Nghĩa vụ của bên cung ứng dịch vụ):** \n     > *\"Bên cung ứng dịch vụ có các nghĩa vụ sau đây:*\n     > *1. Thực hiện công việc đúng chất lượng, số lượng, thời hạn, địa điểm và các thỏa thuận khác;*\n     > *...\"*\n\n2. **Luật Bảo vệ quyền lợi người tiêu dùng số 19/2023/QH15** (trong trường hợp khách hàng là người tiêu dùng):\n   * **Điều 25 (Hợp đồng theo mẫu, điều kiện giao dịch chung):** Quy định về việc thay đổi điều kiện giao dịch chung. Tổ chức, cá nhân kinh doanh khi thay đổi điều kiện giao dịch chung phải thông báo cho người tiêu dùng biết trước một thời hạn theo quy định của pháp luật, đồng thời phải đảm bảo quyền lợi của người tiêu dùng. Nếu điều kiện thay đổi làm bất lợi cho người tiêu dùng, họ có quyền đơn phương chấm dứt hợp đồng.\n\n**Kết luận:** \nMặc dù mục đích có thể là vì lợi ích của khách hàng, nhưng hành vi tự ý thay đổi điều kiện dịch vụ mà không thông báo và không chờ ý kiến đồng ý của khách hàng là hành vi vi phạm nguyên tắc tự nguyện, thỏa thuận trong giao kết và thực hiện hợp đồng dân sự theo quy định tại **Điều 385 và Điều 421 Bộ luật Dân sự 2015**. Nếu muốn thay đổi, bên cung ứng dịch vụ bắt buộc phải thông báo và đạt được sự đồng thuận của khách hàng, trừ trường hợp các bên đã có thỏa thuận trước trong hợp đồng (ví dụ: điều khoản cho phép bên cung ứng tự động nâng cấp gói dịch vụ miễn phí để tối ưu hóa trải nghiệm cho khách hàng).",
+        "laws_matched": 1,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      },
+      "branch_b_rag": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin trả lời câu hỏi của bạn dựa trên các quy định pháp luật được cung cấp như sau:\n\nBên cung ứng dịch vụ **có quyền** thay đổi điều kiện dịch vụ vì lợi ích của bên sử dụng dịch vụ mà **không nhất thiết phải chờ ý kiến** của bên sử dụng dịch vụ, **nếu việc chờ ý kiến sẽ gây thiệt hại** cho bên sử dụng dịch vụ. Tuy nhiên, trong trường hợp này, bên cung ứng dịch vụ **phải báo ngay** cho bên sử dụng dịch vụ biết.\n\nCăn cứ pháp lý cho quy định này được thể hiện tại khoản 2 Điều 518 Bộ luật Dân sự số 91/2015/QH13 ngày 24 tháng 11 năm 2015 của Quốc hội.",
+        "citations_count": 1,
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      }
+    },
+    {
+      "id": "TC_FACT_07",
+      "category": "Fact Retrieval",
+      "question": "Thời điểm trả tiền dịch vụ được xác định thế nào nếu các bên không có thỏa thuận theo Điều 519 BLDS?",
+      "ground_truth": "Theo khoản 2 Điều 519 Bộ luật Dân sự 2015, trường hợp không có thỏa thuận về thời hạn trả tiền dịch vụ thì bên sử dụng dịch vụ phải trả tiền dịch vụ vào thời điểm hoàn thành dịch vụ.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý về hợp đồng dịch vụ, tôi xin trả lời câu hỏi của bạn dựa trên quy định của pháp luật Việt Nam hiện hành như sau:\n\nCăn cứ theo **Bộ luật Dân sự số 91/2015/QH13** được Quốc hội nước CHXHCN Việt Nam thông qua ngày 24/11/2015 (có hiệu lực thi hành từ ngày 01/01/2017), thời điểm trả tiền dịch vụ nếu các bên không có thỏa thuận được quy định tại **Khoản 1 Điều 519** về *Thanh toán tiền dịch vụ*, cụ thể như sau:\n\n*“1. Trường hợp các bên không có thỏa thuận về giá dịch vụ, không có quy định về giá dịch vụ theo tiêu chuẩn ngành nghề và cũng không có bất kỳ hướng dẫn nào khác về giá dịch vụ thì giá dịch vụ được tính theo giá thị trường tại thời điểm và địa điểm giao kết hợp đồng dịch vụ; **bên sử dụng dịch vụ phải thanh toán số tiền dịch vụ theo thời điểm hoàn thành công việc, trừ trường hợp có tập quán khác**.”*\n\n**Như vậy, theo quy định pháp luật nêu trên:**\n\nNếu các bên không có thỏa thuận và không có tập quán khác, thời điểm bên sử dụng dịch vụ phải trả tiền dịch vụ được xác định là **thời điểm hoàn thành công việc**.",
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      },
+      "branch_b_rag": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin giải đáp thắc mắc của bạn dựa trên các quy định hiện hành như sau:\n\nCăn cứ theo quy định tại khoản 3 Điều 519 Bộ luật Dân sự số 91/2015/QH13 ngày 24 tháng 11 năm 2015 của Quốc hội, nếu các bên không có thỏa thuận khác, thời điểm và địa điểm trả tiền dịch vụ được xác định là **khi hoàn thành dịch vụ tại địa điểm thực hiện công việc**.",
+        "citations_count": 1,
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      }
+    },
+    {
+      "id": "TC_FACT_08",
+      "category": "Fact Retrieval",
+      "question": "Quy định về đơn phương chấm dứt hợp đồng dịch vụ khi việc tiếp tục không mang lại lợi ích theo Điều 520 BLDS là gì?",
+      "ground_truth": "Theo khoản 1 Điều 520 Bộ luật Dân sự 2015, trường hợp việc tiếp tục thực hiện dịch vụ không mang lại lợi ích cho bên sử dụng dịch vụ thì bên sử dụng dịch vụ có quyền đơn phương chấm dứt thực hiện hợp đồng, nhưng phải báo cho bên cung ứng dịch vụ biết trước một thời gian hợp lý; bên sử dụng dịch vụ phải trả tiền công theo phần dịch vụ mà bên cung ứng dịch vụ đã thực hiện và bồi thường thiệt hại.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý về hợp đồng dịch vụ tại Việt Nam, tôi xin trả lời câu hỏi của bạn dựa trên các quy định pháp luật hiện hành như sau:\n\n### Căn cứ pháp lý:\n*   **Bộ luật Dân sự số 91/2015/QH13** được Quốc hội nước CHXHCN Việt Nam thông qua ngày 24/11/2015 (có hiệu lực thi hành từ ngày 01/01/2017).\n*   **Điều 520.** Đơn phương chấm dứt thực hiện hợp đồng dịch vụ.\n\n---\n\n### Nội dung tư vấn chi tiết về Điều 520 Bộ luật Dân sự 2015:\n\nQuy định cụ thể tại **Điều 520 Bộ luật Dân sự 2015** về quyền đơn phương chấm dứt thực hiện hợp đồng dịch vụ (bao gồm cả trường hợp việc tiếp tục thực hiện hợp đồng không mang lại lợi ích cho một trong các bên) được chia thành các trường hợp sau:\n\n#### 1. Quyền của Bên sử dụng dịch vụ (Khách hàng):\nTheo **Khoản 1 Điều 520 Bộ luật Dân sự 2015**, trường hợp bên sử dụng dịch vụ (Bên thuê) thấy việc tiếp tục thực hiện hợp đồng không mang lại lợi ích cho mình thì có quyền đơn phương chấm dứt thực hiện hợp đồng, với điều kiện:\n*   Phải **thông báo trước** cho bên cung ứng dịch vụ trong một thời hạn hợp lý.\n*   **Nghĩa vụ tài chính:** Phải thanh toán tiền công tương ứng với phần dịch vụ mà bên cung ứng dịch vụ đã thực hiện và phải bồi thường thiệt hại (nếu có thỏa thuận hoặc luật có quy định).\n\n#### 2. Quyền của Bên cung ứng dịch vụ (Bên làm dịch vụ):\nTheo **Khoản 2 Điều 520 Bộ luật Dân sự 2015**, trường hợp bên cung ứng dịch vụ thấy việc tiếp tục thực hiện hợp đồng không mang lại lợi ích cho mình (ví dụ: chi phí thực hiện tăng cao, gặp khó khăn khách quan không thể khắc phục nếu tiếp tục...) thì có quyền đơn phương chấm dứt thực hiện hợp đồng, với điều kiện:\n*   Phải **thông báo trước** cho bên sử dụng dịch vụ trong một thời hạn hợp lý.\n*   **Nghĩa vụ tài chính:** Bên sử dụng dịch vụ phải trả tiền công tương ứng với phần dịch vụ mà bên cung ứng dịch vụ đã thực hiện và phải bồi thường thiệt hại (nếu có thỏa thuận hoặc luật có quy định).\n\n#### 3. Hệ quả pháp lý chung (Khoản 3 Điều 520 Bộ luật Dân sự 2015):\n*   Khi hợp đồng dịch vụ bị đơn phương chấm dứt theo các trường hợp trên, **hợp đồng chấm dứt hiệu lực từ thời điểm bên nhận được thông báo chấm dứt** (trừ trường hợp các bên có thỏa thuận khác).\n*   Các bên không phải tiếp tục thực hiện nghĩa vụ theo hợp đồng, ngoại trừ các thỏa thuận về giải quyết tranh chấp, bồi thường thiệt hại và thanh toán phần dịch vụ đã thực hiện.\n*   Bên đơn phương chấm dứt hợp đồng trái pháp luật (ví dụ: không thông báo trước cho bên kia) ngoài việc phải thanh toán tiền công cho phần dịch vụ đã làm, còn phải chịu trách nhiệm bồi thường thiệt hại theo quy định của pháp luật dân sự.\n\n---\n*Lưu ý thực tiễn:* Trong hợp đồng dịch vụ do hai bên ký kết, các bên thường thỏa thuận cụ thể thế nào là \"thời hạn hợp lý\" (ví dụ: thông báo trước 15 ngày, 30 ngày) và mức bồi thường hoặc phạt vi phạm khi đơn phương chấm dứt. Do đó, bạn cần đối chiếu thêm với nội dung cụ thể trong văn bản hợp đồng đã ký giữa hai bên.",
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      },
+      "branch_b_rag": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin giải đáp quy định về việc đơn phương chấm dứt hợp đồng dịch vụ khi việc tiếp tục thực hiện công việc không có lợi cho bên sử dụng dịch vụ dựa trên các căn cứ pháp luật hiện hành như sau:\n\nTheo quy định tại khoản 1 Điều 520 Bộ luật Dân sự số 91/2015/QH13 ngày 24 tháng 11 năm 2015 của Quốc hội, trường hợp việc tiếp tục thực hiện công việc không có lợi cho bên sử dụng dịch vụ thì bên sử dụng dịch vụ có quyền đơn phương chấm dứt thực hiện hợp đồng, với các điều kiện và nghĩa vụ đi kèm sau đây:\n- Phải thông báo cho bên cung ứng dịch vụ biết trước một thời gian hợp lý.\n- Phải trả tiền công theo phần dịch vụ mà bên cung ứng dịch vụ đã thực hiện.\n- Phải bồi thường thiệt hại (nếu có).",
+        "citations_count": 1,
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      }
+    },
+    {
+      "id": "TC_FACT_09",
+      "category": "Fact Retrieval",
+      "question": "Bên cung ứng dịch vụ có quyền đơn phương chấm dứt hợp đồng khi bên sử dụng dịch vụ không thực hiện nghĩa vụ không?",
+      "ground_truth": "Theo khoản 2 Điều 520 Bộ luật Dân sự 2015, trường hợp bên sử dụng dịch vụ không thực hiện nghĩa vụ của mình hoặc thực hiện không đúng thỏa thuận thì bên cung ứng dịch vụ có quyền đơn phương chấm dứt thực hiện hợp đồng và yêu cầu bồi thường thiệt hại.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý về hợp đồng dịch vụ tại Việt Nam, tôi xin trả lời câu hỏi của bạn như sau:\n\n**BÊN CUNG ỨNG DỊCH VỤ CÓ QUYỀN ĐƠN PHƯƠNG CHẤM DỨT HỢP ĐỒNG KHÔNG?**\n\n**CÓ.** Bên cung ứng dịch vụ có quyền đơn phương chấm dứt thực hiện hợp đồng khi bên sử dụng dịch vụ không thực hiện nghĩa vụ của mình. Tuy nhiên, việc đơn phương chấm dứt này phải tuân thủ nghiêm ngặt các điều kiện và trình tự do pháp luật quy định.\n\n---\n\n### **CĂN CỨ PHÁP LÝ**\n\nCăn cứ theo **Bộ luật Dân sự số 91/2015/QH13** được Quốc hội nước CHXHCN Việt Nam thông qua ngày 24/11/2015 (có hiệu lực thi hành từ ngày 01/01/2017), cụ thể:\n\n#### **1. Quyền đơn phương chấm dứt do vi phạm nghĩa vụ**\n*   **Khoản 1 Điều 428 (Đơn phương chấm dứt thực hiện hợp đồng):**\n    > *\"1. Một bên có quyền đơn phương chấm dứt thực hiện hợp đồng và không phải bồi thường thiệt hại khi bên kia vi phạm nghiêm trọng nghĩa vụ trong hợp đồng hoặc các bên có thỏa thuận hoặc pháp luật có quy định.\"*\n\n#### **2. Áp dụng cụ thể đối với Hợp đồng dịch vụ**\n*   **Điều 513 (Hợp đồng dịch vụ):** Định nghĩa về hợp đồng dịch vụ.\n*   **Điều 517 (Nghĩa vụ của bên sử dụng dịch vụ):** Quy định rõ bên sử dụng dịch vụ phải trả tiền dịch vụ, cung cấp thông tin, tài liệu và phương tiện cần thiết để thực hiện công việc.\n*   **Điều 518 (Quyền của bên cung ứng dịch vụ):** Quy định quyền yêu cầu bên sử dụng dịch vụ thực hiện nghĩa vụ.\n*   **Điều 519 (Đơn phương chấm dứt thực hiện hợp đồng dịch vụ):**\n    > *\"1. Trường hợp bên sử dụng dịch vụ vi phạm nghiêm trọng nghĩa vụ thì bên cung ứng dịch vụ có quyền đơn phương chấm dứt thực hiện hợp đồng và yêu cầu bồi thường thiệt hại.\"*\n\n---\n\n### **CÁC ĐIỀU KIỆN VÀ HỆ QUẢ KHI THỰC HIỆN (CẦN LƯU Ý)**\n\nĐể việc đơn phương chấm dứt hợp đồng dịch vụ hợp pháp và tránh phát sinh tranh chấp bất lợi, bên cung ứng dịch vụ cần lưu ý các quy định tại **Điều 428 Bộ luật Dân sự 2015**, cụ thể:\n\n1.  **Thông báo cho bên kia:** \n    *   Theo **Khoản 3 Điều 428**, khi đơn phương chấm dứt thực hiện hợp đồng, bên đơn phương phải thông báo ngay cho bên kia biết về việc chấm dứt hợp đồng; nếu không thông báo mà gây thiệt hại thì phải bồi thường.\n2.  **Hậu quả pháp lý:**\n    *   Theo **Khoản 4 Điều 428**, khi hợp đồng bị đơn phương chấm dứt thì hợp đồng chấm dứt kể từ thời điểm bên kia nhận được thông báo chấm dứt. Các bên không phải tiếp tục thực hiện nghĩa vụ, trừ thỏa thuận về phạt vi phạm, bồi thường thiệt hại và giải quyết tranh chấp. Bên đã thực hiện nghĩa vụ có quyền yêu cầu bên kia thanh toán phần nghĩa vụ đã thực hiện.\n    *   Theo **Khoản 1 Điều 519**, nếu việc vi phạm của bên sử dụng dịch vụ là nghiêm trọng, bên cung ứng dịch vụ có quyền đơn phương chấm dứt và **có quyền yêu cầu bồi thường thiệt hại**.\n\n**Khuyến nghị thực tế từ chuyên gia:** \nTrước khi tiến hành đơn phương chấm dứt hợp đồng, bạn cần rà soát lại các điều khoản thỏa thuận riêng về vi phạm nghĩa vụ và phạt vi phạm/bồi thường trong hợp đồng đã ký kết (nếu có), đồng thời phải gửi văn bản thông báo/nhắc nhở (thông qua thư bảo đảm, email có xác nhận, hoặc thừa phát lại) cho bên sử dụng dịch vụ về việc họ không thực hiện nghĩa vụ và ấn định thời hạn hợp lý để họ khắc phục trước khi đưa ra quyết định chấm dứt chính thức.",
+        "laws_matched": 1,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      },
+      "branch_b_rag": {
+        "answer": "Dựa trên các quy định pháp luật được cung cấp, quyền đơn phương chấm dứt hợp đồng của bên cung ứng dịch vụ khi bên sử dụng dịch vụ không thực hiện nghĩa vụ được quy định cụ thể như sau:\n\n1. Theo quy định tại khoản 2 Điều 520 Bộ luật Dân sự số 91/2015/QH13 ngày 24 tháng 11 năm 2015 của Quốc hội, trong trường hợp bên sử dụng dịch vụ vi phạm nghiêm trọng nghĩa vụ thì bên cung ứng dịch vụ có quyền đơn phương chấm dứt thực hiện hợp đồng và yêu cầu bồi thường thiệt hại.\n\n2. Ngoài ra, theo quy định tại khoản 1 Điều 428 Bộ luật Dân sự số 91/2015/QH13, một bên có quyền đơn phương chấm dứt thực hiện hợp đồng và không phải bồi thường thiệt hại khi bên kia vi phạm nghiêm trọng nghĩa vụ trong hợp đồng hoặc các bên có thỏa thuận hoặc pháp luật có quy định. Khi thực hiện quyền này, các nghĩa vụ và thủ tục thông báo phải tuân theo các khoản còn lại của Điều 428 Bộ luật Dân sự số 91/2015/QH13.\n\nNhư vậy, bên cung ứng dịch vụ chỉ có quyền đơn phương chấm dứt hợp đồng khi hành vi không thực hiện nghĩa vụ của bên sử dụng dịch vụ cấu thành mức độ **vi phạm nghiêm trọng nghĩa vụ**, hoặc theo thỏa thuận cụ thể giữa các bên trong hợp đồng hoặc theo quy định pháp luật có liên quan.",
+        "citations_count": 2,
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      }
+    },
+    {
+      "id": "TC_FACT_10",
+      "category": "Fact Retrieval",
+      "question": "Hợp đồng dịch vụ hết thời hạn mà bên cung ứng vẫn tiếp tục thực hiện công việc thì được xử lý thế nào theo Điều 521 BLDS?",
+      "ground_truth": "Theo Điều 521 Bộ luật Dân sự 2015, sau khi kết thúc thời hạn thực hiện dịch vụ mà công việc chưa hoàn thành và bên cung ứng dịch vụ vẫn tiếp tục thực hiện công việc, bên sử dụng dịch vụ biết nhưng không phản đối thì hợp đồng dịch vụ đương nhiên được tiếp tục thực hiện theo nội dung và thời hạn đã thỏa thuận cho đến khi công việc hoàn thành.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin trả lời câu hỏi của bạn dựa trên quy định của pháp luật Việt Nam hiện hành như sau:\n\n**Căn cứ pháp lý:** \n- Bộ luật Dân sự số 91/2015/QH13 được Quốc hội nước CHXHCN Việt Nam thông qua ngày 24/11/2015 (gọi tắt là **Bộ luật Dân sự năm 2015**).\n\n---\n\n### Trả lời câu hỏi:\n\nTheo quy định tại **Điều 521 Bộ luật Dân sự năm 2015** về việc *“Tiếp tục thực hiện hợp đồng dịch vụ khi hết thời hạn”*, trường hợp hợp đồng dịch vụ đã hết thời hạn mà công việc chưa hoàn thành và bên cung ứng dịch vụ vẫn tiếp tục thực hiện công việc, bên sử dụng dịch vụ biết mà không phản đối, thì xử lý như sau:\n\n1. **Xác lập hợp đồng mới (Hợp đồng mặc nhiên/gia hạn ngầm định):** \n   Hợp đồng dịch vụ được mặc nhiên tiếp tục theo nội dung đã thỏa thuận cho đến khi công việc hoàn thành, trừ trường hợp các bên có thỏa thuận khác hoặc pháp luật có quy định khác.\n\n2. **Quyền và nghĩa vụ của các bên:** \n   Khi hợp đồng được tiếp tục theo cơ chế này, các quyền và nghĩa vụ của bên cung ứng dịch vụ và bên sử dụng dịch vụ vẫn tiếp tục được duy trì theo các điều khoản đã cam kết trong hợp đồng ban đầu (trừ khi hai bên có thỏa thuận thay đổi mới).",
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      },
+      "branch_b_rag": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin giải đáp thắc mắc của bạn dựa trên các quy định được cung cấp như sau:\n\nTheo quy định tại Điều 521 Bộ luật Dân sự số 91/2015/QH13 ngày 24 tháng 11 năm 2015 của Quốc hội, việc xử lý trong trường hợp hợp đồng dịch vụ đã hết thời hạn thực hiện công việc mà công việc chưa hoàn thành và bên cung ứng dịch vụ vẫn tiếp tục thực hiện được quy định cụ thể như sau:\n\n* Nếu bên sử dụng dịch vụ biết nhưng không phản đối, thì hợp đồng dịch vụ sẽ đương nhiên được tiếp tục thực hiện theo nội dung đã thỏa thuận cho đến khi công việc được hoàn thành.",
+        "citations_count": 1,
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      }
+    },
+    {
+      "id": "TC_FACT_11",
+      "category": "Fact Retrieval",
+      "question": "Trách nhiệm dân sự do vi phạm nghĩa vụ phát sinh khi nào theo Điều 351 Bộ luật Dân sự 2015?",
+      "ground_truth": "Theo khoản 1 Điều 351 Bộ luật Dân sự 2015, bên có nghĩa vụ mà vi phạm nghĩa vụ thì phải chịu trách nhiệm dân sự đối với bên có quyền. Vi phạm nghĩa vụ là việc bên có nghĩa vụ không thực hiện nghĩa vụ đúng thời hạn, thực hiện không đầy đủ nghĩa vụ hoặc thực hiện không đúng nội dung của nghĩa vụ.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý về hợp đồng dịch vụ tại Việt Nam, tôi xin trả lời câu hỏi của bạn dựa trên quy định pháp luật hiện hành như sau:\n\nCăn cứ theo **Điều 351 Bộ luật Dân sự số 91/2015/QH13** có hiệu lực thi hành từ ngày 01/01/2017, trách nhiệm dân sự do vi phạm nghĩa vụ phát sinh khi có đủ các điều kiện luật định sau đây:\n\n**1. Điều kiện phát sinh trách nhiệm dân sự do vi phạm nghĩa vụ:**\nCăn cứ theo **Khoản 1 Điều 351 Bộ luật Dân sự 2015**, trách nhiệm dân sự do vi phạm nghĩa vụ phát sinh khi một bên có hành vi vi phạm nghĩa vụ. Cụ thể:\n*   Bên có nghĩa vụ không thực hiện, thực hiện không đúng hoặc thực hiện không đầy đủ nghĩa vụ đã cam kết hoặc theo quy định của pháp luật.\n\n**2. Miễn trách nhiệm dân sự do vi phạm nghĩa vụ (Sự kiện bất khả kháng):**\nĐể làm rõ hơn thời điểm và căn cứ phát sinh, luật cũng quy định rõ trường hợp được miễn trách nhiệm tại **Khoản 2 Điều 351 Bộ luật Dân sự 2015**:\n*   Trường hợp bên có nghĩa vụ vi phạm nghĩa vụ hoàn toàn do lỗi của bên còn lại thì không phải chịu trách nhiệm dân sự.\n*   Bên có nghĩa vụ vi phạm nghĩa vụ không phải chịu trách nhiệm dân sự nếu việc vi phạm nghĩa vụ xảy ra hoàn toàn do **sự kiện bất khả kháng**, trừ trường hợp có thỏa thuận khác hoặc pháp luật có quy định khác. *(Sự kiện bất khả kháng được định nghĩa tại Khoản 1 Điều 156 Bộ luật Dân sự 2015 là sự kiện khách quan không thể lường trước được và không thể khắc phục được mặc dù đã áp dụng mọi biện pháp cần thiết và khả năng cho phép).*\n\n**3. Nghĩa vụ chứng minh (Khoản 3 Điều 351 Bộ luật Dân sự 2015):**\n*   Trong tranh chấp hợp đồng dịch vụ, khi có vi phạm xảy ra, **bên có nghĩa vụ phải chứng minh mình bị vi phạm nghĩa vụ** (tức là chứng minh lỗi hoặc sự kiện miễn trách nhiệm như sự kiện bất khả kháng để được miễn trách nhiệm dân sự).\n\n**Tóm lại:** Trách nhiệm dân sự do vi phạm nghĩa vụ theo Điều 351 Bộ luật Dân sự 2015 phát sinh **ngay khi bên có nghĩa vụ không thực hiện, thực hiện không đúng hoặc không đầy đủ nghĩa vụ** mà sự vi phạm đó không thuộc trường hợp được miễn trách nhiệm (do lỗi hoàn toàn của bên bị vi phạm hoặc do sự kiện bất khả kháng).",
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      },
+      "branch_b_rag": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin giải đáp thắc mắc của bạn dựa trên các quy định được cung cấp như sau:\n\nTheo quy định tại khoản 1 Điều 351 Bộ luật Dân sự số 91/2015/QH13 ngày 24 tháng 11 năm 2015 của Quốc hội, trách nhiệm dân sự do vi phạm nghĩa vụ phát sinh khi **bên có nghĩa vụ mà vi phạm nghĩa vụ** đối với bên có quyền. \n\nTrong đó, hành vi vi phạm nghĩa vụ được hiểu là việc bên có nghĩa vụ không thực hiện nghĩa vụ đúng thời hạn, thực hiện không đầy đủ nghĩa vụ hoặc thực hiện không đúng nội dung của nghĩa vụ.\n\nBên cạnh đó, pháp luật cũng quy định các trường hợp miễn trách nhiệm dân sự tại khoản 2 và khoản 3 Điều 351 Bộ luật Dân sự số 91/2015/QH13 như sau:\n- Trường hợp bên có nghĩa vụ không thực hiện đúng nghĩa vụ do **sự kiện bất khả kháng** thì không phải chịu trách nhiệm dân sự, trừ trường hợp có thỏa thuận khác hoặc pháp luật có quy định khác.\n- Bên có nghĩa vụ **không phải chịu trách nhiệm dân sự** nếu chứng minh được nghĩa vụ không thực hiện được là **hoàn toàn do lỗi của bên có quyền**.",
+        "citations_count": 1,
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      }
+    },
+    {
+      "id": "TC_FACT_12",
+      "category": "Fact Retrieval",
+      "question": "Khi nào bên vi phạm nghĩa vụ được miễn trách nhiệm dân sự theo khoản 2 Điều 351 BLDS 2015?",
+      "ground_truth": "Theo khoản 2 Điều 351 Bộ luật Dân sự 2015, trường hợp bên có nghĩa vụ không thực hiện đúng nghĩa vụ do sự kiện bất khả kháng thì không phải chịu trách nhiệm dân sự, trừ trường hợp có thỏa thuận khác hoặc luật có quy định khác.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý về hợp đồng dịch vụ tại Việt Nam, tôi xin trả lời câu hỏi của bạn dựa trên quy định của pháp luật hiện hành như sau:\n\nCăn cứ theo quy định tại **Khoản 2 Điều 351 Bộ luật Dân sự số 91/2015/QH13** có hiệu lực ngày 01/01/2015, trường hợp bên vi phạm nghĩa vụ được miễn trách nhiệm dân sự được quy định cụ thể như sau:\n\nBên vi phạm nghĩa vụ hoàn toàn không phải chịu trách nhiệm dân sự trong trường hợp nghĩa vụ không thể thực hiện được do **sự kiện bất khả kháng**.\n\n---\n\n### **Phân tích chi tiết căn cứ pháp lý liên quan:**\n\n1. **Định nghĩa Sự kiện bất khả kháng:**\n   * Căn cứ theo **Khoản 1 Điều 156 Bộ luật Dân sự số 91/2015/QH13**, sự kiện bất khả kháng là sự kiện xảy ra một cách khách quan không thể lường trước được và không thể khắc phục được mặc dù đã áp dụng mọi biện pháp cần thiết và khả năng cho phép.\n\n2. **Điều kiện để được miễn trách nhiệm:**\n   Để được miễn trách nhiệm dân sự khi vi phạm nghĩa vụ hợp đồng dịch vụ do sự kiện bất khả kháng, bên vi phạm phải đáp ứng đồng thời các điều kiện sau:\n   * Có hành vi vi phạm nghĩa vụ (không thực hiện hoặc thực hiện không đúng, không đầy đủ dịch vụ).\n   * Nguyên nhân của việc vi phạm hoàn toàn do sự kiện bất khả kháng (thỏa mãn 3 yếu tố tại Khoản 1 Điều 156: Khách quan, không thể lường trước, không thể khắc phục).\n   * **Nghĩa vụ chứng minh:** Căn cứ theo **Khoản 2 Điều 351 Bộ luật Dân sự số 91/2015/QH13**, bên vi phạm nghĩa vụ phải có nghĩa vụ chứng minh trường hợp được miễn trách nhiệm (trừ trường hợp có thỏa thuận khác hoặc luật có quy định khác).\n\n*Lưu ý trong thực tiễn hợp đồng dịch vụ:* Các bên có thể thỏa thuận thêm về các trường hợp miễn trách nhiệm khác (như lỗi của bên thứ ba, sự thay đổi cơ bản của hoàn cảnh theo Điều 420 Bộ luật Dân sự 2015) nhưng thỏa thuận đó không được trái với quy định của pháp luật.",
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      },
+      "branch_b_rag": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin trả lời câu hỏi của bạn dựa trên quy định tại phần căn cứ pháp lý như sau:\n\nTheo quy định tại khoản 2 Điều 351 Bộ luật Dân sự số 91/2015/QH13 ngày 24 tháng 11 năm 2015 của Quốc hội, bên có nghĩa vụ không thực hiện đúng nghĩa vụ được miễn trách nhiệm dân sự trong trường hợp:\n\n* Do **sự kiện bất khả kháng**.\n\nTuy nhiên, việc miễn trách nhiệm này sẽ **không áp dụng** (vẫn phải chịu trách nhiệm dân sự) nếu các bên có thỏa thuận khác hoặc pháp luật có quy định khác.",
+        "citations_count": 1,
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      }
+    },
+    {
+      "id": "TC_FACT_13",
+      "category": "Fact Retrieval",
+      "question": "Trách nhiệm bồi thường thiệt hại do vi phạm nghĩa vụ được quy định như thế nào tại Điều 360 BLDS 2015?",
+      "ground_truth": "Theo Điều 360 Bộ luật Dân sự 2015, trường hợp có thiệt hại do vi phạm nghĩa vụ gây ra thì bên có nghĩa vụ phải bồi thường toàn bộ thiệt hại, trừ trường hợp có thỏa thuận khác hoặc luật có quy định khác.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý về hợp đồng dịch vụ tại Việt Nam, tôi xin trả lời câu hỏi của bạn dựa trên quy định pháp luật hiện hành như sau:\n\n**Căn cứ pháp lý:** \n- Bộ luật Dân sự số 91/2015/QH13 được Quốc hội nước CHXHCN Việt Nam thông qua ngày 24/11/2015 (viết tắt là **BLDS 2015**).\n\n---\n\n### NỘI DUNG TƯ VẤN VỀ TRÁCH NHIỆM BỒI THƯỜNG THIỆT HẠI DO VI PHẠM NGHĨA VỤ (ĐIỀU 360 BLDS 2015)\n\nTheo quy định tại **Điều 360 BLDS 2015**, trách nhiệm bồi thường thiệt hại do vi phạm nghĩa vụ được quy định cụ thể như sau:\n\n> *\"Trách nhiệm bồi thường thiệt hại do vi phạm nghĩa vụ\n> Trách nhiệm bồi thường thiệt hại ngoài hợp đồng, trách nhiệm bồi thường thiệt hại do vi phạm hợp đồng bao gồm trách nhiệm bồi thường tổn thất về vật chất, bù đắp tổn thất về tinh thần. Người có nghĩa vụ vi phạm nghĩa vụ phải bồi thường toàn bộ thiệt hại trừ trường hợp có thỏa thuận khác hoặc luật cói quy định khác.\"*\n\nTừ quy định trên, dưới góc độ pháp lý hợp đồng dịch vụ, chúng ta cần lưu ý các điểm cốt lõi sau:\n\n#### 1. Phạm vi bồi thường thiệt hại\nTrách nhiệm bồi thường thiệt hại bao gồm hai cấu phần:\n*   **Tổn thất về vật chất:** Là những tổn thất thực tế, tính được bằng tiền (ví dụ: chi phí hợp lý để ngăn chặn, hạn chế thiệt hại, tài sản bị mất mát, hư hỏng, lợi ích gắn liền với việc sử dụng, khai thác tài sản...).\n*   **Bù đắp tổn thất về tinh thần:** Áp dụng trong trường hợp quyền nhân thân bị xâm phạm (mặc dù ít phổ biến hơn trong các tranh chấp thuần túy về dịch vụ thương mại, nhưng vẫn là một nguyên tắc chung của pháp luật dân sự).\n\n#### 2. Nguyên tắc bồi thường\n*   **Bồi thường toàn bộ:** Nguyên tắc chung là người vi phạm nghĩa vụ (ví dụ: bên cung ứng dịch vụ vi phạm cam kết hoặc bên thuê dịch vụ vi phạm nghĩa vụ thanh toán/hợp tác) phải bồi thường **toàn bộ** thiệt hại thực tế đã xảy ra.\n*   **Ngoại lệ:** Nguyên tắc \"bồi thường toàn bộ\" sẽ không áp dụng nếu:\n    *   Các bên có **thỏa thuận khác** trong hợp đồng dịch vụ (ví dụ: thỏa thuận giới hạn mức bồi thường tối đa, thỏa thuận miễn trừ trách nhiệm trong một số trường hợp nhất định không trái pháp luật và đạo đức xã hội).\n    *   **Pháp luật có quy định khác** (ví dụ: một số luật chuyên ngành có quy định riêng về giới hạn trách nhiệm bồi thường).\n\n#### 3. Điều kiện phát sinh trách nhiệm bồi thường thiệt hại (kết hợp với các điều luật lân cận trong BLDS 2015)\nĐể một bên phải chịu trách nhiệm bồi thường theo Điều 360 BLDS 2015, trên thực tế áp dụng cần thỏa mãn các yếu tố:\n1.  Có hành vi vi phạm nghĩa vụ (vi phạm cam kết trong hợp đồng dịch vụ).\n2.  Có thiệt hại thực tế xảy ra.\n3.  Có mối quan hệ nhân quả giữa hành vi vi phạm và thiệt hại xảy ra.\n*(Lưu ý: Theo Điều 351 BLDS 2015 về Trách nhiệm dân sự do vi phạm nghĩa vụ, bên vi phạm không phải bồi thường thiệt hại nếu nghĩa vụ không thể thực hiện được hoàn toàn do sự kiện bất khả kháng, trừ trường hợp có thỏa thuận khác hoặc pháp luật có quy định khác).*\n\nTrên đây là nội dung tư vấn pháp lý chính xác và đầy đủ dựa trên Điều 360 BLDS 2015 áp dụng cho việc thực hiện hợp đồng dịch vụ tại Việt Nam. Nếu bạn cần soạn thảo hoặc rà soát điều khoản bồi thường thiệt hại trong hợp đồng cụ thể, vui lòng cung cấp thêm thông tin chi tiết.",
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      },
+      "branch_b_rag": {
+        "answer": "Theo quy định tại Điều 360 Bộ luật Dân sự số 91/2015/QH13 ngày 24 tháng 11 năm 2015 của Quốc hội về trách nhiệm bồi thường thiệt hại do vi phạm nghĩa vụ, trường hợp có thiệt hại do vi phạm nghĩa vụ gây ra thì bên có nghĩa vụ phải bồi thường toàn bộ thiệt hại, trừ trường hợp có thỏa thuận khác hoặc luật có quy định khác.",
+        "citations_count": 1,
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      }
+    },
+    {
+      "id": "TC_FACT_14",
+      "category": "Fact Retrieval",
+      "question": "Phạt vi phạm theo Bộ luật Dân sự 2015 có được áp dụng đồng thời với bồi thường thiệt hại không?",
+      "ground_truth": "Theo khoản 2 Điều 418 Bộ luật Dân sự 2015, các bên có thể thỏa thuận về việc bên vi phạm nghĩa vụ chỉ phải chịu phạt vi phạm mà không phải bồi thường thiệt hại hoặc vừa phải chịu phạt vi phạm và vừa phải bồi thường thiệt hại. Nếu có thỏa thuận phạt vi phạm nhưng không thỏa thuận về bồi thường thiệt hại thì bên vi phạm chỉ phải chịu phạt vi phạm.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin trả lời câu hỏi của bạn dựa trên quy định của pháp luật Việt Nam hiện hành như sau:\n\n**Phạt vi phạm hoàn toàn có thể được áp dụng đồng thời với bồi thường thiệt hại**, nếu các bên có thỏa thuận hoặc pháp luật có quy định. \n\n**Căn cứ pháp lý:**\n*   **Bộ luật Dân sự số 91/2015/QH13** được Quốc hội thông qua ngày 24/11/2015 (có hiệu lực thi hành từ ngày 01/01/2017):\n    *   **Điều 363 (Phạt vi phạm):** Quy định *\"Phạt vi phạm là sự thỏa thuận giữa các bên trong hợp đồng hoặc pháp luật có quy định về việc bên vi phạm nghĩa vụ phải nộp một khoản tiền cho bên bị vi phạm do vi phạm hợp đồng.\"*\n    *   **Điều 419 (Thiệt hại được bồi thường do vi phạm hợp đồng):** Khoản 3 Điều này quy định rõ: *\"Trường hợp có thỏa thuận phạt vi phạm thì bên bị vi phạm có quyền yêu cầu phạt vi phạm và bồi thường thiệt hại, trừ trường hợp luật liên quan có quy định khác.\"*\n\n**Lưu ý quan trọng trong thực tiễn áp dụng:**\n1. **Đối với Hợp đồng dịch vụ thông/dân sự:** Việc áp dụng đồng thời phạt vi phạm và bồi thường thiệt hại được thực hiện theo nguyên tắc tự do thỏa thuận của các bên (Khoản 3 Điều 419 Bộ luật Dân sự 2015). Nếu các bên có thỏa thuận trong hợp đồng dịch vụ là được áp dụng cả hai, thì khi có vi phạm xảy ra, bên bị vi phạm được quyền yêu cầu cả tiền phạt vi phạm và tiền bồi thường thiệt hại.\n2. **Mức phạt vi phạm:** \n   * Nếu là quan hệ dân sự thông thuần (theo Bộ luật Dân sự 2015): Pháp luật không giới hạn mức phạt vi phạm tối đa, hoàn toàn do các bên thỏa thuận.\n   * *Lưu ý ngoại lệ:* Nếu hợp đồng dịch vụ của bạn thuộc các lĩnh vực đặc thù có luật chuyên ngành chi phối (ví dụ: Luật Thương mại 2005 đối với dịch vụ thương mại, Luật Xây dựng đối với dịch vụ tư vấn xây dựng...), mức phạt vi phạm có thể bị khống chế bởi trần do luật chuyên ngành đó quy định (ví dụ: tối đa không quá 8% giá trị phần nghĩa vụ hợp đồng bị vi phạm theo Điều 301 Luật Thương mại 2005).",
+        "laws_matched": 1,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      },
+      "branch_b_rag": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin giải đáp thắc mắc của bạn về việc áp dụng đồng thời chế tài phạt vi phạm và bồi thường thiệt hại theo quy định tại Bộ luật Dân sự số 91/2015/QH13 ngày 24 tháng 11 năm 2015 của Quốc hội như sau:\n\nTheo quy định tại khoản 3 Điều 418 Bộ luật Dân sự số 91/2015/QH13, việc áp dụng đồng thời phạt vi phạm và bồi thường thiệt hại phụ thuộc vào sự thỏa thuận của các bên:\n\n1. **Trường hợp có thỏa thuận:** Các bên hoàn toàn có quyền thỏa thuận trong hợp đồng về việc bên vi phạm nghĩa vụ **vừa phải chịu phạt vi phạm và vừa phải bồi thường thiệt hại**.\n2. **Trường hợp không có thỏa thuận cụ thể:** Nếu các bên có thỏa thuận về việc phạt vi phạm nhưng **không** có thỏa thuận về việc vừa phải chịu phạt vi phạm vừa phải bồi thường thiệt hại, thì bên vi phạm nghĩa vụ **chỉ phải chịu phạt vi phạm**. \n\nNhư vậy, theo Bộ luật Dân sự 2015, chế tài phạt vi phạm chỉ được áp dụng đồng thời với bồi thường thiệt hại khi các bên có thỏa thuận rõ ràng về vấn đề này trong hợp đồng.",
+        "citations_count": 1,
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      }
+    },
+    {
+      "id": "TC_FACT_15",
+      "category": "Fact Retrieval",
+      "question": "Thiệt hại được bồi thường do vi phạm hợp đồng bao gồm những gì theo Điều 419 BLDS 2015?",
+      "ground_truth": "Theo Điều 419 Bộ luật Dân sự 2015, thiệt hại được bồi thường do vi phạm hợp đồng gồm: thiệt hại vật chất thực tế xác định được (tổn thất về tài sản, chi phí hợp lý để ngăn chặn, hạn chế, khắc phục thiệt hại, thu nhập thực tế bị mất/giảm sút) và thiệt hại về tinh thần do xâm phạm đến tính mạng, sức khỏe, danh dự, nhân phẩm, uy tín.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin trả lời câu hỏi của bạn dựa trên quy định pháp luật hiện hành của Việt Nam như sau:\n\nCăn cứ theo quy định tại **Điều 419 Bộ luật Dân sự số 91/2015/QH13** có hiệu lực thi hành từ ngày 01/01/2017, thiệt hại được bồi thường do vi phạm hợp đồng bao gồm các thành phần sau đây:\n\n**1. Thiệt hại vật chất bao gồm:**\n*   **Thiệt hại thực tế trực tiếp do vi phạm hợp đồng gây ra:** Là những tổn thất vật chất thực tế, rõ ràng mà bên vi phạm đã gây ra cho bên bị vi phạm, bao gồm tài sản bị mất, bị huỷ hoại hoặc bị hư hỏng (Khoản 1 và Khoản 2 Điều 419).\n*   **Chi phí phát sinh để ngăn chặn, hạn chế, khắc phục thiệt hại:** Là những chi phí hợp lý mà bên bị vi phạm phải bỏ ra để ngăn chặn, hạn chế hoặc khắc phục hậu quả do hành vi vi phạm hợp đồng gây ra (Khoản 1 Điều 419).\n*   **Lợi ích mà đáng lẽ ra bên bị vi phạm sẽ được hưởng nếu không có vi phạm:** Khoản lợi ích này nếu không có hành vi vi phạm hợp đồng thì bên bị vi phạm đã thu được từ hợp đồng (Khoản 1 Điều 419).\n\n**2. Thiệt hại về tinh thần:**\n*   Theo quy định tại **Khoản 3 Điều 419 Bộ luật Dân sự 2015**, ngoài việc bồi thường thiệt hại vật chất, theo yêu cầu của bên bị vi phạm, Tòa án có thể quyết định buộc bên vi phạm bồi thường bù đắp tổn thất về tinh thần cho bên bị vi phạm. \n*   *Lưu ý thực tiễn:* Việc bồi thường tổn thất tinh thần thường áp dụng trong các hợp đồng dịch vụ có liên quan trực tiếp đến nhân thân, sức khỏe, danh dự, nhân phẩm (ví dụ: dịch vụ y tế, thẩm mỹ, du lịch lữ hành gây tổn hại sức khỏe/tinh thần...).\n\n**Tóm lại:** Theo Điều 419 Bộ luật Dân sự 2015, thiệt hại được bồi thường bao gồm thiệt hại vật chất (thiệt hại thực tế, chi phí ngăn chặn/khắc phục, lợi ích đáng lẽ được hưởng) và thiệt hại về tinh thần (nếu có yêu cầu và được Tòa án chấp nhận).",
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      },
+      "branch_b_rag": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin giải đáp thắc mắc của bạn dựa trên các quy định pháp luật có trong cơ sở dữ liệu như sau:\n\nTheo quy định tại Điều 419 Bộ luật Dân sự số 91/2015/QH13 ngày 24 tháng 11 năm 2015 của Quốc hội về thiệt hại được bồi thường do vi phạm hợp đồng, các nội dung được xác định cụ thể như sau:\n\n1. **Xác định chung về thiệt hại:** \n   Thiệt hại được bồi thường do vi phạm nghĩa vụ theo hợp đồng được xác định theo quy định tại khoản 2 Điều 419, Điều 13 và Điều 360 Bộ luật Dân sự số 91/2015/QH13 (theo khoản 1 Điều 419 Bộ luật Dân sự số 91/2015/QH13).\n\n2. **Các quyền yêu cầu bồi thường cụ thể của người có quyền (khoản 2 Điều 419 Bộ luật Dân sự số 91/2015/QH13):**\n   - Yêu cầu bồi thường thiệt hại cho **lợi ích mà lẽ ra mình sẽ được hưởng** do hợp đồng mang lại.\n   - Yêu cầu người có nghĩa vụ **chi trả chi phí phát sinh do không hoàn thành nghĩa vụ hợp đồng** (lưu ý: khoản chi phí này không được trùng lặp với mức bồi thường thiệt hại cho lợi ích mà hợp đồng mang lại).\n\n3. **Bồi thường thiệt hại về tinh thần (khoản 3 Điều 419 Bộ luật Dân sự số 91/2015/QH13):**\n   - Theo yêu cầu của người có quyền, Tòa án có thể buộc người có nghĩa vụ **bồi thường thiệt hại về tinh thần** cho người có quyền. \n   - Mức bồi thường trong trường hợp này sẽ do Tòa án quyết định dựa trên cơ sở căn cứ vào nội dung vụ việc.\n\nBên cạnh đó, theo khoản 2 Điều 361 Bộ luật Dân sự số 91/2015/QH13, thiệt hại về vật chất (được dẫn chiếu qua Điều 360) là tổn thất vật chất thực tế xác định được, bao gồm:\n- Tổn thất về tài sản;\n- Chi phí hợp lý để ngăn chặn, hạn chế, khắc phục thiệt hại;\n- Thu nhập thực tế bị mất hoặc bị giảm sút.\n\nTrên đây là nội dung pháp lý liên quan đến việc xác định thiệt hại được bồi thường do vi phạm hợp đồng theo quy định hiện hành trong cơ sở dữ liệu của chúng tôi để bạn tham khảo.",
+        "citations_count": 3,
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      }
+    },
+    {
+      "id": "TC_FACT_16",
+      "category": "Fact Retrieval",
+      "question": "Bên đơn phương chấm dứt thực hiện hợp đồng phải tuân thủ thủ tục thông báo như thế nào theo Điều 428 BLDS 2015?",
+      "ground_truth": "Theo khoản 2 Điều 428 Bộ luật Dân sự 2015, bên đơn phương chấm dứt thực hiện hợp đồng phải thông báo ngay cho bên kia biết về việc chấm dứt hợp đồng, nếu không thông báo mà gây thiệt hại thì phải bồi thường.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý về hợp đồng dịch vụ tại Việt Nam, tôi xin trả lời câu hỏi của bạn dựa trên quy định của pháp luật hiện hành như sau:\n\nCăn cứ theo quy định tại **Khoản 3 Điều 428 Bộ luật Dân sự số 91/2015/QH13** có hiệu lực thi hành từ ngày 01/01/2017, thủ tục thông báo khi đơn phương chấm dứt thực hiện hợp đồng được quy định cụ thể như sau:\n\n1. **Phải thông báo ngay cho bên kia biết về việc chấm dứt hợp đồng:** \n   Ngay khi có quyết định đơn phương chấm dứt thực hiện hợp đồng, bên đơn phương chấm dứt phải có nghĩa vụ thông báo cho bên còn lại biết.\n\n2. **Yêu cầu về thời hạn thông báo:**\n   * Việc thông báo phải được thực hiện **trước** cho bên kia biết trong một **thời hạn hợp lý**. \n   * *Lưu ý quan trọng:* Thời hạn hợp lý này có thể do các bên tự thỏa thuận trong hợp đồng dịch vụ, hoặc tuân theo quy định của pháp luật chuyên ngành có liên quan. Nếu các bên không có thỏa thuận và pháp luật chuyên ngành không quy định, thì phải áp dụng khoảng thời gian đủ để bên nhận được thông báo có thể chuẩn bị các biện pháp cần thiết nhằm hạn chế thiệt hại (thực tiễn áp dụng thường xem xét tính chất của từng loại dịch vụ cụ thể).\n\nNếu bên đơn phương chấm dứt hợp đồng không thực hiện đúng nghĩa vụ thông báo này mà gây ra thiệt hại, thì theo quy định tại Khoản 4 Điều 428 Bộ luật Dân sự 2015, bên đó **phải bồi thường thiệt hại** cho bên còn lại.",
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      },
+      "branch_b_rag": {
+        "answer": "Chào bạn, với vai trò là chuyên gia tư vấn pháp lý, tôi xin trả lời câu hỏi của bạn dựa trên các quy định được cung cấp như sau:\n\nTheo quy định tại khoản 2 Điều 428 Bộ luật Dân sự số 91/2015/QH13 ngày 24 tháng 11 năm 2015 của Quốc hội về việc đơn phương chấm dứt thực hiện hợp đồng, thủ tục thông báo được quy định cụ thể như sau:\n\n* **Nghĩa vụ thông báo:** Bên đơn phương chấm dứt thực hiện hợp đồng **phải thông báo ngay** cho bên kia biết về việc chấm dứt hợp đồng.\n* **Hậu quả pháp lý khi vi phạm nghĩa vụ thông báo:** Nếu bên đơn phương chấm dứt hợp đồng mà không thực hiện việc thông báo theo quy định, dẫn đến gây ra thiệt hại cho bên kia thì **phải bồi thường**. \n* **Thời điểm hợp đồng chấm dứt:** Theo khoản 3 Điều 428 Bộ luật Dân sự số 91/2015/QH13, khi hợp đồng bị đơn phương chấm dứt thực hiện, thời điểm hợp đồng chính thức chấm dứt là **kể từ thời điểm bên kia nhận được thông báo chấm dứt**.\n\nTrên đây là các quy định pháp lý liên quan đến thủ tục thông báo khi đơn phương chấm dứt hợp đồng để bạn tham khảo và áp dụng đúng quy định pháp luật.",
+        "citations_count": 1,
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      }
+    },
+    {
+      "id": "TC_FACT_17",
+      "category": "Fact Retrieval",
+      "question": "Hình thức hợp đồng dịch vụ theo quy định tại Điều 74 Luật Thương mại 2005 là gì?",
+      "ground_truth": "Theo Điều 74 Luật Thương mại 2005, hợp đồng dịch vụ được thể hiện bằng lời nói, bằng văn bản hoặc được xác lập bằng hành vi cụ thể. Đối với các loại hợp đồng dịch vụ mà pháp luật quy định phải được lập thành văn bản thì phải tuân theo các quy định đó.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin trả lời câu hỏi của bạn dựa trên các quy định của pháp luật Việt Nam hiện hành như sau:\n\nCăn cứ theo quy định tại **Điều 74 Luật Thương mại số 36/2005/QH11** ngày 14 tháng 6 năm 2005 của Quốc hội, hình thức hợp đồng dịch vụ được quy định cụ thể như sau:\n\n*“Hợp đồng dịch vụ phải được lập thành văn bản, được thể hiện bằng lời nói hoặc được xác lập bằng hành vi cụ thể đối với các loại dịch vụ mà pháp luật không quy định hợp đồng dịch vụ phải được lập thành văn bản.”*\n\n**Tóm lại, hình thức hợp đồng dịch vụ theo quy định trên bao gồm 3 hình thức:**\n1. **Bằng văn bản** (áp dụng cho các loại dịch vụ mà pháp luật bắt buộc phải lập thành văn bản).\n2. **Bằng lời nói**.\n3. **Được xác lập bằng hành vi cụ thể**. \n\n*(Hai hình thức sau áp dụng đối với các loại dịch vụ mà pháp luật không có quy định bắt buộc phải lập thành văn bản).*",
+        "laws_matched": 1,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      },
+      "branch_b_rag": {
+        "answer": "Chào bạn, dựa trên cơ sở dữ liệu được cung cấp, hình thức của hợp đồng dịch vụ được quy định tại Điều 74 Luật Thương mại số 36/2005/QH11 ngày 14 tháng 6 năm 2005 của Quốc hội (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH ngày 27 tháng 8 năm 2025 của Văn phòng Quốc hội) như sau:\n\n1. Hợp đồng dịch vụ được thể hiện bằng lời nói, bằng văn bản hoặc được xác lập bằng hành vi cụ thể.\n2. Đối với các loại hợp đồng dịch vụ mà pháp luật quy định phải được lập thành văn bản thì phải tuân theo các quy định đó.",
+        "citations_count": 1,
+        "laws_matched": 1,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      }
+    },
+    {
+      "id": "TC_FACT_18",
+      "category": "Fact Retrieval",
+      "question": "Nghĩa vụ chung của bên cung ứng dịch vụ được quy định như thế nào tại Điều 78 Luật Thương mại 2005?",
+      "ground_truth": "Theo Điều 78 Luật Thương mại 2005, bên cung ứng dịch vụ có các nghĩa vụ: Cung ứng các dịch vụ và thực hiện những công việc có liên quan một cách đầy đủ, phù hợp với thoả thuận và theo quy định của Luật này; Bảo quản và giao lại cho khách hàng tài liệu và phương tiện được giao để thực hiện dịch vụ sau khi hoàn thành; Thông báo ngay cho khách hàng trong trường hợp thông tin, tài liệu không đầy đủ, phương tiện không bảo đảm; Giữ bí mật về thông tin mà mình biết được trong quá trình cung ứng dịch vụ nếu có thoả thuận hoặc pháp luật có quy định.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin trả lời câu hỏi của bạn dựa trên quy định của pháp luật Việt Nam hiện hành như sau:\n\nCăn cứ theo quy định tại **Điều 78 Luật Thương mại số 36/2005/QH11** ngày 14 tháng 6 năm 2005, nghĩa vụ chung của bên cung ứng dịch vụ được quy định cụ thể như sau:\n\nBên cung ứng dịch vụ có các nghĩa vụ chung bao gồm:\n\n1. Thực hiện dịch vụ và các công việc khác có liên quan đúng thời hạn, chất lượng, số lượng, với phương thức, thủ tục và các điều kiện khác đã thoả thuận trong hợp đồng hoặc theo quy định của Luật Thương mại 2005.\n2. Trường hợp không có thoả thuận cụ thể về thời hạn, chất lượng, số lượng, phương thức, thủ tục và các điều kiện khác thì bên cung ứng dịch vụ phải thực hiện dịch vụ với chất lượng và thời hạn phù hợp với tiêu chuẩn thông thường của dịch vụ đó, hoặc phù hợp với tiêu chuẩn hợp lý khác mà bên cung ứng dịch vụ biết hoặc phải biết về mục đích cụ thể của bên sử dụng dịch vụ.\n3. Trong quá trình thực hiện dịch vụ, bên cung ứng dịch vụ phải thông báo kịp thời cho bên sử dụng dịch vụ trong trường hợp có căn cứ hợp lý cho thấy thông tin, tài liệu, phương tiện được giao không bảo đảm cho việc thực hiện dịch vụ, đồng thời yêu cầu bên sử dụng dịch vụ khắc phục ngay trong thời hạn hợp lý để bảo đảm chất lượng dịch vụ.\n4. Các nghĩa vụ khác theo quy định của pháp luật hoặc theo thoả thuận trong hợp đồng dịch vụ.\n\nTrên đây là tư vấn pháp lý chi tiết dựa trên các căn cứ pháp luật hiện hành. Trân trọng!",
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      },
+      "branch_b_rag": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý về hợp đồng dịch vụ, tôi xin trả lời câu hỏi của bạn dựa trên các quy định được cung cấp như sau:\n\nTrừ trường hợp các bên có thỏa thuận khác, nghĩa vụ chung của bên cung ứng dịch vụ được quy định tại Điều 78 Luật Thương mại số 36/2005/QH11 ngày 14 tháng 6 năm 2005 của Quốc hội (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH ngày 27 tháng 8 năm 2025 của Văn phòng Quốc hội), bao gồm các nội dung sau:\n\n1. Cung ứng các dịch vụ và thực hiện những công việc có liên quan một cách đầy đủ, phù hợp với thỏa thuận và theo quy định của Luật Thương mại số 36/2005/QH11 (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH);\n2. Bảo quản và giao lại cho khách hàng tài liệu và phương tiện được giao để thực hiện dịch vụ sau khi hoàn thành công việc;\n3. Thông báo ngay cho khách hàng trong trường hợp thông tin, tài liệu không đầy đủ, phương tiện không bảo đảm để hoàn thành việc cung ứng dịch vụ;\n4. Giữ bí mật về thông tin mà mình biết được trong quá trình cung ứng dịch vụ nếu có thỏa thuận hoặc pháp luật có quy định.\n\nTrên đây là các quy định về nghĩa vụ chung của bên cung ứng dịch vụ theo pháp luật hiện hành để bạn tham khảo.",
+        "citations_count": 1,
+        "laws_matched": 1,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      }
+    },
+    {
+      "id": "TC_FACT_19",
+      "category": "Fact Retrieval",
+      "question": "Nghĩa vụ cung ứng dịch vụ theo kết quả công việc theo Điều 79 Luật Thương mại là gì?",
+      "ground_truth": "Theo Điều 79 Luật Thương mại 2005, nếu tính chất của loại dịch vụ được cung ứng yêu cầu bên cung ứng dịch vụ phải đạt được một kết quả nhất định thì bên cung ứng dịch vụ phải thực hiện việc cung ứng dịch vụ với kết quả phù hợp với các điều khoản và mục đích của hợp đồng.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý về hợp đồng dịch vụ tại Việt Nam, tôi xin giải đáp câu hỏi của bạn dựa trên các quy định của pháp luật hiện hành như sau:\n\nCăn cứ theo quy định tại **Điều 79 Luật Thương mại số 36/2005/QH11** được Quốc hội nước Cộng hòa xã hội chủ nghĩa Việt Nam thông qua ngày 14 tháng 6 năm 2005, nghĩa vụ cung ứng dịch vụ theo kết quả công việc được quy định cụ thể như sau:\n\n1. Trường hợp các bên thỏa thuận cung ứng dịch vụ theo kết quả công việc thì bên cung ứng dịch vụ phải hoàn thành công việc để đạt được kết quả theo như thỏa thuận trong hợp đồng *(Căn cứ theo Khoản 1 Điều 79 Luật Thương mại số 36/2005/QH11)*.\n\n2. Trường hợp kết quả công việc đòi hỏi phải có thời gian để hoàn thành và các bên không có thỏa thuận khác về thời điểm hoàn thành công việc thì bên cung ứng dịch vụ phải hoàn thành công việc đó trong một thời hạn hợp lý tính trên cơ sở tính chất và mục đích của công việc mà các bên đã thỏa thuận hoặc đã biết vào thời điểm giao kết hợp đồng *(Căn cứ theo Khoản 2 Điều 79 Luật Thương mại số 36/2005/QH11)*.\n\n---\n**Tóm lại:** \nKhi giao kết hợp đồng dịch vụ theo kết quả công việc, bên cung ứng dịch vụ buộc phải đạt được đích đến cuối cùng là hoàn thành công việc đó. Nếu không có thỏa thuận về thời gian, họ phải hoàn thành trong một khoảng thời gian \"hợp lý\" tùy thuộc vào tính chất và mục đích của từng loại dịch vụ cụ thể.",
+        "laws_matched": 1,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      },
+      "branch_b_rag": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý về hợp đồng dịch vụ, tôi xin giải đáp câu hỏi của bạn về nghĩa vụ cung ứng dịch vụ theo kết quả công việc như sau:\n\nTheo quy định tại Điều 79 Luật Thương mại số 36/2005/QH11 ngày 14 tháng 6 năm 2005 của Quốc hội (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH ngày 27 tháng 8 năm 2025 của Văn phòng Quốc hội), trừ trường hợp có thỏa thuận khác, nội dung của nghĩa vụ này được xác định cụ thể như sau:\n\n1. **Trường hợp tính chất dịch vụ yêu cầu đạt kết quả nhất định:** Nếu tính chất của loại dịch vụ được cung ứng đòi hỏi bên cung ứng phải đạt được một kết quả cụ thể, thì bên cung ứng dịch vụ có nghĩa vụ thực hiện việc cung ứng sao cho kết quả làm ra phải phù hợp với các điều khoản và mục đích của hợp đồng.\n2. **Trường hợp hợp đồng không quy định cụ thể về tiêu chuẩn kết quả:** Nếu hợp đồng không có quy định cụ thể về tiêu chuẩn kết quả cần đạt được, bên cung ứng dịch vụ vẫn bắt buộc phải thực hiện việc cung ứng dịch vụ với kết quả phù hợp với tiêu chuẩn thông thường của loại dịch vụ đó.",
+        "citations_count": 1,
+        "laws_matched": 1,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      }
+    },
+    {
+      "id": "TC_FACT_20",
+      "category": "Fact Retrieval",
+      "question": "Nghĩa vụ cung ứng dịch vụ theo nỗ lực cao nhất được quy định thế nào tại Điều 80 Luật Thương mại?",
+      "ground_truth": "Theo Điều 80 Luật Thương mại 2005, nếu tính chất của loại dịch vụ được cung ứng yêu cầu bên cung ứng dịch vụ phải nỗ lực cao nhất để đạt được kết quả thì bên cung ứng dịch vụ phải thực hiện nghĩa vụ cung ứng dịch vụ đó với nỗ lực cao nhất theo tiêu chuẩn nghề nghiệp thông thường.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin trả lời câu hỏi của bạn dựa trên các quy định của pháp luật thương mại hiện hành tại Việt Nam như sau:\n\nNghĩa vụ cung ứng dịch vụ theo nỗ lực cao nhất được quy định tại **Điều 80 Luật Thương mại số 36/2005/QH11** (được thông qua ngày 14 tháng 6 năm 2005). \n\nCụ thể, nội dung này được quy định chi tiết như sau:\n\n1. **Về nghĩa vụ chung (Khoản 1 Điều 80):**\n   Bên cung ứng dịch vụ phải hoàn thành công việc và các nghĩa vụ khác theo thỏa thuận trong hợp đồng. Trường hợp hợp đồng không có thỏa thuận cụ thể về quy trình, cách thức thực hiện dịch vụ, bên cung ứng dịch vụ phải thực hiện dịch vụ theo **nỗ lực cao nhất** và khả năng tốt nhất của mình để đạt được kết quả mà các bên mong muốn hoặc theo tiêu chuẩn thông thường của ngành nghề dịch vụ đó.\n\n2. **Về trường hợp không đạt được kết quả (Khoản 2 Điều 80):**\n   Trong trường hợp hợp đồng dịch vụ không quy định cụ thể về kết quả phải đạt được, bên cung ứng dịch vụ **không phải chịu trách nhiệm** về việc không đạt được kết quả như các bên mong muốn, nếu bên đó đã chứng minh mình đã áp dụng **nỗ lực cao nhất** và khả năng tốt nhất để thực hiện công việc.\n\n---\n**Tóm tắt căn cứ pháp lý:**\n* **Văn bản luật:** Luật Thương mại năm 2005.\n* **Số hiệu:** Số 36/2005/QH11.\n* **Điều luật:** Điều 80 (Nghĩa vụ cung ứng dịch vụ).",
+        "laws_matched": 1,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      },
+      "branch_b_rag": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin giải đáp thắc mắc của bạn về nghĩa vụ cung ứng dịch vụ theo nỗ lực và khả năng cao nhất dựa trên các quy định pháp luật hiện hành như sau:\n\nTheo quy định tại **Điều 80 Luật Thương mại số 36/2005/QH11 ngày 14 tháng 6 năm 2005 của Quốc hội (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH ngày 27 tháng 8 năm 2005 của Văn phòng Quốc hội)**, nghĩa vụ của bên cung ứng dịch vụ theo nỗ lực và khả năng cao nhất được quy định cụ thể như sau:\n\nTrừ trường hợp các bên có thỏa thuận khác, nếu tính chất của loại dịch vụ được cung ứng yêu cầu bên cung ứng dịch vụ phải nỗ lực cao nhất để đạt được kết quả mong muốn, thì bên cung ứng dịch vụ bắt buộc phải thực hiện nghĩa vụ cung ứng dịch vụ đó với mức độ nỗ lực và khả năng cao nhất của mình.\n\nTrên đây là nội dung tư vấn dựa trên phạm vi căn cứ pháp luật được cung cấp. Nếu bạn cần hỗ trợ thêm các vấn đề khác, vui lòng đặt câu hỏi để được giải đáp!",
+        "citations_count": 1,
+        "laws_matched": 1,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      }
+    },
+    {
+      "id": "TC_FACT_21",
+      "category": "Fact Retrieval",
+      "question": "Bên cung ứng dịch vụ có được giao cho người khác thực hiện thay dịch vụ theo Luật Thương mại không?",
+      "ground_truth": "Theo Điều 81 Luật Thương mại 2005, bên cung ứng dịch vụ chỉ được giao cho người khác thực hiện thay nghĩa vụ cung ứng dịch vụ nếu có sự chấp thuận của khách hàng. Bên cung ứng dịch vụ vẫn phải chịu trách nhiệm trước khách hàng về việc thực hiện nghĩa vụ của người được giao thay thế.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý về hợp đồng dịch vụ tại Việt Nam, tôi xin trả lời câu hỏi của bạn dựa trên các quy định của Luật Thương mại năm 2005 như sau:\n\n**1. Trả lời trực tiếp:**\n\nBên cung ứng dịch vụ **ĐƯỢC PHEY** giao cho người khác thực hiện thay dịch vụ, **NHƯNG** phải đáp ứng điều kiện quan trọng là **phải được sự đồng ý của khách hàng**. Nếu không có sự đồng ý của khách hàng mà tự ý giao cho bên thứ ba thực hiện, bên cung ứng dịch vụ sẽ vi phạm hợp đồng.\n\n**2. Căn cứ pháp lý:**\n\nCăn cứ theo **Điều 51 (Thực hiện dịch vụ) của Luật Thương mại số 36/2005/QH11** ngày 14 tháng 6 năm 2005, quy định cụ thể như sau:\n\n> *\"Bên cung ứng dịch vụ thực hiện công việc, dịch vụ theo đúng thỏa thuận, theo quy định của Luật này và các quy định khác của pháp luật có liên quan.\"*\n\nĐồng thời, đối chiếu với nguyên tắc chung của pháp luật thương mại và hợp đồng dịch vụ (được quy định chi tiết tại **Điều 369 Bộ luật Dân sự số 91/2015/QH13** về *Thực hiện nghĩa vụ thông qua người thứ ba*, áp dụng tương tự trong hoạt động thương mại theo Điều 4 Luật Thương mại 2005):\n\n> *\"Khi được sự đồng ý của bên có quyền, bên có nghĩa vụ có thể ủy quyền cho người thứ ba thay mình thực hiện nghĩa vụ dân sự nhưng vẫn phải chịu trách nhiệm trước bên có quyền về việc thực hiện nghĩa vụ...\"*\n\n**3. Lưu ý pháp lý quan trọng cho bên cung ứng dịch vụ:**\n\n*   **Nghĩa vụ thông báo/xin phép:** Bên cung ứng dịch vụ trước khi bàn giao công việc cho người thứ ba (thầu phụ, người làm thay) phải thông báo và nhận được sự chấp thuận bằng văn bản hoặc thỏa thuận rõ ràng từ khách hàng.\n*   **Trách nhiệm liên đới:** Mặc dù người thứ ba là người trực tiếp thực hiện dịch vụ, nhưng theo quan hệ hợp đồng ban đầu, **bên cung ứng dịch vụ vẫn phải chịu trách nhiệm hoàn toàn trước khách hàng** về chất lượng, tiến độ và các vi phạm phát sinh do người thứ ba gây ra (trừ khi các bên có thỏa thuận khác). \n\nTrên đây là tư vấn pháp lý chính xác dựa trên hệ thống pháp luật thương mại hiện hành tại Việt Nam để bạn áp dụng vào tình huống thực tế.",
+        "laws_matched": 1,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      },
+      "branch_b_rag": {
+        "answer": "Dựa trên cơ sở dữ liệu pháp luật hiện có, hiện tại trong hệ thống chưa có quy định trực tiếp tại Luật Thương mại về việc bên cung ứng dịch vụ có được giao cho người khác thực hiện thay công việc hay không. \n\nTuy nhiên, liên quan đến vấn đề này, quy định tại khoản 2 Điều 517 Bộ luật Dân sự số 91/2015/QH13 ngày 24 tháng 11 năm 2015 của Quốc hội nêu rõ: bên cung ứng dịch vụ *\"Không được giao cho người khác thực hiện thay công việc nếu không có sự đồng ý của bên sử dụng dịch vụ\"*. \n\nBạn vui lòng tra cứu thêm các văn bản pháp luật chuyên ngành liên quan hoặc tham vấn chuyên gia pháp lý để có thêm thông tin chi tiết.",
+        "citations_count": 1,
+        "laws_matched": 0,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      }
+    },
+    {
+      "id": "TC_FACT_22",
+      "category": "Fact Retrieval",
+      "question": "Thời hạn hoàn thành dịch vụ theo Điều 83 Luật Thương mại 2005 được xác định như thế nào?",
+      "ground_truth": "Theo Điều 83 Luật Thương mại 2005, bên cung ứng dịch vụ phải hoàn thành dịch vụ đúng thời hạn đã thoả thuận trong hợp đồng. Trường hợp không có thoả thuận về thời hạn thì bên cung ứng dịch vụ phải hoàn thành dịch vụ trong một thời hạn hợp lý trên cơ sở tính đến tất cả các điều kiện và hoàn cảnh cụ thể.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý về hợp đồng dịch vụ, tôi xin trả lời câu hỏi của bạn dựa trên quy định của pháp luật Việt Nam hiện hành như sau:\n\nCăn cứ theo **Điều 83 Luật Thương mại số 36/2005/QH11** quy định về *Thời hạn hoàn thành dịch vụ*, thời hạn hoàn thành dịch vụ được xác định như sau:\n\n1. Các bên thỏa thuận về thời hạn hoàn thành dịch vụ.\n2. Trường hợp các bên không có thỏa thuận thì dịch vụ phải được hoàn thành trong một thời hạn hợp lý, tính trên cơ sở điều kiện và hoàn cảnh cụ thể của việc cung ứng dịch vụ.\n\nTrân trọng!",
+        "laws_matched": 1,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      },
+      "branch_b_rag": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý về hợp đồng dịch vụ, tôi xin trả lời câu hỏi của bạn dựa trên các quy định được cung cấp như sau:\n\nHiện tại, trong cơ sở dữ liệu pháp luật về hợp đồng dịch vụ của hệ thống, nội dung về \"Thời hạn hoàn thành dịch vụ\" không được quy định tại Điều 83 mà được quy định cụ thể tại **Điều 82 Luật Thương mại số 36/2005/QH11 ngày 14 tháng 6 năm 2005 của Quốc hội (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH ngày 27 tháng 8 năm 2025 của Văn phòng Quốc hội)**. \n\nCụ thể, thời hạn hoàn thành dịch vụ được xác định theo các trường hợp sau đây:\n\n1. **Theo thỏa thuận:** Theo khoản 1 Điều 82 Luật Thương mại số 36/2005/QH11 (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH), bên cung ứng dịch vụ phải hoàn thành dịch vụ đúng thời hạn đã thỏa thuận trong hợp đồng.\n2. **Trường hợp không có thỏa thuận:** Theo khoản 2 Điều 82 Luật Thương mại số 36/2005/QH11 (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH), nếu các bên không có thỏa thuận về thời hạn, bên cung ứng dịch vụ phải hoàn thành dịch vụ trong một thời hạn hợp lý. Thời hạn hợp lý này được xác định trên cơ sở tính đến tất cả các điều kiện và hoàn cảnh mà bên cung ứng dịch vụ biết được vào thời điểm giao kết hợp đồng, bao gồm bất kỳ nhu cầu cụ thể nào của khách hàng có liên quan đến thời gian hoàn thành dịch vụ.\n3. **Trường hợp phụ thuộc vào điều kiện đáp ứng:** Theo khoản 3 Điều 82 Luật Thương mại số 36/2005/QH11 (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH), nếu dịch vụ chỉ có thể được hoàn thành khi khách hàng hoặc bên cung ứng dịch vụ khác đáp ứng các điều kiện nhất định, thì bên cung ứng dịch vụ không có nghĩa vụ hoàn thành dịch vụ của mình cho đến khi các điều kiện đó được đáp ứng.\n\n*(Lưu ý: Đối với **Điều 83 Luật Thương mại số 36/2005/QH11 (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH)** mà bạn nhắc tới, điều luật này không quy định về thời hạn hoàn thành dịch vụ, mà quy định về quyền và nghĩa vụ liên quan đến **Yêu cầu của khách hàng về những thay đổi trong quá trình cung ứng dịch vụ**, theo đó bên cung ứng phải tuân thủ các yêu cầu hợp lý của khách hàng và khách hàng phải chịu các chi phí hợp lý cho việc thực hiện những yêu cầu thay đổi đó trừ khi có thỏa thuận khác).*\n\nHy vọng thông tin pháp lý trên giúp ích cho quá trình tìm hiểu và áp dụng pháp luật của bạn. Nếu bạn cần tư vấn thêm các vấn đề khác trong phạm vi cơ sở dữ liệu, xin vui lòng cho biết!",
+        "citations_count": 2,
+        "laws_matched": 1,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      }
+    },
+    {
+      "id": "TC_FACT_23",
+      "category": "Fact Retrieval",
+      "question": "Khách hàng có quyền yêu cầu thay đổi dịch vụ trong quá trình thực hiện theo Điều 84 Luật Thương mại không?",
+      "ground_truth": "Theo Điều 84 Luật Thương mại 2005, trong quá trình cung ứng dịch vụ, khách hàng có thể yêu cầu thay đổi việc cung ứng dịch vụ nhưng phải chịu các chi phí hợp lý phát sinh từ việc thay đổi đó, trừ trường hợp các bên có thoả thuận khác.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý về hợp đồng dịch vụ tại Việt Nam, tôi xin trả lời câu hỏi của bạn như sau:\n\n**TRẢ LỜI:**\n\nTrong quá trình thực hiện hợp đồng dịch vụ, khách hàng **CÓ QUYỀN** yêu cầu thay đổi dịch vụ. \n\nCăn cứ pháp lý cụ thể cho quyền này được quy định tại **Điều 84 Luật Thương mại số 36/2005/QH11** (có hiệu lực thi hành từ ngày 01/01/2006). Cụ thể nội dung được quy định như sau:\n\n1. **Khoản 1 Điều 84 Luật Thương mại 36/2005/QH11** quy định về việc thay đổi yêu cầu dịch vụ:\n   > *\"Trừ trường hợp có thỏa thuận khác, bên thuê dịch vụ có quyền yêu cầu thay đổi nội dung, phạm vi dịch vụ nhưng phải thông báo kịp thời cho bên cung ứng dịch vụ biết sự thay đổi đó.\"*\n\n2. **Khoản 2 Điều 84 Luật Thương mại 36/2005/QH11** quy định về hệ quả của việc thay đổi (xử lý chi phí và thù lao):\n   > *\"Trong trường hợp việc thay đổi nội dung, phạm vi dịch vụ làm tăng chi phí thực hiện dịch vụ thì bên thuê dịch vụ phải trả thêm các khoản chi phí hợp lý cho bên cung ứng dịch vụ.\"*\n\n**Lưu ý từ chuyên gia:**\n* Mặc dù pháp luật thương mại cho phép khách hàng có quyền yêu cầu thay đổi, nhưng quyền này đi kèm với nghĩa vụ **thông báo kịp thời** cho bên cung ứng dịch vụ.\n* Đồng thời, mọi phát sinh về chi phí, thù lao hoặc thời gian thực hiện do việc thay đổi này mang lại cần phải được hai bên bàn bạc, thống nhất (tốt nhất nên lập thành phụ lục hợp đồng bằng văn bản) để tránh tranh chấp phát sinh trong quá trình thực hiện.",
+        "laws_matched": 1,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      },
+      "branch_b_rag": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin giải đáp thắc mắc của bạn dựa trên các quy định pháp luật được cung cấp như sau:\n\nTheo quy định pháp luật, nội dung về quyền của khách hàng yêu cầu thay đổi trong quá trình cung ứng dịch vụ không được quy định tại Điều 84 mà được quy định cụ thể tại **Điều 83 Luật Thương mại số 36/2005/QH11 ngày 14 tháng 6 năm 2005 của Quốc hội (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH ngày 27 tháng 8 năm 2025 của Văn phòng Quốc hội)**. \n\nCụ thể, theo quy định tại Điều 83 Luật Thương mại số 36/2005/QH11 (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH):\n1. Trong quá trình cung ứng dịch vụ, bên cung ứng dịch vụ phải tuân thủ những yêu cầu hợp lý của khách hàng liên quan đến những thay đổi trong quá trình cung ứng dịch vụ.\n2. Trừ trường hợp có thỏa thuận khác, khách hàng phải chịu những chi phí hợp lý cho việc thực hiện những yêu cầu thay đổi của mình.\n\n*(Lưu ý: Điều 84 Luật Thương mại số 36/2005/QH11 (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH) thực chất điều chỉnh về việc tiếp tục cung ứng dịch vụ sau khi hết thời hạn hoàn thành).*\n\nHy vọng nội dung tư vấn trên đã giải đáp chính xác thắc mắc của bạn. Nếu cần hỗ trợ thêm, bạn vui lòng đặt câu hỏi.",
+        "citations_count": 2,
+        "laws_matched": 1,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      }
+    },
+    {
+      "id": "TC_FACT_24",
+      "category": "Fact Retrieval",
+      "question": "Nghĩa vụ của khách hàng trong hợp đồng dịch vụ theo Điều 85 Luật Thương mại 2005 gồm những gì?",
+      "ground_truth": "Theo Điều 85 Luật Thương mại 2005, khách hàng có nghĩa vụ: Thanh toán tiền cung ứng dịch vụ như đã thoả thuận trong hợp đồng; Cung cấp kịp thời các kế hoạch, chỉ dẫn và những chi tiết khác để việc cung ứng dịch vụ không bị trì hoãn hay gián đoạn; Hợp tác trong tất cả những vấn đề cần thiết khác để bên cung ứng dịch vụ có thể thực hiện công việc thích hợp.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý về hợp đồng dịch vụ tại Việt Nam, tôi xin trả lời câu hỏi của bạn dựa trên quy định pháp luật hiện hành như sau:\n\nCăn cứ theo quy định tại **Điều 85 Luật Thương mại số 36/2005/QH11** ngày 14 tháng 6 năm 2005, nghĩa vụ của khách hàng (bên sử dụng dịch vụ) trong hợp đồng dịch vụ bao gồm các nội dung cụ thể sau đây:\n\n1. **Thanh toán tiền dịch vụ** và các chi phí hợp lý khác cho bên cung ứng dịch vụ theo thỏa thuận trong hợp đồng (Khoản 1 Điều 85).\n2. **Cung cấp kịp thời** các tài liệu, vật dụng và thông tin cần thiết để việc thực hiện dịch vụ được tiến hành (Khoản 2 Điều 85).\n3. **Phối hợp** với bên cung ứng dịch vụ trong tất cả các vấn đề cần thiết để bên cung ứng dịch vụ có thể thực hiện dịch vụ một cách bình thường (Khoản 3 Điều 85).\n4. Trong trường hợp dịch vụ do bên thứ ba thực hiện, khách hàng có nghĩa vụ **thực hiện các công việc phối hợp** với bên thứ ba đó theo yêu cầu của bên cung ứng dịch vụ (Khoản 4 Điều 85).\n\nTrên đây là căn cứ pháp lý và nội dung chi tiết về nghĩa vụ của khách hàng trong hợp đồng dịch vụ theo Luật Thương mại 2005 để bạn áp dụng vào thực tiễn công việc.",
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      },
+      "branch_b_rag": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin trả lời câu hỏi của bạn về nghĩa vụ của khách hàng trong hợp đồng dịch vụ dựa trên các quy định được cung cấp như sau:\n\nTrừ trường hợp các bên có thỏa thuận khác, theo quy định tại Điều 85 Luật Thương mại số 36/2005/QH11 ngày 14 tháng 6 năm 2005 của Quốc hội (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH ngày 27 tháng 8 năm 2025 của Văn phòng Quốc hội), khách hàng có các nghĩa vụ sau đây:\n\n1. Thanh toán tiền cung ứng dịch vụ như đã thỏa thuận trong hợp đồng;\n2. Cung cấp kịp thời các kế hoạch, chỉ dẫn và những chi tiết khác để việc cung ứng dịch vụ được thực hiện không bị trì hoãn hay gián đoạn;\n3. Hợp tác trong tất cả những vấn đề cần thiết khác để bên cung ứng có thể cung ứng dịch vụ một cách thích hợp;\n4. Trường hợp một dịch vụ do nhiều bên cung ứng dịch vụ cùng tiến hành hoặc phối hợp với bên cung ứng dịch vụ khác, khách hàng có nghĩa vụ điều phối hoạt động của các bên cung ứng dịch vụ để không gây cản trở đến công việc của bất kỳ bên cung ứng dịch vụ nào.\n\nTrên đây là nội dung tư vấn pháp lý dựa trên các căn cứ pháp luật hiện hành. Nếu bạn có thêm bất kỳ thắc mắc nào, vui lòng liên hệ để được hỗ trợ.",
+        "citations_count": 1,
+        "laws_matched": 1,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      }
+    },
+    {
+      "id": "TC_FACT_25",
+      "category": "Fact Retrieval",
+      "question": "Giá dịch vụ được xác định như thế nào khi các bên không có thỏa thuận theo Điều 86 Luật Thương mại 2005?",
+      "ground_truth": "Theo Điều 86 Luật Thương mại 2005, trường hợp không có thoả thuận về giá dịch vụ, không có thoả thuận về phương pháp xác định giá dịch vụ thì giá dịch vụ được xác định theo giá của loại dịch vụ đó trong các điều kiện tương tự về phương thức cung ứng, thời điểm, địa điểm và các điều kiện khác có liên quan.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin trả lời câu hỏi của bạn dựa trên quy định của pháp luật thương mại Việt Nam hiện hành như sau:\n\nCăn cứ theo quy định tại **Khoản 1 Điều 86 Luật Thương mại số 36/2005/QH11** ngày 14 tháng 6 năm 2005, trong trường hợp các bên không có thỏa thuận về giá dịch vụ, không có thỏa thuận về phương pháp xác định giá dịch vụ và cũng không có bất kỳ chỉ dẫn nào khác về giá dịch vụ, thì giá dịch vụ được xác định theo **giá của loại dịch vụ đó trong điều kiện tương tự về phương thức cung ứng, thời điểm, thị trường địa phương, phương thức thanh toán và các điều kiện khác**.\n\nNhư vậy, khi xảy ra tranh chấp hoặc cần xác định giá dịch vụ trong trường hợp thiếu thỏa thuận, cơ quan có thẩm quyền (hoặc các bên) sẽ căn cứ vào **giá thị trường của dịch vụ tương tự** với các điều kiện so sánh, đối chiếu cụ thể nêu trên theo đúng quy định tại **Khoản 1 Điều 86 Luật Thương mại 2005**.",
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      },
+      "branch_b_rag": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin trả lời câu hỏi của bạn về việc xác định giá dịch vụ khi các bên không có thỏa thuận như sau:\n\nTheo quy định pháp luật, trường hợp các bên không có thỏa thuận về giá dịch vụ, không có thỏa thuận về phương pháp xác định giá dịch vụ và cũng không có bất kỳ chỉ dẫn nào khác về giá dịch vụ thì giá dịch vụ sẽ được xác định theo giá của loại dịch vụ đó trong các điều kiện tương tự về:\n- Phương thức cung ứng;\n- Thời điểm cung ứng;\n- Thị trường địa lý;\n- Phương thức thanh toán; và\n- Các điều kiện khác có ảnh hưởng đến giá dịch vụ.\n\nCăn cứ pháp lý: Điều 86 Luật Thương mại số 36/2005/QH11 ngày 14 tháng 6 năm 2005 của Quốc hội (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH ngày 27 tháng 8 năm 2025 của Văn phòng Quốc hội).",
+        "citations_count": 1,
+        "laws_matched": 1,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      }
+    },
+    {
+      "id": "TC_FACT_26",
+      "category": "Fact Retrieval",
+      "question": "Thời hạn thanh toán tiền dịch vụ được quy định như thế nào tại Điều 87 Luật Thương mại 2005?",
+      "ground_truth": "Theo Điều 87 Luật Thương mại 2005, trường hợp không có thoả thuận và giữa các bên không có bất kỳ thói quen nào về việc thanh toán thì thời hạn thanh toán là thời điểm bên cung ứng dịch vụ hoàn thành việc cung ứng dịch vụ.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin trả lời câu hỏi của bạn dựa trên quy định của pháp luật Việt Nam hiện hành như sau:\n\nCăn cứ theo **Điều 87 Luật Thương mại số 36/2005/QH11** quy định về thời hạn thanh toán như sau:\n\n1. Trường hợp không có thỏa thuận, không có thoả thuận cụ thể về thời hạn thanh toán và pháp luật không có quy định khác thì thời hạn thanh toán là thời điểm bên dịch vụ hoàn thành việc cung ứng dịch vụ hoặc thời điểm giao dịch xong kết quả của việc cung ứng dịch vụ.\n2. Trường hợp có thoả thuận tạm ứng tiền dịch vụ thì bên sử dụng dịch vụ phải thanh toán số tiền tạm ứng theo đúng thời hạn đã thỏa thuận.\n\n--- \n**Tóm tắt căn cứ pháp lý:**\n* **Văn bản luật:** Luật Thương mại số 36/2005/QH11 ngày 14 tháng 6 năm 2005 của Quốc hội.\n* **Điều luật:** Điều 87 (Thời hạn thanh toán).",
+        "laws_matched": 1,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      },
+      "branch_b_rag": {
+        "answer": "Theo quy định tại Điều 87 Luật Thương mại số 36/2005/QH11 ngày 14 tháng 6 năm 2005 của Quốc hội (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH ngày 27 tháng 8 năm 2025 của Văn phòng Quốc hội), thời hạn thanh toán tiền dịch vụ được xác định như sau:\n\nTrường hợp các bên không có thỏa thuận và giữa các bên không có bất kỳ thói quen nào về việc thanh toán, thì thời hạn thanh toán là thời điểm việc cung ứng dịch vụ được hoàn thành.",
+        "citations_count": 1,
+        "laws_matched": 1,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      }
+    },
+    {
+      "id": "TC_FACT_27",
+      "category": "Fact Retrieval",
+      "question": "Luật Thương mại 2005 quy định những loại chế tài nào trong thương mại tại Điều 292?",
+      "ground_truth": "Theo Điều 292 Luật Thương mại 2005, các loại chế tài trong thương mại gồm: 1. Buộc thực hiện đúng hợp đồng; 2. Phạt vi phạm; 3. Buộc bồi thường thiệt hại; 4. Tạm ngừng thực hiện hợp đồng; 5. Đình chỉ thực hiện hợp đồng; 6. Huỷ bỏ hợp đồng; 7. Các biện pháp khác do các bên thoả thuận không trái với nguyên tắc cơ bản của pháp luật Việt Nam.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin trả lời câu hỏi của bạn dựa trên quy định của pháp luật thương mại Việt Nam hiện hành như sau:\n\nCăn cứ theo quy định tại **Điều 292 Luật Thương mại số 36/2005/QH11** được Quốc hội thông qua ngày 14 tháng 6 năm 2005, các hình thức chế tài trong thương mại bao gồm:\n\n1. **Buộc thực hiện đúng hợp đồng** (Khoản 1);\n2. **Phạt vi phạm** (Khoản 2);\n3. **Bồi thường thiệt hại** (Khoản 3);\n4. **Tạm đình chỉ thực hiện hợp đồng** (Khoản 4);\n5. **Đình chỉ thực hiện hợp đồng** (Khoản 5);\n6. **Hủy bỏ hợp đồng** (Khoản 6);\n7. **Các biện pháp khác** do các bên thỏa thuận không trái với nguyên tắc cơ bảnของ pháp luật Việt Nam, điều ước quốc tế mà Cộng hòa xã hội chủ nghĩa Việt Nam là thành viên và tập quán thương mại quốc tế (Khoản 7).\n\nTrên đây là nội dung quy định pháp lý chính xác về các loại chế tài trong thương mại theo yêu cầu của bạn. Trân trọng!",
+        "laws_matched": 1,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      },
+      "branch_b_rag": {
+        "answer": "Chào bạn, dựa trên các quy định pháp luật được cung cấp, các loại chế tài trong thương mại được quy định tại Điều 292 Luật Thương mại số 36/2005/QH11 ngày 14 tháng 6 năm 2005 của Quốc hội (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH ngày 27 tháng 8 năm 2025 của Văn phòng Quốc hội) bao gồm:\n\n1. Buộc thực hiện đúng hợp đồng.\n2. Phạt vi phạm.\n3. Buộc bồi thường thiệt hại.\n4. Tạm ngừng thực hiện hợp đồng.\n5. Đình chỉ thực hiện hợp đồng.\n6. Hủy bỏ hợp đồng.\n7. Các biện pháp khác do các bên thỏa thuận không trái với nguyên tắc cơ bản của pháp luật Việt Nam, điều ước quốc tế mà Cộng hòa xã hội chủ nghĩa Việt Nam là thành viên và tập quán thương mại quốc tế.",
+        "citations_count": 2,
+        "laws_matched": 1,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      }
+    },
+    {
+      "id": "TC_FACT_28",
+      "category": "Fact Retrieval",
+      "question": "Trong trường hợp nào bên vi phạm hợp đồng thương mại được miễn trách nhiệm theo Điều 294 Luật Thương mại?",
+      "ground_truth": "Theo Điều 294 Luật Thương mại 2005, bên vi phạm hợp đồng được miễn trách nhiệm trong các trường hợp: xảy ra trường hợp miễn trách nhiệm mà các bên đã thoả thuận; xảy ra sự kiện bất khả kháng; hành vi vi phạm của một bên hoàn toàn do lỗi của bên kia; hành vi vi phạm của một bên do thực hiện quyết định của cơ quan quản lý nhà nước có thẩm quyền mà các bên không thể biết được vào thời điểm giao kết hợp đồng.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin trả lời câu hỏi của bạn dựa trên quy định của pháp luật Việt Nam hiện hành như sau:\n\nTheo quy định tại **Điều 294 Luật Thương mại năm 2005** (số 36/2005/QH11), bên vi phạm hợp đồng thương mại được miễn trách nhiệm nghĩa vụ bồi thường thiệt hại, phạt vi phạm trong các trường hợp sau đây:\n\n1. **Xảy ra trường hợp miễn trách nhiệm mà các bên đã thỏa thuận:** Đây là sự kiện mà các bên đã lường trước và thỏa thuận từ khi giao kết hợp đồng (với điều kiện thỏa thuận này không vi phạm điều cấm của pháp luật và đạo đức xã hội).\n\n2. **Bất khả kháng:** Xảy ra sự kiện bất khả kháng theo quy định tại **Điều 156 Bộ luật Dân sự năm 2015** và **Điều 157 Luật Thương mại năm 2005** (Sự kiện bất khả kháng là sự kiện xảy ra một cách khách quan không thể lường trước được và không thể khắc phục được mặc dù đã áp dụng mọi biện pháp cần thiết và khả năng cho phép).\n\n3. **Hành vi vi phạm của một bên hoàn toàn do lỗi của bên kia:** Bên vi phạm chứng minh được hành vi vi phạm của mình là do lỗi hoàn toàn của bên có quyền yêu cầu (bên bị vi phạm).\n\n4. **Hành vi vi phạm của một bên do thực hiện quyết định của cơ quan quản lý nhà nước có thẩm quyền** mà các bên không thể biết được vào thời điểm giao kết hợp đồng.\n\n---\n\n**LƯU Ý QUAN TRỌNG ĐỂ ĐƯỢC MIỄN TRÁCH NHIỆM:**\n\nCăn cứ theo **Điều 295 Luật Thương mại năm 2005**, để được hưởng chế độ miễn trách nhiệm, bên vi phạm có nghĩa vụ phải **thông báo ngay bằng văn bản** cho bên kia về trường hợp miễn trách nhiệm và những hậu quả có thể xảy ra. Khi trường hợp miễn trách nhiệm chấm dứt, bên vi phạm cũng phải thông báo ngay cho bên kia biết. Nếu không thông báo hoặc thông báo chậm, bên vi phạm phải bồi thường thiệt hại cho bên kia.",
+        "laws_matched": 1,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      },
+      "branch_b_rag": {
+        "answer": "Theo quy định tại khoản 1 Điều 294 Luật Thương mại số 36/2005/QH11 (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH), bên vi phạm hợp đồng thương mại được miễn trách nhiệm trong các trường hợp sau đây:\n\na) Xảy ra trường hợp miễn trách nhiệm mà các bên đã thỏa thuận;\n\nb) Xảy ra sự kiện bất khả kháng;\n\nc) Hành vi vi phạm của một bên hoàn toàn do lỗi của bên kia;\n\nd) Hành vi vi phạm của một bên do thực hiện quyết định của cơ quan quản lý nhà nước có thẩm quyền mà các bên không thể biết được vào thời điểm giao kết hợp đồng.\n\nBên cạnh đó, theo khoản 2 Điều 294 Luật Thương mại số 36/2005/QH11 (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH), bên vi phạm hợp đồng có nghĩa vụ chứng minh các trường hợp miễn trách nhiệm này.",
+        "citations_count": 1,
+        "laws_matched": 1,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      }
+    },
+    {
+      "id": "TC_FACT_29",
+      "category": "Fact Retrieval",
+      "question": "Phạt vi phạm trong thương mại là gì và cần điều kiện gì để áp dụng theo Điều 300 Luật Thương mại 2005?",
+      "ground_truth": "Theo Điều 300 Luật Thương mại 2005, phạt vi phạm là việc bên bị vi phạm yêu cầu bên vi phạm trả một khoản tiền phạt do vi phạm hợp đồng nếu trong hợp đồng có thoả thuận, trừ các trường hợp miễn trách nhiệm quy định tại Điều 294 của Luật này.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý về hợp đồng dịch vụ tại Việt Nam, tôi xin trả lời câu hỏi của bạn dựa trên các quy định pháp luật hiện hành như sau:\n\n### Căn cứ pháp lý:\n*   **Luật Thương mại số 36/2005/QH11** được Quốc hội nước CHXHCN Việt Nam thông qua ngày 14 tháng 6 năm 2005, có hiệu lực thi hành từ ngày 01 tháng 1 জানুয়ারি 2006 (Cụ thể tại **Điều 300** và **Điều 301**).\n\n---\n\n### 1. Phạt vi phạm trong thương mại là gì?\nMặc dù Luật Thương mại 2005 không đưa ra một định nghĩa mang tính lý luận về \"phạt vi phạm\", nhưng căn cứ theo nội dung quy định tại **Điều 300 Luật Thương mại 2005**, có thể hiểu:\n\n> **Phạt vi phạm** là việc một bên vi phạm hợp đồng chịu phạt một khoản tiền phạt do bên bị vi phạm yêu cầu dựa trên thỏa thuận trong hợp đồng (với điều kiện các bên có thỏa thuận phạt vi phạm và hành vi vi phạm thuộc trường hợp bị phạt), nhằm chế tài hành vi vi phạm nghĩa vụ hợp đồng.\n\n### 2. Điều kiện để áp dụng chế tài phạt vi phạm theo Điều 300 Luật Thương mại 2005\nTheo quy định tại **Điều 300 Luật Thương mại 2005**, chế tài phạt vi phạm chỉ được áp dụng khi **ĐỒNG THỜI** thỏa mãn các điều kiện sau đây:\n\n1.  **Phải có thỏa thuận giữa các bên:** \n    *   Các bên phải có thỏa thuận về việc phạt vi phạm trong hợp đồng (thường được lập thành văn bản). \n    *   *Lưu ý:* Nếu trong hợp đồng không có thỏa thuận về phạt vi phạm, bên bị vi phạm **không có quyền** yêu cầu phạt bên vi phạm (trừ trường hợp pháp luật chuyên ngành có quy định khác).\n\n2.  **Có hành vi vi phạm hợp đồng:** \n    *   Một bên không thực hiện, thực hiện không đầy đủ hoặc thực hiện không đúng nghĩa vụ đã cam kết trong hợp đồng thương mại.\n\n3.  **Không thuộc các trường hợp miễn trách nhiệm:** \n    *   Hành vi vi phạm hợp đồng không nằm trong các trường hợp được miễn trách nhiệm quy định tại **Điều 294 Luật Thương mại 2005** (ví dụ: do sự kiện bất khả kháng, do lỗi hoàn toàn của bên bị vi phạm, hoặc do thực hiện quyết định của cơ quan nhà nước có thẩm quyền mà các bên không thể biết trước khi giao kết hợp đồng...).\n\n---\n\n### 💡 Lưu ý quan trọng thêm từ chuyên gia (Giới hạn mức phạt vi phạm):\nKhi áp dụng phạt vi phạm trong các hoạt động thương mại thông thường, bạn cần lưu ý thêm về **Mức phạt vi phạm** quy định tại **Điều 301 Luật Thương mại 2005**:\n*   Mức phạt đối với vi phạm nghĩa vụ hợp đồng hoặc tổng mức phạt đối với nhiều vi phạm (nếu các bên có thỏa thuận phạt nhiều vi phạm) **không được quá 8%** giá trị phần nghĩa vụ hợp đồng bị vi phạm.\n*   *(Trường hợp áp dụng cho quan hệ dịch vụ đặc thù như Giám định hàng hóa thì áp dụng mức phạt không quá mười lần giá trị dịch vụ giám định, theo Điều 266 Luật Thương mại 2005).*\n\nTrên đây là tư vấn pháp lý chi tiết dành cho bạn. Nếu bạn cần soạn thảo hoặc rà soát điều khoản phạt vi phạm trong hợp đồng dịch vụ cụ thể, vui lòng cung cấp thêm thông tin để tôi hỗ trợ sâu hơn.",
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      },
+      "branch_b_rag": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin giải đáp thắc mắc của bạn dựa trên các quy định pháp luật được cung cấp như sau:\n\n**1. Khái niệm phạt vi phạm trong thương mại**\nTheo quy định tại Điều 300 Luật Thương mại số 36/2005/QH11 ngày 14 tháng 6 năm 2005 của Quốc hội (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH ngày 27 tháng 8 năm 2025 của Văn phòng Quốc hội), phạt vi phạm là việc bên bị vi phạm yêu cầu bên vi phạm trả một khoản tiền phạt do vi phạm hợp đồng nếu trong hợp đồng có thỏa thuận, trừ các trường hợp miễn trách nhiệm quy định tại Điều 294 của Luật này.\n\n**2. Điều kiện để áp dụng chế tài phạt vi phạm**\nCăn cứ theo quy định tại Điều 300 Luật Thương mại số 36/2005/QH11 (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH), để áp dụng chế tài phạt vi phạm, cần đáp ứng các điều kiện sau:\n* **Có sự thỏa thuận trong hợp đồng:** Các bên phải có thỏa thuận về việc phạt vi phạm trong hợp đồng.\n* **Có hành vi vi phạm hợp đồng:** Bên bị vi phạm yêu cầu phạt do bên vi phạm có hành vi vi phạm nghĩa vụ hợp đồng.\n* **Không thuộc trường hợp miễn trách nhiệm:** Hành vi vi phạm đó không thuộc các trường hợp miễn trách nhiệm quy định tại Điều 294 của Luật Thương mại số 36/2005/QH11 (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH).",
+        "citations_count": 1,
+        "laws_matched": 1,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      }
+    },
+    {
+      "id": "TC_FACT_30",
+      "category": "Fact Retrieval",
+      "question": "Mức phạt vi phạm hợp đồng tối đa trong quan hệ thương mại theo Điều 301 Luật Thương mại 2005 là bao nhiêu?",
+      "ground_truth": "Theo Điều 301 Luật Thương mại 2005, mức phạt đối với vi phạm nghĩa vụ hợp đồng hoặc tổng mức phạt đối với nhiều vi phạm do các bên thoả thuận trong hợp đồng, nhưng không quá 8% giá trị phần nghĩa vụ hợp đồng bị vi phạm, trừ trường hợp quy định tại Điều 266 của Luật này.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý về hợp đồng dịch vụ tại Việt Nam, tôi xin trả lời câu hỏi của bạn như sau:\n\nCăn cứ theo quy định tại **Điều 301 Luật Thương mại số 36/2005/QH11** ngày 14 tháng 6 năm 2005 của Quốc hội quy định về mức phạt vi phạm:\n\n> *\"Mức phạt vi phạm đối với tổng số tiền phạt vi phạm nghĩa vụ hợp đồng do các bên thỏa thuận nhưng không quá 8% giá trị phần nghĩa vụ hợp đồng bị vi phạm, trừ trường hợp quy định tại Điều 266 của Luật này.\"*\n\nNhư vậy, mức phạt vi phạm hợp đồng tối đa trong quan hệ thương mại thông thường là **không quá 8%** giá trị phần nghĩa vụ hợp đồng bị vi phạm (trừ trường hợp quy định tại Điều 266 Luật Thương mại 2005 đối với hành vi giám định sai).",
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      },
+      "branch_b_rag": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin trả lời câu hỏi của bạn dựa trên các quy định pháp luật được cung cấp như sau:\n\nTheo quy định tại Điều 301 Luật Thương mại số 36/2005/QH11 ngày 14 tháng 6 năm 2005 của Quốc hội (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH ngày 27 tháng 8 năm 2025 của Văn phòng Quốc hội), mức phạt đối với vi phạm nghĩa vụ hợp đồng hoặc tổng mức phạt đối với nhiều vi phạm do các bên thỏa thuận trong hợp đồng **không quá 8%** giá trị phần nghĩa vụ hợp đồng bị vi phạm, trừ trường hợp quy định tại Điều 266 của Luật Thương mại.",
+        "citations_count": 1,
+        "laws_matched": 1,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      }
+    },
+    {
+      "id": "TC_FACT_31",
+      "category": "Fact Retrieval",
+      "question": "Giá trị bồi thường thiệt hại trong hợp đồng thương mại bao gồm những khoản nào theo Điều 302 Luật Thương mại 2005?",
+      "ground_truth": "Theo khoản 2 Điều 302 Luật Thương mại 2005, giá trị bồi thường thiệt hại bao gồm giá trị tổn thất thực tế, trực tiếp mà bên bị vi phạm phải chịu do bên vi phạm gây ra và khoản lợi trực tiếp mà bên bị vi phạm đáng lẽ được hưởng nếu không có hành vi vi phạm.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin trả lời câu hỏi của bạn dựa trên quy định pháp luật thương mại hiện hành tại Việt Nam như sau:\n\nCăn cứ theo **Khoản 2 Điều 302 Luật Thương mại số 36/2005/QH11** (ngày 14 tháng 6 năm 2005), giá trị bồi thường thiệt hại bao gồm hai khoản chính sau đây:\n\n1. **Giá trị tổn thất thực tế, trực tiếp mà bên bị vi phạm phải gánh chịu do bên vi phạm gây ra:** \n   * Đây là những thiệt hại vật chất thực tế hiện hữu, có thật, có thể tính toán được ngay (ví dụ: giá trị tài sản bị mất, bị hư hỏng, chi phí để ngăn chặn, hạn chế thiệt hại do hành vi vi phạm gây ra).\n   * Căn cứ pháp lý: **Điểm a Khoản 2 Điều 302 Luật Thương mại 2005**.\n\n2. **Khoản lợi trực tiếp mà bên bị vi phạm đáng lẽ được hưởng nếu không có hành vi vi phạm:**\n   * Đây là khoản lợi ích vật chất đáng lẽ bên bị vi phạm sẽ thu được từ việc thực hiện hợp đồng nếu như bên kia không có hành vi vi phạm hợp đồng. Khoản lợi ích này phải là khoản lợi trực tiếp và có thật (thường được chứng minh bằng các hợp đồng mua bán lại, các đơn hàng đã ký kết, v.v.).\n   * Căn cứ pháp lý: **Điểm b Khoản 2 Điều 302 Luật Thương mại 2005**.\n\n---\n*Lưu ý thêm từ chuyên gia:* Ngoài quy định trên, để yêu cầu bồi thường thiệt hại, bạn cũng cần lưu ý thêm các điều kiện phát sinh trách nhiệm bồi thường thiệt hại được quy định tại **Điều 303 Luật Thương mại 2005** (bao gồm: có hành vi vi phạm hợp đồng, có thiệt hại thực tế, hành vi vi phạm là nguyên nhân trực tiếp gây ra thiệt hại) và nghĩa vụ chứng minh tổn thất thuộc về bên bị vi phạm theo **Điều 304 Luật Thương mại 2005**.",
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      },
+      "branch_b_rag": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin giải đáp thắc mắc của bạn dựa trên các quy định được cung cấp như sau:\n\nTheo quy định tại khoản 2 Điều 302 Luật Thương mại số 36/2005/QH11 (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH), giá trị bồi thường thiệt hại bao gồm:\n\n1. Giá trị tổn thất thực tế, trực tiếp mà bên bị vi phạm phải chịu do bên vi phạm gây ra.\n2. Khoản lợi trực tiếp mà bên bị vi phạm đáng lẽ được hưởng nếu không có hành vi vi phạm.\n\nTrên đây là nội dung tư vấn pháp lý về giá trị bồi thường thiệt hại trong thương mại theo đúng căn cứ pháp luật hiện hành. Nếu bạn có thêm vướng mắc nào khác, hãy trao đổi để tôi tiếp tục hỗ trợ!",
+        "citations_count": 1,
+        "laws_matched": 1,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      }
+    },
+    {
+      "id": "TC_FACT_32",
+      "category": "Fact Retrieval",
+      "question": "Căn cứ phát sinh trách nhiệm bồi thường thiệt hại trong thương mại theo Điều 303 Luật Thương mại gồm những yếu tố nào?",
+      "ground_truth": "Theo Điều 303 Luật Thương mại 2005, trừ các trường hợp miễn trách nhiệm quy định tại Điều 294, trách nhiệm bồi thường thiệt hại phát sinh khi có đủ các yếu tố: 1. Có hành vi vi phạm hợp đồng; 2. Có thiệt hại thực tế; 3. Hành vi vi phạm hợp đồng là nguyên nhân trực tiếp gây ra thiệt hại.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin trả lời câu hỏi của bạn dựa trên quy định của pháp luật thương mại hiện hành tại Việt Nam như sau:\n\nCăn cứ phát sinh trách nhiệm bồi thường thiệt hại trong thương mại được quy định tại **Điều 303 Luật Thương mại số 36/2005/QH11** ngày 14 tháng 6 năm 2005. \n\nTheo đó, trách nhiệm bồi thường thiệt hại phát sinh khi có đủ **03 yếu tố** sau đây (trừ các trường hợp miễn trách nhiệm quy định tại Điều 294 của Luật Thương mại):\n\n1. **Có hành vi vi phạm hợp đồng:** \n   *Căn cứ pháp lý: Điểm a Khoản 1 Điều 303 Luật Thương mại số 36/2005/QH11.*\n\n2. **Có thiệt hại thực tế xảy ra đối với bên bị vi phạm do hành vi vi phạm hợp đồng gây ra:** \n   *Căn cứ pháp lý: Điểm b Khoản 1 Điều 303 Luật Thương mại số 36/2005/QH11.*\n\n3. **Hành vi vi phạm hợp đồng là nguyên nhân trực tiếp gây ra thiệt hại:** \n   *Căn cứ pháp lý: Điểm c Khoản 1 Điều 303 Luật Thương mại số 36/2005/QH11.*\n\nNhư vậy, để yêu cầu bồi thường thiệt hại trong thương mại, bên bị vi phạm có nghĩa vụ chứng minh đầy đủ cả ba yếu tố nêu trên (trừ trường hợp các bên có thỏa thuận khác hoặc pháp luật có quy định khác).",
+        "laws_matched": 1,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      },
+      "branch_b_rag": {
+        "answer": "Chào bạn, dựa trên quy định tại phần Căn cứ pháp lý được cung cấp, trách nhiệm bồi thường thiệt hại trong thương mại phát sinh khi có đủ các yếu tố được quy định cụ thể như sau:\n\nTheo quy định tại Điều 303 Luật Thương mại số 36/2005/QH11 ngày 14 tháng 6 năm 2005 của Quốc hội (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH ngày 27 tháng 8 năm 2025 của Văn phòng Quốc hội), trừ các trường hợp miễn trách nhiệm quy định tại Điều 294 của Luật này, trách nhiệm bồi thường thiệt hại phát sinh khi có đủ các yếu tố sau đây:\n\n1. Có hành vi vi phạm hợp đồng;\n2. Có thiệt hại thực tế;\n3. Hành vi vi phạm hợp đồng là nguyên nhân trực tiếp gây ra thiệt hại.\n\nHy vọng thông tin trên đáp ứng đúng yêu cầu tra cứu pháp lý của bạn!",
+        "citations_count": 1,
+        "laws_matched": 1,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      }
+    },
+    {
+      "id": "TC_FACT_33",
+      "category": "Fact Retrieval",
+      "question": "Thời hiệu khởi kiện áp dụng đối với các tranh chấp thương mại là bao lâu theo Điều 319 Luật Thương mại 2005?",
+      "ground_truth": "Theo Điều 319 Luật Thương mại 2005, thời hiệu khởi kiện áp dụng đối với các tranh chấp thương mại là chín tháng, kể từ thời điểm quyền và lợi ích hợp pháp bị xâm phạm, trừ trường hợp quy định tại điểm e khoản 1 Điều 237 của Luật này.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin trả lời câu hỏi của bạn dựa trên các quy định pháp luật hiện hành của Việt Nam như sau:\n\nCăn cứ theo quy định tại **Điều 319 Luật Thương mại số 36/2005/QH11** ngày 14 tháng 6 năm 2005, thời hiệu khởi kiện áp dụng đối với các tranh chấp thương mại được quy định cụ thể như sau:\n\n*   **Thời hạn cụ thể:** Thời hiệu khởi kiện áp dụng đối với các tranh chấp thương mại là **hai (02) năm**, kể từ thời điểm quyền và lợi ích hợp pháp bị xâm phạm, trừ trường hợp quy định tại điểm b khoản 1 Điều 237 của Luật Luật sư năm 2006 (hoặc các văn bản chuyên ngành khác có quy định khác về thời hiệu).\n\nNhư vậy, khi phát sinh tranh chấp hợp đồng dịch vụ (được coi là một hoạt động thương mại theo Luật Thương mại), các bên lưu ý thời hạn 02 năm nêu trên để bảo vệ quyền và lợi ích hợp pháp của mình tại Trọng tài hoặc Tòa án có thẩm quyền.",
+        "laws_matched": 1,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      },
+      "branch_b_rag": {
+        "answer": "Theo quy định tại Điều 319 Luật Thương mại số 36/2005/QH11 ngày 14 tháng 6 năm 2005 của Quốc hội (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH ngày 27 tháng 8 năm 2025 của Văn phòng Quốc hội), thời hiệu khởi kiện áp dụng đối với các tranh chấp thương mại là **hai năm**, kể từ thời điểm quyền và lợi ích hợp pháp bị xâm phạm, trừ trường hợp quy định tại điểm e khoản 1 Điều 237 của Luật này.",
+        "citations_count": 2,
+        "laws_matched": 1,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      }
+    },
+    {
+      "id": "TC_FACT_34",
+      "category": "Fact Retrieval",
+      "question": "Quyền nhân thân của tác giả theo Điều 19 Luật Sở hữu trí tuệ bao gồm những quyền gì?",
+      "ground_truth": "Theo Điều 19 Luật Sở hữu trí tuệ, quyền nhân thân của tác giả gồm: 1. Đặt tên cho tác phẩm; 2. Đứng tên thật hoặc bút danh trên tác phẩm, được nêu tên khi tác phẩm được công bố, sử dụng; 3. Công bố tác phẩm hoặc cho phép người khác công bố tác phẩm; 4. Bảo vệ sự toàn vẹn của tác phẩm không cho người khác xuyên tạc, cắt xén hoặc sửa đổi làm tổn hại đến danh dự và uy tín của tác giả.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin trả lời câu hỏi của bạn dựa trên các quy định pháp luật hiện hành của Việt Nam như sau:\n\nCăn cứ theo quy định tại **Khoản 3 Điều 1 Luật sửa đổi, bổ sung một số điều của Luật Sở hữu trí tuệ số 07/2022/QH15** (sửa đổi, bổ sung Điều 19 của **Luật Sở hữu trí tuệ số 50/2005/QH11** đã được sửa đổi, bổ sung một số điều theo Luật số 36/2009/QH12 và Luật số 42/2019/QH13), quyền nhân thân của tác giả bao gồm các quyền sau đây:\n\n1. **Đặt tên cho tác phẩm** (tuy nhiên, quy định này không áp dụng đối với trường hợp tác phẩm dịch từ ngôn ngữ này sang ngôn ngữ khác theo điểm a khoản 1 Điều 20 Luật Sở hữu trí tuệ).\n2. **Đứng tên thật hoặc bút danh trên tác phẩm**; được nêu tên thật hoặc bút danh khi tác phẩm được công bố, sử dụng.\n3. **Công bố tác phẩm** hoặc cho phép người khác công bố tác phẩm.\n4. **Bảo vệ sự toàn vẹn của tác phẩm** không cho người khác xuyên tạc; không cho người khác sửa chữa, cắt xén tác phẩm dưới bất kỳ hình thức nào gây phương hại đến danh dự và uy tín của tác giả.\n\nTrên đây là nội dung pháp lý chính xác và đầy đủ về quyền nhân thân của tác giả theo hệ thống pháp luật sở hữu trí tuệ hiện hành tại Việt Nam.",
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      },
+      "branch_b_rag": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin trả lời câu hỏi của bạn dựa trên quy định tại Điều 19 Luật Sở hữu trí tuệ số 50/2005/QH11 ngày 29 tháng 11 năm 2005 của Quốc hội như sau:\n\nQuyền nhân thân của tác giả bao gồm:\n\n1. Đặt tên cho tác phẩm (trong đó tác giả có quyền chuyển quyền sử dụng quyền đặt tên tác phẩm cho tổ chức, cá nhân nhận chuyển giao quyền tài sản quy định tại khoản 1 Điều 20 Luật Sở hữu trí tuệ số 50/2005/QH11).\n2. Đứng tên thật hoặc bút danh trên tác phẩm; được nêu tên thật hoặc bút danh khi tác phẩm được công bố, sử dụng.\n3. Công bố tác phẩm hoặc cho phép người khác công bố tác phẩm.\n4. Bảo vệ sự toàn vẹn của tác phẩm không cho người khác xuyên tạc; không cho người khác sửa đổi, cắt xén tác phẩm dưới bất kỳ hình thức nào gây phương hại đến danh dự và uy tín của tác giả.\n\nTrân trọng!",
+        "citations_count": 2,
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      }
+    },
+    {
+      "id": "TC_FACT_35",
+      "category": "Fact Retrieval",
+      "question": "Quyền tài sản đối với tác phẩm theo Điều 20 Luật Sở hữu trí tuệ gồm các quyền nào?",
+      "ground_truth": "Theo Điều 20 Luật Sở hữu trí tuệ, quyền tài sản gồm: làm tác phẩm phái sinh; biểu diễn tác phẩm trước công chúng; sao chép tác phẩm; phân phối, nhập khẩu để phân phối bản gốc hoặc bản sao; phát sóng, truyền đạt tác phẩm đến công chúng; cho thuê bản gốc hoặc bản sao tác phẩm điện ảnh, chương trình máy tính.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin trả lời câu hỏi của bạn dựa trên các quy định pháp luật hiện hành của Việt Nam như sau:\n\nCăn cứ theo quy định tại **Khoản 1 Điều 20 Luật Sở hữu trí tuệ số 50/2005/QH11** (đã được sửa đổi, bổ sung một số điều theo **Luật số 36/2009/QH12, Luật số 42/2019/QH14 và Luật số 07/2022/QH15**), quyền tài sản đối với tác phẩm bao gồm các quyền sau đây:\n\n1. **Làm tác phẩm phái sinh** (điểm a khoản 1 Điều 20);\n2. **Biểu diễn tác phẩm trước công chúng** trực tiếp hoặc thôngผ่าน bất kỳ thiết bị kỹ thuật nào tại địa điểm mà công chúng có thể tiếp cận được nhưng công chúng không thể tự quyết định thời gian và địa điểm tiếp cận (điểm b khoản 1 Điều 20);\n3. **Sao chép trực tiếp hoặc gián tiếp tác phẩm** bằng bất kỳ phương tiện hay hình thức nào, toàn bộ hoặc một phần (điểm c khoản 1 Điều 20);\n4. **Phân phối, nhập khẩu để phân phối** đến công chúng thông qua bán, cho thuê hoặc hình thức chuyển giao quyền sở hữu khác đối với bản gốc, bản sao tác phẩm dưới dạng hữu hình (điểm d khoản 1 Điều 20);\n5. **Truyền đạt tác phẩm đến công chúng** bằng phương tiện hữu tuyến, vô tuyến, mạng thông tin điện tử hoặc bất kỳ phương tiện kỹ thuật nào khác mà công chúng có thể tiếp cận được tại thời gian và địa điểm do chính họ lựa chọn (điểm đ khoản 1 Điều 20);\n6. **Cho thuê bản gốc hoặc bản sao tác phẩm điện ảnh, chương trình máy tính** (điểm e khoản 1 Điều 20).\n\n*Lưu ý thêm:* Các quyền tài sản này do tác giả, chủ sở hữu quyền tác giả độc quyền thực hiện hoặc cho phép người khác thực hiện theo quy định tại Khoản 2 Điều 20 Luật Sở hữu trí tuệ. Tổ chức, cá nhân khi khai thác, sử dụng một, một số hoặc toàn bộ các quyền tài sản nêu trên phải xin phép và trả tiền nhuận bút, thù lao, các quyền lợi vật chất khác cho chủ sở hữu quyền tác giả, trừ các trường hợp ngoại lệ quy định tại Điều 25 và Điều 25a Luật Sở hữu trí tuệ.",
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      },
+      "branch_b_rag": {
+        "answer": "Căn cứ theo quy định tại khoản 1 Điều 20 Luật Sở hữu trí tuệ số 50/2005/QH11 ngày 29 tháng 11 năm 2005 của Quốc hội, quyền tài sản đối với tác phẩm bao gồm các quyền sau đây:\n\na) Làm tác phẩm phái sinh;\n\nb) Biểu diễn tác phẩm trước công chúng trực tiếp hoặc gián tiếp thông qua các bản ghi âm, ghi hình hoặc bất kỳ phương tiện kỹ thuật nào tại địa điểm mà công chúng có thể tiếp cận được nhưng công chúng không thể tự do lựa chọn thời gian và từng phần tác phẩm;\n\nc) Sao chép trực tiếp hoặc gián tiếp toàn bộ hoặc một phần tác phẩm bằng bất kỳ phương tiện hay hình thức nào, trừ trường hợp quy định tại điểm a khoản 3 Điều 20 Luật Sở hữu trí tuệ số 50/2005/QH11;\n\nd) Phân phối, nhập khẩu để phân phối đến công chúng thông qua bán hoặc hình thức chuyển giao quyền sở hữu khác đối với bản gốc, bản sao tác phẩm dưới dạng hữu hình, trừ trường hợp quy định tại điểm b khoản 3 Điều 20 Luật Sở hữu trí tuệ số 50/2005/QH11;\n\nđ) Phát sóng, truyền đạt đến công chúng tác phẩm bằng phương tiện hữu tuyến, vô tuyến, mạng thông tin điện tử hoặc bất kỳ phương tiện kỹ thuật nào khác, bao gồm cả việc cung cấp tác phẩm đến công chúng theo cách mà công chúng có thể tiếp cận được tại địa điểm và thời gian do họ lựa chọn;\n\ne) Cho thuê bản gốc hoặc bản sao tác phẩm điện ảnh, chương trình máy tính, trừ trường hợp chương trình máy tính đó không phải là đối tượng chính của việc cho thuê.",
+        "citations_count": 1,
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      }
+    },
+    {
+      "id": "TC_FACT_36",
+      "category": "Fact Retrieval",
+      "question": "Chương trình máy tính được bảo hộ như thế nào theo Điều 22 Luật Sở hữu trí tuệ?",
+      "ground_truth": "Theo Điều 22 Luật Sở hữu trí tuệ, chương trình máy tính là tập hợp các chỉ dẫn được thể hiện dưới dạng lệnh, mã, lược đồ hoặc dạng khác để máy tính thực hiện công việc. Chương trình máy tính được bảo hộ như tác phẩm văn học, dù được thể hiện dưới dạng mã nguồn hay mã máy.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin trả lời câu hỏi của bạn dựa trên quy định pháp luật hiện hành tại Việt Nam như sau:\n\nCăn cứ theo **Điều 22 Luật Sở hữu trí tuệ số 50/2005/QH11** (đã được sửa đổi, bổ sung một số điều theo Luật số 36/2009/QH12, Luật số 42/2019/QH14 và Luật số 07/2022/QH15), chương trình máy tính được bảo hộ quyền tác giả cụ thể như sau:\n\n**1. Hình thức bảo hộ (Khoản 1 Điều 22):**\n* Chương trình máy tính được bảo hộ như **tác phẩm văn học**, dù được thể hiện dưới dạng mã nguồn hay mã máy.\n\n**2. Thỏa thuận và quy chế bảo hộ (Khoản 2 Điều 22):**\n* “Chương trình máy tính” được định nghĩa là tập hợp các chỉ dẫn nhằm thực hiện các công việc khác nhau hoặc làm cho máy tính thực hiện được một công việc cụ thể nào đó đạt được kết quả nhất định. Chương trình máy tính có thể được giao kết, sử dụng dưới bất kỳ dạng nào, kể cả dạng thể hiện đã được làm cho máy tính có thể đọc được.\n* Người có quyền tác giả và người có quyền sử dụng hợp pháp chương trình máy tính có thể sao chép, sửa đổi, thích ứng chương trình máy tính đó cho phù hợp với mục đích sử dụng, nhưng việc sửa đổi, thích ứng này không được xâm phạm quyền của chủ sở hữu quyền tác giả đối với chương trình máy tính đó.\n\n**3. Bản sao chương trình máy tính (Khoản 3 Điều 22):**\n* Việc sao chép chương trình máy tính (với điều kiện việc sao chép đó nhằm mục đích lưu trữ để thay thế bản hợp pháp bị hỏng, bị thất lạc hoặc không còn sử dụng được) sẽ không bị coi là xâm phạm quyền tác giả, nếu việc sao chép này do người có quyền sử dụng hợp pháp thực hiện.\n\nTrên đây là nội dung pháp lý chi tiết quy định về việc bảo hộ chương trình máy tính theo Luật Sở hữu trí tuệ của Việt Nam. Trân trọng thông tin đến bạn!",
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      },
+      "branch_b_rag": {
+        "answer": "Theo quy định tại khoản 1 Điều 22 Luật Sở hữu trí tuệ số 50/2005/QH11 ngày 29 tháng 11 năm 2005 của Quốc hội, chương trình máy tính được bảo hộ như sau:\n\n- Chương trình máy tính được bảo hộ như tác phẩm văn học, dù được thể hiện dưới dạng mã nguồn hay mã máy.\n- Tác giả và chủ sở hữu quyền tác giả đối với chương trình máy tính có quyền thỏa thuận bằng văn bản với nhau về việc sửa chữa, nâng cấp chương trình máy tính.\n- Tổ chức, cá nhân có quyền sử dụng hợp pháp bản sao chương trình máy tính được làm một bản sao dự phòng để thay thế khi bản sao đó bị xóa, bị hỏng hoặc không thể sử dụng nhưng không được chuyển giao cho tổ chức, cá nhân khác.\n- Trường hợp chương trình máy tính được cung cấp dưới dạng dịch vụ hoặc thông qua các nền tảng trực tuyến thì việc tạo bản sao dự phòng thực hiện theo điều khoản sử dụng hoặc thỏa thuận cấp phép giữa các bên.",
+        "citations_count": 1,
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      }
+    },
+    {
+      "id": "TC_FACT_37",
+      "category": "Fact Retrieval",
+      "question": "Khi tổ chức, cá nhân giao việc hoặc giao kết hợp đồng sáng tạo tác phẩm thì quyền tác giả thuộc về ai theo Điều 39 Luật SHTT?",
+      "ground_truth": "Theo khoản 1 và khoản 2 Điều 39 Luật Sở hữu trí tuệ, tổ chức giao nhiệm vụ sáng tạo tác phẩm cho tác giả là người thuộc tổ chức mình, hoặc tổ chức/cá nhân giao kết hợp đồng với tác giả sáng tạo ra tác phẩm là chủ sở hữu quyền tài sản quy định tại Điều 20 và quyền công bố tác phẩm quy định tại khoản 3 Điều 19, trừ trường hợp có thoả thuận khác.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý về hợp đồng dịch vụ tại Việt Nam, tôi xin trả lời câu hỏi của bạn dựa trên quy định hiện hành của pháp luật về sở hữu trí tuệ như sau:\n\nCăn cứ theo **Điều 39 Luật Sở hữu trí tuệ số 50/2005/QH11** (đã được sửa đổi, bổ sung một số điều theo **Luật số 36/2009/QH12**, **Luật số 42/2019/QH14** và **Luật số 07/2022/QH15**), quy định về quyền tác giả đối với tác phẩm được giao nhiệm vụ hoặc giao kết hợp đồng sáng tạo tác phẩm được xác định cụ thể như sau:\n\n**1. Đối với tổ chức, cá nhân giao nhiệm vụ (chủ thể giao việc):**\nTổ chức, cá nhân giao nhiệm vụ sáng tạo tác phẩm là chủ sở hữu các quyền tác giả quy định tại Điều 20 và khoản 3 Điều 19 của Luật Sở hữu trí tuệ (bao gồm quyền tài sản và quyền công bố tác phẩm, hoặc cho phép người khác công bố tác phẩm), trừ trường hợp có thỏa thuận khác.\n\n**2. Đối với tổ chức, cá nhân giao kết hợp đồng sáng tạo tác phẩm (chủ thể ký hợp đồng dịch vụ/thuê mướn sáng tạo):**\nTổ chức, cá nhân giao kết hợp đồng sáng tạo tác phẩm là chủ sở hữu các quyền tác giả quy định tại Điều 20 và khoản 3 Điều 19 của Luật Sở hữu trí tuệ, trừ trường hợp có thỏa thuận khác.\n\n**3. Đối với tác giả trực tiếp sáng tạo tác phẩm:**\n*   Cá nhân trực tiếp sáng tạo ra tác phẩm theo hình thức giao nhiệm vụ hoặc giao kết hợp đồng sáng tạo tác phẩm đồng thời là **tác giả** của tác phẩm đó.\n*   Tác giả này nắm giữ các quyền nhân thân quy định tại khoản 1, khoản 2 và khoản 4 Điều 19 của Luật Sở hữu trí tuệ (gồm các quyền: Đặt tên cho tác phẩm; Đứng tên thật hoặc bút danh trên tác phẩm; Bảo vệ sự toàn vẹn của tác phẩm, không cho người khác sửa chữa, cắt xén hoặc xuyên tạc tác phẩm dưới bất kỳ hình thức nào gây phương hại đến danh dự và uy tín của tác giả), trừ trường hợp quy định tại khoản 5 Điều này (tác phẩm phần mềm máy tính, biên soạn...).\n\n**Tóm lại:** \nKhi có thỏa thuận giao việc hoặc giao kết hợp đồng dịch vụ sáng tạo tác phẩm, **quyền tài sản** và **quyền công bố** (Chủ sở hữu quyền tác giả) thuộc về bên thuê/giao việc; trong khi **quyền nhân thân gắn liền với nhân thân người sáng tạo** (trừ quyền công bố) vẫn thuộc về cá nhân trực tiếp làm ra tác phẩm (Tác giả), *trừ khi các bên có thỏa thuận khác trong hợp đồng.*",
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      },
+      "branch_b_rag": {
+        "answer": "Theo quy định tại Điều 39 Luật Sở hữu trí tuệ số 50/2005/QH11 ngày 29 tháng 11 năm 2005 của Quốc hội, việc xác định chủ sở hữu quyền tác giả trong trường hợp tổ chức, cá nhân giao việc hoặc giao kết hợp đồng sáng tạo tác phẩm được quy định cụ thể như sau:\n\n1. Theo khoản 1 Điều 39 Luật Sở hữu trí tuệ số 50/2005/QH11: Tổ chức giao nhiệm vụ sáng tạo tác phẩm cho tác giả là người thuộc tổ chức mình là chủ sở hữu các quyền quy định tại Điều 20 và khoản 3 Điều 19 của Luật Sở hữu trí tuệ số 50/2005/QH11, trừ trường hợp có thỏa thuận khác.\n\n2. Theo khoản 2 Điều 39 Luật Sở hữu trí tuệ số 50/2005/QH11: Tổ chức, cá nhân giao kết hợp đồng với tác giả sáng tạo ra tác phẩm là chủ sở hữu các quyền quy định tại Điều 20 và khoản 3 Điều 19 của Luật Sở hữu trí tuệ số 50/2005/QH11, trừ trường hợp có thỏa thuận khác.",
+        "citations_count": 2,
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      }
+    },
+    {
+      "id": "TC_FACT_38",
+      "category": "Fact Retrieval",
+      "question": "Thông điệp dữ liệu có giá trị như văn bản giấy khi đáp ứng điều kiện gì theo Điều 9 Luật Giao dịch điện tử 2023?",
+      "ground_truth": "Theo Điều 9 Luật Giao dịch điện tử 2023, thông điệp dữ liệu có giá trị như văn bản khi thông tin chứa trong thông điệp dữ liệu đó có thể truy cập và sử dụng được để tham chiếu.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin trả lời câu hỏi của bạn dựa trên quy định pháp luật hiện hành tại Việt Nam như sau:\n\nCăn cứ theo **Điều 9 Luật Giao dịch điện tử số 20/2023/QH15** (được Quốc hội nước Cộng hòa xã hội chủ nghĩa Việt Nam thông qua ngày 22 tháng 6 năm 2023, có hiệu lực thi hành từ ngày 01 tháng 7 năm 2024), thông điệp dữ liệu được thể hiện dưới hình thức văn bản giấy khi đáp ứng các điều kiện sau đây:\n\n1. **Thông tin chứa trong thông điệp dữ liệu đó có thể truy cập và sử dụng được để tham chiếu khi cần thiết** (quy định tại Khoản 1 Điều 9).\n2. **Thông tin chứa trong thông điệp dữ liệu đó được bảo đảm an toàn bằng hình thức mã hóa hoặc bằng phương pháp khác để bảo đảm tính toàn vẹn của thông điệp dữ liệu từ khi khởi tạo cho đến khi hoàn thành việc truyền gửi** (quy định tại Điểm a Khoản 2 Điều 9), **trừ trường hợp pháp luật có quy định khác**.\n\nNhư vậy, khi đáp ứng đủ các điều kiện về khả năng truy cập, sử dụng để tham chiếu và đảm bảo tính toàn vẹn nêu trên, thông điệp dữ liệu sẽ có giá trị pháp lý tương đương như văn bản giấy trong các giao dịch dân sự, thương mại và các hoạt động khác theo quy định của pháp luật.",
+        "laws_matched": 1,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      },
+      "branch_b_rag": {
+        "answer": "Theo quy định tại Điều 9 Luật Giao dịch điện tử số 20/2023/QH15 ngày 30 tháng 7 năm 2023 của Quốc hội, trường hợp pháp luật yêu cầu thông tin phải được thể hiện bằng văn bản thì thông điệp dữ liệu được xem là đáp ứng yêu cầu khi đáp ứng các điều kiện sau:\n\n1. Thông tin trong thông điệp dữ liệu đó có thể truy cập và sử dụng được để tham chiếu theo quy định tại khoản 1 Điều 9 Luật Giao dịch điện tử số 20/2023/QH15.\n2. Trường hợp pháp luật yêu cầu văn bản phải được công chứng, chứng thực thì thông điệp dữ liệu được xem là đáp ứng yêu cầu nếu được công chứng theo quy định của pháp luật về công chứng; chứng thực theo quy định của Luật Giao dịch điện tử số 20/2023/QH15 và pháp luật về chứng thực theo quy định tại khoản 2 Điều 9 Luật Giao dịch điện tử số 20/2023/QH15.",
+        "citations_count": 1,
+        "laws_matched": 1,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      }
+    },
+    {
+      "id": "TC_FACT_39",
+      "category": "Fact Retrieval",
+      "question": "Thông điệp dữ liệu có giá trị như bản gốc khi nào theo Điều 10 Luật Giao dịch điện tử 2023?",
+      "ground_truth": "Theo Điều 10 Luật Giao dịch điện tử 2023, thông điệp dữ liệu có giá trị như bản gốc khi thông tin chứa trong đó được bảo đảm toàn vẹn kể từ khi được khởi tạo lần đầu và có thể truy cập, sử dụng được dưới dạng hoàn chỉnh.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin trả lời câu hỏi của bạn dựa trên quy định của pháp luật Việt Nam hiện hành như sau:\n\nCăn cứ theo quy định tại **Điều 10 Luật Giao dịch điện tử số 20/2023/QH15** (được Quốc hội nước Cộng hòa xã hội chủ nghĩa Việt Nam khóa XV thông qua ngày 22 tháng 6 năm 2023), thông điệp dữ liệu được thể hiện dưới dạng văn bản được coi là có giá trị như bản gốc khi đáp ứng đồng thời các điều kiện sau đây:\n\n1. **Khoản 1 Điều 10:** Có biện pháp bảo đảm tính toàn vẹn của thông điệp dữ liệu từ khi được khởi tạo lần đầu dưới dạng một thông điệp dữ liệu hoàn chỉnh cho đến khi thông điệp dữ liệu đó được thể hiện. \n   *(Tiêu chí đánh giá tính toàn vẹn là thông điệp dữ liệu chưa bị thay đổi, trừ những thay đổi về hình thức phát sinh trong quá trình hiển thị, gửi, nhận hoặc lưu trữ).*\n\n2. **Khoản 2 Điều 10:** Thông điệp dữ liệu có thể truy cập và sử dụng được dưới dạng hoàn chỉnh khi cần thiết.\n\nNhư vậy, để một thông điệp dữ liệu thay thế được cho \"bản gốc\" về mặt pháp lý trong giao dịch điện tử và hợp đồng dịch vụ, bắt buộc phải thỏa mãn hai điều kiện cốt lõi là **bảo đảm tính toàn vẹn** và **khả năng truy cập, sử dụng được** theo đúng quy định tại Điều 10 Luật Giao dịch điện tử 2023 nêu trên.",
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      },
+      "branch_b_rag": {
+        "answer": "Theo quy định tại Điều 10 Luật Giao dịch điện tử số 20/2023/QH15 ngày 30 tháng 7 năm 2023 của Quốc hội, thông điệp dữ liệu được sử dụng và có giá trị như bản gốc khi đáp ứng đủ các yêu cầu sau đây:\n\n1. Thông tin trong thông điệp dữ liệu được bảo đảm toàn vẹn kể từ khi được khởi tạo lần đầu tiên dưới dạng một thông điệp dữ liệu hoàn chỉnh. \n   *(Thông tin trong thông điệp dữ liệu được xem là toàn vẹn khi thông tin đó chưa bị thay đổi, trừ những thay đổi về hình thức phát sinh trong quá trình gửi, lưu trữ hoặc hiển thị thông điệp dữ liệu).*\n\n2. Thông tin trong thông điệp dữ liệu có thể truy cập và sử dụng được dưới dạng hoàn chỉnh.",
+        "citations_count": 1,
+        "laws_matched": 1,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      }
+    },
+    {
+      "id": "TC_FACT_40",
+      "category": "Fact Retrieval",
+      "question": "Chữ ký điện tử có giá trị pháp lý như thế nào theo Điều 22 Luật Giao dịch điện tử 2023?",
+      "ground_truth": "Theo Điều 22 Luật Giao dịch điện tử 2023, chữ ký điện tử không bị phủ nhận giá trị pháp lý chỉ vì được thể hiện dưới dạng chữ ký điện tử. Chữ ký điện tử chuyên dùng bảo đảm an toàn hoặc chữ ký số có giá trị pháp lý tương đương chữ ký của cá nhân trong văn bản giấy.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin trả lời câu hỏi của bạn dựa trên quy định của pháp luật Việt Nam hiện hành như sau:\n\nCăn cứ theo **Điều 22 Luật Giao dịch điện tử số 20/2023/QH15** được Quốc hội thông qua ngày 22 tháng 6 năm 2023 (có hiệu lực thi hành từ ngày 01 tháng 7 năm 2024), giá trị pháp lý của chữ ký điện tử được quy định cụ thể như sau:\n\n1. Chữ ký điện tử không bị phủ nhận giá trị pháp lý chỉ vì được thể hiện dưới dạng chữ ký điện tử. *(Theo Khoản 1 Điều 22)*\n\n2. Chữ ký điện tử chuyên dùng bảo đảm an toàn hoặc chữ ký số có giá trị pháp lý tương đương chữ ký của cá nhân đó trong văn bản giấy. Trong trường hợp pháp luật quy định văn bản phải được cơ quan, tổ chức xác nhận thì yêu cầu đó được xem là đã đáp ứng đối với văn bản điện tử nếu chữ ký điện tử chuyên dùng bảo đảm an toàn hoặc chữ ký số của cơ quan, tổ chức đó. *(Theo Khoản 2 Điều 22)*\n\n3. Chữ ký điện tử không phải là chữ ký điện tử chuyên dùng bảo đảm an toàn hoặc chữ ký số nhưng được các bên tham gia giao dịch thỏa thuận bằng văn bản đáp ứng các yêu cầu về an toàn theo quy định của pháp luật về giao dịch điện tử thì có giá trị pháp lý tương đương chữ ký của cá nhân, cơ quan, tổ chức đó. *(Theo Khoản 3 Điều 22)*\n\n4. Trong trường hợp pháp luật quy định văn bản phải được đóng dấu của cơ quan, tổ chức thì yêu cầu đó được xem là đã đáp ứng đối với văn bản điện tử nếu chữ ký điện tử chuyên dùng bảo đảm an toàn hoặc chữ ký số của cơ quan, tổ chức đó đáp ứng các điều kiện kỹ thuật theo quy định. *(Theo Khoản 4 Điều 22)*\n\nNhư vậy, khi giao kết hợp đồng dịch vụ, việc sử dụng chữ ký điện tử (đặc biệt là chữ ký số hoặc chữ ký điện tử chuyên dùng bảo đảm an toàn) hoàn toàn có giá trị pháp lý ràng buộc các bên tương-đương như chữ ký tay và con dấu trên văn bản giấy truyền thống, miễn là đáp ứng đủ các điều kiện kỹ thuật và pháp lý theo luật định.",
+        "laws_matched": 1,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      },
+      "branch_b_rag": {
+        "answer": "Hiện tại trong cơ sở dữ liệu pháp luật về hợp đồng dịch vụ của hệ thống chưa có quy định về vấn đề này. Bạn vui lòng tra cứu thêm các văn bản pháp luật chuyên ngành liên quan hoặc tham vấn chuyên gia pháp lý.",
+        "citations_count": 0,
+        "laws_matched": 0,
+        "laws_total": 2,
+        "article_cited": false,
+        "hallucinated": false
+      }
+    },
+    {
+      "id": "TC_FACT_41",
+      "category": "Fact Retrieval",
+      "question": "Việc giao kết hợp đồng điện tử được quy định như thế nào tại Điều 34 Luật Giao dịch điện tử 2023?",
+      "ground_truth": "Theo Điều 34 Luật Giao dịch điện tử 2023, hợp đồng điện tử được giao kết hoặc thực hiện từ sự tương tác giữa một hệ thống thông tin tự động với người hoặc giữa các hệ thống thông tin tự động với nhau không bị phủ nhận giá trị pháp lý chỉ vì không có sự kiểm tra hay can thiệp của con người.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin trả lời câu hỏi của bạn dựa trên quy định của pháp luật Việt Nam hiện hành như sau:\n\n**Căn cứ pháp lý:** \n* **Luật Giao dịch điện tử số 20/2023/QH15** được Quốc hội nước Cộng hòa xã hội chủ nghĩa Việt Nam thông qua ngày 22 tháng 6 năm 2023 (có hiệu lực thi hành từ ngày 01 tháng 7 năm 2024).\n\n---\n\nTheo quy định tại **Điều 34 Luật Giao dịch điện tử 2023**, việc giao kết hợp đồng điện tử được quy định cụ thể như sau:\n\n**1. Giao kết hợp đồng điện tử (Khoản 1):**\nHợp đồng điện tử được giao kết thông qua việc sử dụng thông điệp dữ liệu để thực hiện toàn bộ hoặc một phần giao dịch trong quá trình giao kết hợp đồng.\n\n**2. Thể hiện ý chí giao kết (Khoản 2):**\nTrong giao kết hợp đồng điện tử, các bên có quyền thỏa thuận về việc sử dụng phương tiện điện tử để giao kết hợp đồng, tuân thủ các quy định của Luật này và pháp luật về hợp đồng.\n\n**3. Đề nghị giao kết hợp đồng và chấp nhận đề nghị giao kết hợp đồng (Khoản 3):**\nViệc gửi, nhận đề nghị giao kết hợp đồng và chấp nhận giao kết hợp đồng được thực hiện thông qua thông điệp dữ liệu, trừ trường hợp các bên có thỏa thuận khác.\n\n**4. Giá trị pháp lý của hợp đồng điện tử (Khoản 4):**\nHợp đồng điện tử không bị phủ nhận giá trị pháp lý chỉ vì dùng thông điệp dữ liệu để giao kết hợp đồng.\n\n---\n*Lưu ý từ chuyên gia:* Khi tiến hành giao kết hợp đồng dịch vụ bằng hình thức điện tử, các bên ngoài việc tuân thủ các quy định chung về giao dịch điện tử nêu trên, còn cần đảm bảo các điều kiện có hiệu lực của hợp đồng theo quy định của Bộ luật Dân sự và các văn bản pháp luật chuyên ngành liên quan đến loại dịch vụ mà các bên đang giao kết.",
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      },
+      "branch_b_rag": {
+        "answer": "Dựa trên cơ sở pháp lý được cung cấp, việc giao kết và thực hiện hợp đồng điện tử tại Điều 34 Luật Giao dịch điện tử số 20/2023/QH15 ngày 30 tháng 7 năm 2023 của Quốc hội được quy định cụ thể như sau:\n\n1. Hợp đồng điện tử được giao kết hoặc thực hiện từ sự tương tác giữa một hệ thống thông tin tự động với người hoặc giữa các hệ thống thông tin tự động với nhau sẽ không bị phủ nhận giá trị pháp lý chỉ vì không có sự kiểm tra hay can thiệp của con người vào từng hành động cụ thể do các hệ thống thông tin tự động thực hiện hoặc vào hợp đồng (theo khoản 1 Điều 34 Luật Giao dịch điện tử số 20/2023/QH15).\n\n2. Thẩm quyền ban hành quy định: Bộ trưởng, Thủ trưởng cơ quan ngang Bộ ban hành theo thẩm quyền hoặc trình cấp có thẩm quyền ban hành quy định về giao kết và thực hiện hợp đồng điện tử trong lĩnh vực thuộc phạm vi nhiệm vụ, quyền hạn được phân công, bảo đảm phù hợp với điều kiện thực tiễn (theo khoản 2 Điều 34 Luật Giao dịch điện tử số 20/2023/QH15).",
+        "citations_count": 1,
+        "laws_matched": 1,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      }
+    },
+    {
+      "id": "TC_FACT_42",
+      "category": "Fact Retrieval",
+      "question": "Nguyên tắc bảo vệ dữ liệu cá nhân theo Điều 3 Luật Bảo vệ dữ liệu cá nhân 2025 quy định những gì?",
+      "ground_truth": "Theo Điều 3 Luật Bảo vệ dữ liệu cá nhân 2025, dữ liệu cá nhân được xử lý theo quy định của pháp luật; chủ thể dữ liệu được biết về hoạt động xử lý dữ liệu của mình; dữ liệu cá nhân chỉ được xử lý đúng với mục đích đã được thông báo, đăng ký hoặc thỏa thuận; và phải áp dụng các biện pháp bảo vệ, bảo mật thích hợp trong quá trình xử lý.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin trả lời câu hỏi của bạn như sau:\n\nTrước hết, cần phải đính chính một điểm về mặt văn bản quy phạm pháp luật tại Việt Nam: Tính đến thời điểm hiện tại (năm 2024 và các năm trước đó), hệ thống pháp luật Việt Nam **chưa ban hành \"Luật Bảo vệ dữ liệu cá nhân năm 2025\"**. \n\nVăn bản pháp luật cao nhất hiện hành trực tiếp và toàn diện điều chỉnh về vấn đề bảo vệ dữ liệu cá nhân tại Việt Nam là **Nghị định số 13/2023/NĐ-CP** ngày 17 tháng 4 năm 2023 của Chính phủ về bảo vệ dữ liệu cá nhân. \n\nDo đó, các nguyên tắc bảo vệ dữ liệu cá nhân không được quy định tại \"Điều 3 Luật Bảo vệ dữ liệu cá nhân 2025\" như câu hỏi đề cập, mà được quy định cụ thể tại **Điều 4 của Nghị định số 13/2023/NĐ-CP**. \n\nCăn cứ pháp lý tại **Điều 4 Nghị định số 13/2023/NĐ-CP**, các nguyên tắc bảo vệ dữ liệu cá nhân bao gồm:\n\n1. **Nguyên tắc bảo mật:** Dữ liệu cá nhân phải được bảo mật trong quá trình xử lý.\n2. **Nguyên tắc hợp pháp:** Dữ liệu cá nhân chỉ được thu thập, xử lý theo quy định của pháp luật.\n3. **Nguyên tắc minh bạch:** Chủ thể dữ liệu phải được biết về hoạt động xử lý dữ liệu cá nhân của mình.\n4. **Nguyên tắc hạn chế mục đích:** Dữ liệu cá nhân chỉ được xử lý theo đúng mục đích đã được xác định trước và thông báo cho chủ thể dữ liệu khi thu thập.\n5. **Nguyên tắc giảm thiểu:** Dữ liệu cá nhân được thu thập phải phù hợp và giới hạn trong phạm vi mục đích cần xử lý. Dữ liệu thu thập chỉ được lưu trữ trong một khoảng thời gian phù hợp với mục đích xử lý.\n6. **Nguyên tắc chính xác:** Dữ liệu cá nhân phải được cập nhật, bổ sung để đảm bảo tính chính xác cho mục đích xử lý.\n7. **Nguyên tắc trách nhiệm giải trình:** Các tổ chức, cá nhân xử lý dữ liệu cá nhân phải tuân thủ các nguyên tắc bảo vệ dữ liệu cá nhân quy định tại Nghị định này và có trách nhiệm chứng minh sự tuân thủ đó.\n8. **Nguyên tắc bảo đảm an toàn thông tin:** Áp dụng các biện pháp kỹ thuật và tổ chức cần thiết để bảo đảm an toàn dữ liệu cá nhân, tránh bị mất mát, hủy hoại hoặc truy cập, sử dụng trái phép.\n\n---\n**Lời khuyên pháp lý cho hợp đồng dịch vụ:** \nKhi soạn thảo hoặc đàm phán các hợp đồng dịch vụ có liên quan đến việc thu thập, lưu trữ và xử lý dữ liệu cá nhân (ví dụ: dịch vụ CNTT, dịch vụ marketing, nhân sự, chăm sóc khách hàng...), bạn cần đảm bảo các điều khoản trong hợp đồng tuân thủ nghiêm ngặt các nguyên tắc nêu trên tại **Nghị định 13/2023/NĐ-CP** để tránh rủi ro pháp lý và các chế tài xử phạt hành chính theo quy định của pháp luật Việt Nam.",
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      },
+      "branch_b_rag": {
+        "answer": "Dưới đây là các quy định về nguyên tắc bảo vệ dữ liệu cá nhân theo quy định tại Điều 3 Luật Bảo vệ dữ liệu cá nhân số 91/2025/QH15 ngày 26 tháng 6 năm 2025 của Quốc hội:\n\n1. Tuân thủ quy định của Hiến pháp, quy định của Luật Bảo vệ dữ liệu cá nhân số 91/2025/QH15 và quy định khác của pháp luật có liên quan (khoản 1 Điều 3 Luật Bảo vệ dữ liệu cá nhân số 91/2025/QH15).\n2. Chỉ được thu thập, xử lý dữ liệu cá nhân đúng phạm vi, mục đích cụ thể, rõ ràng, bảo đảm tuân thủ quy định của pháp luật (khoản 2 Điều 3 Luật Bảo vệ dữ liệu cá nhân số 91/2025/QH15).\n3. Bảo đảm tính chính xác của dữ liệu cá nhân và được chỉnh sửa, cập nhật, bổ sung khi cần thiết; được lưu trữ trong khoảng thời gian phù hợp với mục đích xử lý dữ liệu cá nhân, trừ trường hợp pháp luật có quy định khác (khoản 3 Điều 3 Luật Bảo vệ dữ liệu cá nhân số 91/2025/QH15).\n4. Thực hiện đồng bộ có hiệu quả các biện pháp, giải pháp về thể chế, kỹ thuật, con người phù hợp để bảo vệ dữ liệu cá nhân (khoản 4 Điều 3 Luật Bảo vệ dữ liệu cá nhân số 91/2025/QH15).\n5. Chủ động phòng ngừa, phát hiện, ngăn chặn, đấu tranh, xử lý kịp thời, nghiêm minh mọi hành vi vi phạm pháp luật về bảo vệ dữ liệu cá nhân (khoản 5 Điều 3 Luật Bảo vệ dữ liệu cá nhân số 91/2025/QH15).\n6. Bảo vệ dữ liệu cá nhân gắn với bảo vệ lợi ích quốc gia, dân tộc, phục vụ phát triển kinh tế - xã hội, bảo đảm quốc phòng, an ninh và đối ngoại; bảo đảm hài hòa giữa bảo vệ dữ liệu cá nhân với bảo vệ quyền, lợi ích hợp pháp của cơ quan, tổ chức, cá nhân (khoản 6 Điều 3 Luật Bảo vệ dữ liệu cá nhân số 91/2025/QH15).",
+        "citations_count": 1,
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      }
+    },
+    {
+      "id": "TC_FACT_43",
+      "category": "Fact Retrieval",
+      "question": "Sự đồng ý của chủ thể dữ liệu cá nhân phải đáp ứng yêu cầu gì theo Điều 9 Luật Bảo vệ dữ liệu cá nhân 2025?",
+      "ground_truth": "Theo Điều 9 Luật Bảo vệ dữ liệu cá nhân 2025, sự đồng ý của chủ thể dữ liệu chỉ có hiệu lực khi chủ thể dữ liệu tự nguyện và biết rõ loại dữ liệu cá nhân được xử lý, mục đích xử lý, bên xử lý dữ liệu, quyền và nghĩa vụ của chủ thể dữ liệu. Sự đồng ý phải được thể hiện bằng một định dạng có thể in, sao chép được bằng văn bản hoặc hình thức điện tử.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, tôi là chuyên gia tư vấn pháp lý. \n\nDưới đây là câu trả lời chính xác và đầy đủ dựa trên các quy định pháp luật hiện hành tại Việt Nam đối với câu hỏi của bạn về \"Luật Bảo vệ dữ liệu cá nhân 2025\".\n\nTuy nhiên, trước hết tôi xin đính chính một chi tiết quan trọng về văn bản pháp luật: Tính đến thời điểm hiện tại (năm 2024), **Quốc hội Việt Nam chưa ban hành \"Luật Bảo vệ dữ liệu cá nhân 2025\"**. Văn bản pháp lý cao nhất đang có hiệu lực trực tiếp điều chỉnh vấn đề bảo vệ dữ liệu cá nhân là **Nghị định số 13/2023/NĐ-CP** ngày 17 tháng 4 năm 2023 của Chính phủ về bảo vệ dữ liệu cá nhân (dự kiến Luật Bảo vệ dữ liệu cá nhân sẽ được Quốc hội xem xét thông qua trong thời gian tới). Do đó, tôi xin căn cứ vào văn bản pháp lý có hiệu lực cao nhất hiện nay là **Nghị định 13/2023/NĐ-CP** để trả lời câu hỏi của bạn (cụ thể là quy định về sự đồng ý của chủ thể dữ liệu tại **Điều 11**, tương ứng với nội dung câu hỏi của bạn).\n\n---\n\n### **TRẢ LỜI:**\n\nTheo quy định pháp luật Việt Nam về bảo vệ dữ liệu cá nhân, sự đồng ý của chủ thể dữ liệu cá nhân phải đáp ứng các yêu cầu cốt lõi sau đây:\n\n**1. Sự tự nguyện:**\nSự đồng ý của chủ thể dữ liệu phải được thể hiện một cách hoàn toàn tự nguyện, không bị ép buộc, đe dọa, lừa dối hoặc chịu bất kỳ áp lực nào từ bên xử lý dữ liệu.\n\n**2. Sự hiểu biết (Biết rõ nội dung):**\nChủ thể dữ liệu phải biết rõ và hiểu rõ các nội dung sau trước khi đưa ra sự đồng ý:\n*   Loại dữ liệu cá nhân sẽ được xử lý;\n*   Mục đích xử lý dữ liệu cá nhân;\n*   Tổ chức, cá nhân được quyền xử lý dữ liệu cá nhân;\n*   Các quyền và nghĩa vụ của chủ thể dữ liệu liên quan đến dữ liệu cá nhân được xử lý.\n\n**3. Sự thể hiện rõ ràng (Có thể chứng minh được):**\nSự đồng ý phải được thể hiện bằng hành động cụ thể, rõ ràng, có thể in ra, sao lưu bằng văn bản hoặc hình thức điện tử khác chứng minh được sự chấp thuận của chủ thể dữ liệu. Sự im lặng hoặc không phản hồi của chủ thể dữ liệu **không** mặc nhiên được coi là sự đồng ý.\n\n**4. Tính riêng biệt (Không gộp chung):**\nTrong trường hợp sự đồng ý của chủ thể dữ liệu được quy định trong văn bản với các nội dung khác, nội dung về sự đồng ý xử lý dữ liệu cá nhân phải được trình bày tách biệt, rõ ràng để chủ thể dữ liệu dễ dàng nhận biết.\n\n---\n\n### **CĂN CỨ PHÁP LÝ:**\n*   **Văn bản:** Nghị định số 13/2023/NĐ-CP của Chính phủ ban hành ngày 17 tháng 4 năm 2023 về Bảo vệ dữ liệu cá nhân.\n*   **Điều khoản:** **Điều 11** (Quy định về sự đồng ý của chủ thể dữ liệu cá nhân).\n\n*(Lưu ý: Nếu trong tương lai Luật Bảo vệ dữ liệu cá nhân chính thức được Quốc hội thông qua và có hiệu lực, các yêu cầu này sẽ tiếp tục được luật hóa và có thể được điều chỉnh theo văn bản luật mới nhất).*",
+        "laws_matched": 1,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      },
+      "branch_b_rag": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin trả lời câu hỏi của bạn dựa trên các quy định được cung cấp như sau:\n\nTheo quy định tại **Điều 9 Luật Bảo vệ dữ liệu cá nhân số 91/2025/QH15 ngày 26 tháng 6 năm 2025 của Quốc hội**, sự đồng ý của chủ thể dữ liệu cá nhân phải đáp ứng các yêu cầu và nguyên tắc sau đây:\n\n**1. Về hiệu lực của sự đồng ý (Khoản 2):**\nSự đồng ý của chủ thể dữ liệu cá nhân chỉ có hiệu lực khi dựa trên sự tự nguyện và biết rõ các thông tin sau đây:\n* Loại dữ liệu cá nhân được xử lý, mục đích xử lý dữ liệu cá nhân;\n* Bên kiểm soát dữ liệu cá nhân hoặc bên kiểm soát và xử lý dữ liệu cá nhân;\n* Các quyền, nghĩa vụ của chủ thể dữ liệu cá nhân.\n\n**2. Về phương thức thể hiện (Khoản 3):**\nSự đồng ý phải được thể hiện bằng phương thức rõ ràng, cụ thể, có thể in, sao chép bằng văn bản, bao gồm cả dưới dạng điện tử hoặc định dạng kiểm chứng được.\n\n**3. Về các nguyên tắc bảo đảm (Khoản 4):**\nSự đồng ý của chủ thể dữ liệu cá nhân phải bảo đảm các nguyên tắc:\n* Thể hiện sự đồng ý đối với từng mục đích;\n* Không được kèm theo điều kiện bắt buộc phải đồng ý với các mục đích khác với nội dung thỏa thuận;\n* Sự đồng ý có hiệu lực cho đến khi chủ thể dữ liệu cá nhân thay đổi sự đồng ý đó hoặc theo quy định của pháp luật;\n* Sự im lặng hoặc không phản hồi không được coi là sự đồng ý.\n\nTrên đây là các yêu cầu pháp lý cụ thể đối với sự đồng ý của chủ thể dữ liệu cá nhân theo quy định hiện hành. Nếu bạn cần hỗ trợ thêm các vấn đề pháp lý khác, xin vui lòng cho biết.",
+        "citations_count": 1,
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      }
+    },
+    {
+      "id": "TC_FACT_44",
+      "category": "Fact Retrieval",
+      "question": "Việc chuyển giao dữ liệu cá nhân cho bên thứ ba được quy định như thế nào tại Điều 17 Luật Bảo vệ dữ liệu cá nhân 2025?",
+      "ground_truth": "Theo Điều 17 Luật Bảo vệ dữ liệu cá nhân 2025, bên kiểm soát dữ liệu cá nhân, bên kiểm soát và xử lý dữ liệu cá nhân chỉ được chuyển giao dữ liệu cá nhân của chủ thể dữ liệu cho bên thứ ba khi có sự đồng ý của chủ thể dữ liệu, trừ trường hợp luật có quy định khác; và phải có hợp đồng hoặc văn bản thỏa thuận xác định rõ quyền, nghĩa vụ của các bên.",
+      "branch_a_zero_shot": {
+        "answer": "Chào bạn, với tư cách là chuyên gia tư vấn pháp lý, tôi xin trả lời câu hỏi của bạn dựa trên các quy định pháp luật hiện hành tại Việt Nam.\n\nTrước hết, cần phải đính chính một điểm quan trọng về mặt pháp lý: Tính đến thời điểm hiện tại (năm 2024), **Quốc hội Việt Nam chưa ban hành \"Luật Bảo vệ dữ liệu cá nhân năm 2025\"**. \n\nKhung pháp lý cao nhất hiện nay điều chỉnh trực tiếp về bảo vệ dữ liệu cá nhân tại Việt Nam là **Nghị định số 13/2023/NĐ-CP** ngày 17 tháng 4 năm 2023 của Chính phủ về bảo vệ dữ liệu cá nhân. Các quy định về việc chuyển giao dữ liệu cá nhân cho bên thứ ba (bao gồm cả việc chia sẻ, tiết lộ, cung cấp dữ liệu) được quy định rải rác trong Nghị định này, đặc biệt là tại **Điều 20 về \"Bảo vệ dữ liệu cá nhân trong quá trình xử lý\"** và các quy định chung về sự đồng ý của chủ thể dữ liệu (Điều 11).\n\nDo đó, không có \"Điều 17 Luật Bảo vệ dữ liệu cá nhân 2025\" như câu hỏi đề cập. Tuy nhiên, nếu bạn đang muốn tìm hiểu về **quy định pháp luật hiện hành đối với việc chuyển giao dữ liệu cá nhân cho bên thứ ba**, căn cứ pháp lý chính thống và đầy đủ nhất theo pháp luật Việt Nam hiện nay được quy định như sau:\n\n### 1. Căn cứ pháp lý\n*   **Văn bản:** Nghị định số 13/2023/NĐ-CP của Chính phủ ban hành ngày 17 tháng 4 năm 2023 về bảo vệ dữ liệu cá nhân.\n*   **Các điều khoản liên quan:** \n    *   **Điều 2** (Áp dụng đối với cơ quan, tổ chức, cá nhân có liên quan).\n    *   **Điều 11** (Sự đồng ý của chủ thể dữ liệu).\n    *   **Điều 20** (Xử lý dữ liệu cá nhân trong một số trường hợp cụ thể).\n\n---\n\n### 2. Nội dung quy định về việc chuyển giao dữ liệu cá nhân cho bên thứ ba\n\nTheo pháp luật Việt Nam hiện hành (Nghị định 13/2023/NĐ-CP), việc chuyển giao dữ liệu cá nhân cho bên thứ ba phải tuân thủ nghiêm ngặt các nguyên tắc sau:\n\n#### a. Phải có sự đồng ý của chủ thể dữ liệu\n*   Căn cứ **Khoản 1 và Khoản 2 Điều 11 Nghị định 13/2023/NĐ-CP**, bên Kiểm soát dữ liệu cá nhân hoặc bên Xử lý dữ liệu cá nhân chỉ được chuyển giao dữ liệu cá nhân cho bên thứ ba khi có **sự đồng ý của chủ thể dữ liệu**, trừ trường hợp pháp luật có quy định khác.\n*   Sự đồng ý này phải được thể hiện rõ ràng, cụ thể (có thể đọc được, nghe được hoặc thể hiện bằng hành vi cụ thể chứng minh sự đồng tình) và chủ thể dữ liệu phải biết rõ mục đích chuyển giao, loại dữ liệu được chuyển giao và bên thứ ba nhận dữ liệu.\n\n#### b. Quyền của chủ thể dữ liệu đối với việc chuyển giao\n*   Căn cứ **Điều 9 Nghị định 13/2023/NĐ-CP**, chủ thể dữ liệu có **Quyền đồng ý hoặc không đồng ý** cho phép xử lý dữ liệu cá nhân của mình, bao gồm cả việc cung cấp, chuyển giao cho bên thứ ba.\n*   Chủ thể dữ liệu có quyền rút lại sự đồng ý của mình (theo **Điều 12 Nghị định 13/2023/NĐ-CP**). Khi có yêu cầu rút lại sự đồng ý, bên kiểm soát và bên thứ ba phải ngừng việc chuyển giao và xử lý dữ liệu (trong phạm vi yêu cầu), trừ trường hợp pháp luật có quy định khác.\n\n#### c. Trách nhiệm của các bên trong hợp đồng dịch vụ / chuyển giao dữ liệu\nKhi soạn thảo hoặc rà soát hợp đồng dịch vụ có chứa điều khoản chuyển giao dữ liệu cá nhân cho bên thứ ba, chuyên gia pháp lý cần lưu ý các bên phải tuân thủ:\n*   **Không được mua bán dữ liệu:** Pháp luật Việt Nam nghiêm cấm hành vi mua, bán dữ liệu cá nhân dưới mọi hình thức (Căn cứ **Khoản 4 Điều 3 Nghị định 13/2023/NĐ-CP** về các hành vi bị nghiêm cấm).\n*   **Biện pháp bảo mật:** Bên nhận dữ liệu (bên thứ ba) có trách nhiệm áp dụng các biện pháp bảo mật kỹ thuật và tổ chức phù hợp để bảo vệ dữ liệu cá nhân được chuyển giao, tránh việc thất lạc, đánh cắp, sử dụng sai mục đích.\n\n---\n\n### Lời khuyên pháp lý cho Hợp đồng dịch vụ:\nNếu bạn đang soạn thảo hợp đồng dịch vụ có cấu phần chuyển giao dữ liệu cá nhân tại Việt Nam hiện nay, bạn **không nên viện dẫn Luật Bảo vệ dữ liệu cá nhân 2025** mà phải viện dẫn **Nghị định 13/2023/NĐ-CP**. Hợp đồng cần thể hiện rõ:\n1. Đã có sự đồng ý hợp lệ của chủ thể dữ liệu.\n2. Mục đích chuyển giao dữ liệu cụ thể cho bên thứ ba.\n3. Cam kết bảo mật và tuân thủ Nghị định 13/2023/NĐ-CP của bên nhận dữ liệu.",
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      },
+      "branch_b_rag": {
+        "answer": "Căn cứ theo quy định tại điểm d khoản 1 Điều 17 Luật Bảo vệ dữ liệu cá nhân số 91/2025/QH15 ngày 26 tháng 06 năm 2025 của Quốc hội, việc chuyển giao dữ liệu cá nhân cho bên thứ ba được thực hiện trong trường hợp: Bên kiểm soát dữ liệu cá nhân, bên kiểm soát và xử lý dữ liệu cá nhân chuyển giao dữ liệu cá nhân cho bên xử lý dữ liệu cá nhân, bên thứ ba để xử lý dữ liệu cá nhân theo quy định.\n\nBên cạnh đó, việc chuyển giao dữ liệu cá nhân nói chung (bao gồm cả trường hợp chuyển giao cho bên thứ ba) cũng cần tuân thủ các quy định chung tại Điều 17 Luật Bảo vệ dữ liệu cá nhân số 91/2025/QH15, cụ thể như sau:\n- Việc chuyển giao dữ liệu cá nhân có thu phí hoặc không thu phí thì không được xác định là mua, bán dữ liệu cá nhân (theo khoản 2 Điều 17 Luật Bảo vệ dữ liệu cá nhân số 91/2025/QH15).\n- Việc chi tiết về nội dung này sẽ do Chính phủ quy định (theo khoản 3 Điều 17 Luật Bảo vệ dữ liệu cá nhân số 91/2025/QH15).",
+        "citations_count": 1,
+        "laws_matched": 2,
+        "laws_total": 2,
+        "article_cited": true,
+        "hallucinated": false
+      }
+    }
+  ]
+}
