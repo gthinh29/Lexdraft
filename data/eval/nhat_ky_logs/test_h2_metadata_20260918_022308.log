@@ -1,0 +1,221 @@
+2026-09-18 02:23:08,713 [INFO] Log file: D:\PJ\Lexdraft\data\eval\logs\test_h2_metadata_20260918_022308.log
+2026-09-18 02:23:08,940 [INFO] Loading faiss with AVX2 support.
+2026-09-18 02:23:08,941 [INFO] Could not load library with AVX2 support due to:
+ModuleNotFoundError("No module named 'faiss.swigfaiss_avx2'")
+2026-09-18 02:23:08,941 [INFO] Loading faiss.
+2026-09-18 02:23:08,966 [INFO] Successfully loaded faiss.
+2026-09-18 02:23:09,008 [INFO] --- BẮT ĐẦU ĐO ĐẾM HIT RATE TRUY XUẤT CỦA CẤU TRÚC ĐIỀU/KHOẢN ---
+2026-09-18 02:23:10,790 [INFO] Đã nạp VectorDB thành công từ 'data\faiss_index\law_index' (583 vectors, 583 chunks).
+2026-09-18 02:23:11,389 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:11,925 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:12,375 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:12,983 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:13,450 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:13,858 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:14,342 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:14,836 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:15,262 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:15,680 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:16,161 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:16,584 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:16,991 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:17,451 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:17,885 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:18,334 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:18,781 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:19,186 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:19,573 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:19,971 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:20,359 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:20,751 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:21,170 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:21,560 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:22,004 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:22,405 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:22,839 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:23,226 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:23,671 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:24,081 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:24,510 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:24,949 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:25,451 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:25,887 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:26,306 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:26,685 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:27,096 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:27,505 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:27,927 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:28,311 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:28,728 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:29,166 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:29,874 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:30,326 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:30,333 [INFO] KẾT QUẢ RETRIEVAL METRICS (TOÀN BỘ 44 CÂU):
+2026-09-18 02:23:30,333 [INFO]   Hit Rate@1: 84.09% (37/44)
+2026-09-18 02:23:30,333 [INFO]   Hit Rate@3: 93.18% (41/44)
+2026-09-18 02:23:30,334 [INFO]   Hit Rate@5: 93.18% (41/44)
+2026-09-18 02:23:30,334 [INFO] --- BẮT ĐẦU ABLATION STUDY: WITH METADATA VS. W/O METADATA (Mẫu: 25) ---
+2026-09-18 02:23:30,945 [INFO] [1/25] Đang đối chứng câu hỏi: Hợp đồng dịch vụ được định nghĩa như thế nào theo Bộ luật Dâ...
+2026-09-18 02:23:31,383 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:31,390 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:23:31,391 [WARNING] Direct use of automatic function calling (AFC) in Models.generate_content is not recommended. Instead, we recommend to use AFC in Chat.send_message. Similarly, direct use of AFC in Models.generate_content_stream is not recommended. Instead, we recommend to use AFC in Chat.send_message_stream.
+2026-09-18 02:23:33,100 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:23:33,102 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:23:34,580 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:23:35,082 [INFO] [2/25] Đang đối chứng câu hỏi: Đối tượng của hợp đồng dịch vụ theo Bộ luật Dân sự 2015 phải...
+2026-09-18 02:23:35,443 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:35,450 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:23:36,799 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:23:36,800 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:23:37,804 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:23:38,306 [INFO] [3/25] Đang đối chứng câu hỏi: Bên sử dụng dịch vụ có những nghĩa vụ gì theo Điều 515 Bộ lu...
+2026-09-18 02:23:38,709 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:38,715 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:23:40,080 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:23:40,082 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:23:41,216 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:23:41,719 [INFO] [4/25] Đang đối chứng câu hỏi: Bên sử dụng dịch vụ có quyền đơn phương chấm dứt hợp đồng kh...
+2026-09-18 02:23:42,105 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:42,112 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:23:44,402 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:23:44,404 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:23:46,417 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:23:46,919 [INFO] [5/25] Đang đối chứng câu hỏi: Bên cung ứng dịch vụ có được tự ý giao công việc cho người k...
+2026-09-18 02:23:47,291 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:47,297 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:23:48,738 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:23:48,741 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:23:49,916 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:23:50,418 [INFO] [6/25] Đang đối chứng câu hỏi: Bên cung ứng dịch vụ có quyền thay đổi điều kiện dịch vụ vì ...
+2026-09-18 02:23:50,819 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:50,826 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:23:52,127 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:23:52,128 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:23:53,527 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:23:54,029 [INFO] [7/25] Đang đối chứng câu hỏi: Thời điểm trả tiền dịch vụ được xác định thế nào nếu các bên...
+2026-09-18 02:23:54,454 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:54,461 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:23:56,050 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:23:56,052 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:23:57,234 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:23:57,736 [INFO] [8/25] Đang đối chứng câu hỏi: Quy định về đơn phương chấm dứt hợp đồng dịch vụ khi việc ti...
+2026-09-18 02:23:58,139 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:23:58,146 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:23:59,825 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:23:59,827 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:24:01,426 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:24:01,928 [INFO] [9/25] Đang đối chứng câu hỏi: Bên cung ứng dịch vụ có quyền đơn phương chấm dứt hợp đồng k...
+2026-09-18 02:24:02,293 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:24:02,297 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:24:02,527 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 429 Too Many Requests"
+2026-09-18 02:24:02,528 [WARNING] Gemini API rate limit (429/quota). Đang chờ 45.0s trước khi thử lại (lần 1/3)...
+2026-09-18 02:24:47,529 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:24:49,488 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:24:49,490 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:24:50,522 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:24:51,023 [INFO] [10/25] Đang đối chứng câu hỏi: Hợp đồng dịch vụ hết thời hạn mà bên cung ứng vẫn tiếp tục t...
+2026-09-18 02:24:51,542 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:24:51,545 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:24:52,604 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:24:52,605 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:24:54,084 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:24:54,588 [INFO] [11/25] Đang đối chứng câu hỏi: Trách nhiệm dân sự do vi phạm nghĩa vụ phát sinh khi nào the...
+2026-09-18 02:24:55,005 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:24:55,011 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:24:56,003 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:24:56,004 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:24:57,088 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:24:57,592 [INFO] [12/25] Đang đối chứng câu hỏi: Khi nào bên vi phạm nghĩa vụ được miễn trách nhiệm dân sự th...
+2026-09-18 02:24:58,051 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:24:58,058 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:24:59,271 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:24:59,273 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:25:00,170 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:25:00,672 [INFO] [13/25] Đang đối chứng câu hỏi: Trách nhiệm bồi thường thiệt hại do vi phạm nghĩa vụ được qu...
+2026-09-18 02:25:01,045 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:25:01,052 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:25:02,363 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:25:02,365 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:25:03,635 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:25:04,137 [INFO] [14/25] Đang đối chứng câu hỏi: Phạt vi phạm theo Bộ luật Dân sự 2015 có được áp dụng đồng t...
+2026-09-18 02:25:04,508 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:25:04,516 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:25:06,429 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:25:06,431 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:25:08,088 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:25:08,590 [INFO] [15/25] Đang đối chứng câu hỏi: Thiệt hại được bồi thường do vi phạm hợp đồng bao gồm những ...
+2026-09-18 02:25:08,991 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:25:08,999 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:25:11,145 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:25:11,147 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:25:12,233 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:25:12,735 [INFO] [16/25] Đang đối chứng câu hỏi: Bên đơn phương chấm dứt thực hiện hợp đồng phải tuân thủ thủ...
+2026-09-18 02:25:13,189 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:25:13,195 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:25:14,757 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:25:14,759 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:25:14,960 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 429 Too Many Requests"
+2026-09-18 02:25:14,961 [WARNING] Gemini API rate limit (429/quota). Đang chờ 45.0s trước khi thử lại (lần 1/3)...
+2026-09-18 02:25:59,961 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:26:01,743 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:26:02,245 [INFO] [17/25] Đang đối chứng câu hỏi: Hình thức hợp đồng dịch vụ theo quy định tại Điều 74 Luật Th...
+2026-09-18 02:26:02,753 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:26:02,755 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:26:04,318 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:26:04,319 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:26:06,447 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:26:06,949 [INFO] [18/25] Đang đối chứng câu hỏi: Nghĩa vụ chung của bên cung ứng dịch vụ được quy định như th...
+2026-09-18 02:26:07,463 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:26:07,469 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:26:09,329 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:26:09,331 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:26:10,842 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:26:11,344 [INFO] [19/25] Đang đối chứng câu hỏi: Nghĩa vụ cung ứng dịch vụ theo kết quả công việc theo Điều 7...
+2026-09-18 02:26:11,759 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:26:11,764 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:26:13,572 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:26:13,573 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:26:15,986 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:26:16,488 [INFO] [20/25] Đang đối chứng câu hỏi: Nghĩa vụ cung ứng dịch vụ theo nỗ lực cao nhất được quy định...
+2026-09-18 02:26:16,865 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:26:16,873 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:26:18,196 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:26:18,198 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:26:19,359 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:26:19,861 [INFO] [21/25] Đang đối chứng câu hỏi: Bên cung ứng dịch vụ có được giao cho người khác thực hiện t...
+2026-09-18 02:26:20,265 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:26:20,272 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:26:22,129 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:26:22,131 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:26:23,048 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:26:23,550 [INFO] [22/25] Đang đối chứng câu hỏi: Thời hạn hoàn thành dịch vụ theo Điều 83 Luật Thương mại 200...
+2026-09-18 02:26:23,969 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:26:23,976 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:26:24,901 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:26:24,903 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:26:25,781 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:26:26,283 [INFO] [23/25] Đang đối chứng câu hỏi: Khách hàng có quyền yêu cầu thay đổi dịch vụ trong quá trình...
+2026-09-18 02:26:26,709 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:26:26,716 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:26:28,982 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:26:28,983 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:26:29,767 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:26:30,269 [INFO] [24/25] Đang đối chứng câu hỏi: Nghĩa vụ của khách hàng trong hợp đồng dịch vụ theo Điều 85 ...
+2026-09-18 02:26:30,701 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:26:30,708 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:26:30,909 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 429 Too Many Requests"
+2026-09-18 02:26:30,911 [WARNING] Gemini API rate limit (429/quota). Đang chờ 30.5s trước khi thử lại (lần 1/3)...
+2026-09-18 02:27:01,387 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:27:03,943 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:27:03,945 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:27:04,939 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:27:05,441 [INFO] [25/25] Đang đối chứng câu hỏi: Giá dịch vụ được xác định như thế nào khi các bên không có t...
+2026-09-18 02:27:06,026 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents "HTTP/1.1 200 OK"
+2026-09-18 02:27:06,029 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:27:07,534 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:27:07,536 [INFO] AFC is enabled with max remote calls: 10.
+2026-09-18 02:27:08,885 [INFO] HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+2026-09-18 02:27:09,387 [INFO] KẾT QUẢ ABLATION STUDY (CÓ METADATA VS. KHÔNG METADATA):
+2026-09-18 02:27:09,387 [INFO]   Nhánh A (Không Metadata): Law Acc = 76.00% | Article Acc = 76.00% | Structured Citations = 0.00%
+2026-09-18 02:27:09,388 [INFO]   Nhánh B (Có Metadata):    Law Acc = 96.00% | Article Acc = 92.00% | Structured Citations = 100.00%
+2026-09-18 02:27:09,391 [INFO] Đã lưu báo cáo đầy đủ tại: D:\PJ\Lexdraft\data\eval\report_h2_metadata.json
