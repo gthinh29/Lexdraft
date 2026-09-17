@@ -1,0 +1,82 @@
+{
+  "_comment": "Danh mục văn bản pháp luật hết hiệu lực (Cấp 1 - Curated Rules). Được kiểm duyệt thủ công, có độ tin cậy 100%. Dùng để phát hiện hợp đồng viện dẫn luật cũ đã bị thay thế.",
+  "expired_laws": [
+    {
+      "id": "luat_gddt_2005",
+      "keywords": [
+        "Luật Giao dịch điện tử 2005",
+        "Luật Giao dịch điện tử số 51/2005/QH11",
+        "51/2005/QH11",
+        "Luật số 51/2005/QH11"
+      ],
+      "status": "Hết hiệu lực",
+      "expire_date": "01/07/2024",
+      "replaced_by": "Luật Giao dịch điện tử 2023 (Luật số 20/2023/QH15)",
+      "note": "Thay thế toàn bộ bởi Luật số 20/2023/QH15, có hiệu lực từ 01/07/2024"
+    },
+    {
+      "id": "luat_cntt_2006",
+      "keywords": [
+        "Luật Công nghệ thông tin 2006",
+        "Luật Công nghệ thông tin số 67/2006/QH11",
+        "67/2006/QH11",
+        "Luật số 67/2006/QH11",
+        "Luật CNTT 2006"
+      ],
+      "status": "Hết hiệu lực",
+      "expire_date": "01/07/2026",
+      "replaced_by": "Luật Chuyển đổi số 2025 (Luật số 148/2025/QH15)",
+      "note": "Theo Điều 47 Luật Chuyển đổi số 2025, Luật CNTT 2006 hết hiệu lực từ 01/07/2026"
+    },
+    {
+      "id": "luat_bvqlntd_2010",
+      "keywords": [
+        "Luật Bảo vệ quyền lợi người tiêu dùng 2010",
+        "Luật Bảo vệ quyền lợi người tiêu dùng số 59/2010/QH12",
+        "59/2010/QH12",
+        "Luật số 59/2010/QH12",
+        "Luật BVQLNTD 2010"
+      ],
+      "status": "Hết hiệu lực",
+      "expire_date": "01/07/2024",
+      "replaced_by": "Luật Bảo vệ quyền lợi người tiêu dùng 2023 (Luật số 19/2023/QH15)",
+      "note": "Bị thay thế toàn bộ bởi Luật số 19/2023/QH15, có hiệu lực từ 01/07/2024"
+    },
+    {
+      "id": "luat_thuong_mai_2005_sai",
+      "keywords": [
+        "Luật Thương mại 2020",
+        "Luật Thương mại năm 2020"
+      ],
+      "status": "Không tồn tại",
+      "expire_date": null,
+      "replaced_by": "Luật Thương mại 2005 (số 36/2005/QH11) - Văn bản hợp nhất mới nhất VBHN 113/VBHN-VPQH (2025)",
+      "note": "Không tồn tại văn bản 'Luật Thương mại 2020'. Đây là lỗi pháp lý kinh điển trong các hợp đồng mẫu không rõ nguồn gốc"
+    },
+    {
+      "id": "bo_luat_dan_su_2005",
+      "keywords": [
+        "Bộ luật Dân sự 2005",
+        "Bộ luật Dân sự số 33/2005/QH11",
+        "33/2005/QH11",
+        "Luật số 33/2005/QH11",
+        "BLDS 2005"
+      ],
+      "status": "Hết hiệu lực",
+      "expire_date": "01/01/2017",
+      "replaced_by": "Bộ luật Dân sự 2015 (Luật số 91/2015/QH13)",
+      "note": "Hết hiệu lực từ 01/01/2017 theo Điều 688 Bộ luật Dân sự 2015"
+    },
+    {
+      "id": "luat_thuong_mai_1997",
+      "keywords": [
+        "Luật Thương mại 1997",
+        "Luật Thương mại năm 1997"
+      ],
+      "status": "Hết hiệu lực",
+      "expire_date": "01/01/2006",
+      "replaced_by": "Luật Thương mại 2005 (Luật số 36/2005/QH11)",
+      "note": "Hết hiệu lực từ 01/01/2006 theo Luật Thương mại 2005"
+    }
+  ]
+}

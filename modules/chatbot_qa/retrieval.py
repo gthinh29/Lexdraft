@@ -76,22 +76,27 @@ def search_context(
     query: str,
     has_session: bool = False,
     session: Optional[ChatSession] = None,
-    top_k: int = 5,
+    top_k: Optional[int] = None,
 ) -> List[Dict[str, Any]]:
     """
     Truy xuất ngữ cảnh liên quan cho 1 câu hỏi của người dùng.
+    Linh hoạt lấy tối đa RETRIEVAL_TOP_K điều luật có độ tương đồng cao (>= RELEVANCE_SCORE_THRESHOLD).
 
     Args:
         query: câu hỏi hiện tại.
         has_session: True nếu phiên đang ở Chế độ A (có ngữ cảnh hợp đồng).
         session: đối tượng ChatSession hiện tại - BẮT BUỘC nếu has_session=True.
-        top_k: số chunk lấy về mỗi index (SRS 6.1 khuyến nghị 3-5).
+        top_k: số chunk lấy về tối đa (mặc định lấy từ config.RETRIEVAL_TOP_K, thường là 10).
 
     Returns:
-        Danh sách chunk (content + metadata), gộp từ contract_index (nếu có,
-        đánh dấu metadata["index"] = "contract_index") và law_index
-        (metadata["index"] = "law_index").
+        Danh sách chunk (content + metadata), gộp từ contract_index và law_index.
     """
+    config_top_k = getattr(getattr(config, "Config", config), "RETRIEVAL_TOP_K", 10)
+    limit = top_k or config_top_k
+    min_score = getattr(
+        getattr(config, "Config", config), "RELEVANCE_SCORE_THRESHOLD", 0.65
+    )
+
     results: List[Dict[str, Any]] = []
 
     if has_session:
@@ -100,15 +105,26 @@ def search_context(
 
         contract_db = _get_or_build_contract_db(session)
         if contract_db is not None:
-            contract_hits = contract_db.hybrid_search(query, top_k=top_k)
-            for hit in contract_hits:
+            contract_hits = contract_db.hybrid_search(query, top_k=limit)
+            # Lọc các điều khoản hợp đồng có điểm tương đồng tốt
+            good_contract_hits = [
+                h for h in contract_hits if h.get("score", 0) >= min_score
+            ]
+            chosen_contract = (
+                good_contract_hits if good_contract_hits else contract_hits[:2]
+            )
+            for hit in chosen_contract:
                 hit.setdefault("metadata", {})["index"] = "contract_index"
-            results.extend(contract_hits)
+            results.extend(chosen_contract)
 
     law_db = _get_law_db()
-    law_hits = law_db.hybrid_search(query, top_k=top_k)
-    for hit in law_hits:
+    law_hits = law_db.hybrid_search(query, top_k=limit)
+    # Lọc các điều luật có điểm tương đồng cao >= min_score
+    good_law_hits = [h for h in law_hits if h.get("score", 0) >= min_score]
+    # Nếu không có điều nào đạt min_score, giữ lại 2 điều cao nhất để downstream llm_client kiểm tra ngưỡng từ chối
+    chosen_law = good_law_hits if good_law_hits else law_hits[:2]
+    for hit in chosen_law:
         hit.setdefault("metadata", {})["index"] = "law_index"
-    results.extend(law_hits)
+    results.extend(chosen_law)
 
     return results

@@ -17,7 +17,9 @@ except ImportError:
     llm_client = None
 
 try:
-    from modules.risk_assessment import service as risk_assessment_service  # Phần 8 - Dev B
+    from modules.risk_assessment import (
+        service as risk_assessment_service,
+    )  # Phần 8 - Dev B
 except ImportError:
     risk_assessment_service = None
 
@@ -74,7 +76,7 @@ def generate_contract_draft(user_input_dict: Dict[str, Any]) -> Dict[str, Any]:
     # 7.2: Ghép prompt
     prompt = prompts.build_drafting_prompt(template_text, law_context, user_input_dict)
 
-    # 7.3: Gọi LLM sinh bản nháp
+    # 7.3: Gọi LLM sinh bản nháp (threshold=0.0 vì soạn thảo cần sinh văn bản chứ không từ chối như chatbot)
     if llm_client is None:
         raise RuntimeError(
             "modules.shared.llm_client chưa sẵn sàng (Phần 6 chưa build)."
@@ -83,19 +85,21 @@ def generate_contract_draft(user_input_dict: Dict[str, Any]) -> Dict[str, Any]:
     draft_result = llm_client.generate_grounded_response(
         query=prompt,
         retrieved_chunks=law_context,
+        threshold=0.0,
     )
     draft_text = draft_result.get("answer", "")
 
-    # 7.4: Tự động chạy risk_assessment cho bản nháp vừa sinh
-    risk_report = _run_risk_assessment_safely(draft_text, user_input_dict.get("session_id"))
-
+    # Không tự động phân tích rủi ro nữa theo yêu cầu người dùng (tiết kiệm API quota & tăng tốc 2x)
     return {
         "draft": draft_text,
-        "risk_report": risk_report,
+        "risk_report": [],
+        "expired_law_alerts": [],
     }
 
 
-def _run_risk_assessment_safely(draft_text: str, session_id: Optional[str]) -> Optional[Any]:
+def _run_risk_assessment_safely(
+    draft_text: str, session_id: Optional[str]
+) -> Optional[Any]:
     if risk_assessment_service is None:
         logger.warning(
             "modules.risk_assessment.service chưa sẵn sàng (Phần 8 chưa build). "

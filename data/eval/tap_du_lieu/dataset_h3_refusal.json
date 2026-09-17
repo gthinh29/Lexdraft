@@ -1,0 +1,317 @@
+[
+  {
+    "id": "H3_IN_TC_FACT_01",
+    "group": "in_domain_fact",
+    "group_desc": "Câu hỏi trong phạm vi và có căn cứ pháp lý trong CSDL",
+    "question": "Hợp đồng dịch vụ được định nghĩa như thế nào theo Bộ luật Dân sự 2015?",
+    "expected_behavior": "answer_with_citation",
+    "must_refuse": false,
+    "ground_truth": "Theo Điều 513 Bộ luật Dân sự 2015, hợp đồng dịch vụ là sự thỏa thuận giữa các bên, theo đó bên cung ứng dịch vụ thực hiện công việc cho bên sử dụng dịch vụ, bên sử dụng dịch vụ phải trả tiền dịch vụ cho bên cung ứng dịch vụ."
+  },
+  {
+    "id": "H3_IN_TC_FACT_02",
+    "group": "in_domain_fact",
+    "group_desc": "Câu hỏi trong phạm vi và có căn cứ pháp lý trong CSDL",
+    "question": "Đối tượng của hợp đồng dịch vụ theo Bộ luật Dân sự 2015 phải đáp ứng điều kiện gì?",
+    "expected_behavior": "answer_with_citation",
+    "must_refuse": false,
+    "ground_truth": "Theo Điều 514 Bộ luật Dân sự 2015, đối tượng của hợp đồng dịch vụ là công việc có thể thực hiện được, không vi phạm điều cấm của luật, không trái đạo đức xã hội."
+  },
+  {
+    "id": "H3_IN_TC_FACT_04",
+    "group": "in_domain_fact",
+    "group_desc": "Câu hỏi trong phạm vi và có căn cứ pháp lý trong CSDL",
+    "question": "Bên sử dụng dịch vụ có quyền đơn phương chấm dứt hợp đồng khi bên cung ứng vi phạm nghiêm trọng nghĩa vụ không?",
+    "expected_behavior": "answer_with_citation",
+    "must_refuse": false,
+    "ground_truth": "Theo khoản 2 Điều 516 Bộ luật Dân sự 2015, trường hợp bên cung ứng dịch vụ vi phạm nghiêm trọng nghĩa vụ thì bên sử dụng dịch vụ có quyền đơn phương chấm dứt thực hiện hợp đồng và yêu cầu bồi thường thiệt hại."
+  },
+  {
+    "id": "H3_IN_TC_FACT_07",
+    "group": "in_domain_fact",
+    "group_desc": "Câu hỏi trong phạm vi và có căn cứ pháp lý trong CSDL",
+    "question": "Thời điểm trả tiền dịch vụ được xác định thế nào nếu các bên không có thỏa thuận theo Điều 519 BLDS?",
+    "expected_behavior": "answer_with_citation",
+    "must_refuse": false,
+    "ground_truth": "Theo khoản 2 Điều 519 Bộ luật Dân sự 2015, trường hợp không có thỏa thuận về thời hạn trả tiền dịch vụ thì bên sử dụng dịch vụ phải trả tiền dịch vụ vào thời điểm hoàn thành dịch vụ."
+  },
+  {
+    "id": "H3_IN_TC_FACT_09",
+    "group": "in_domain_fact",
+    "group_desc": "Câu hỏi trong phạm vi và có căn cứ pháp lý trong CSDL",
+    "question": "Bên cung ứng dịch vụ có quyền đơn phương chấm dứt hợp đồng khi bên sử dụng dịch vụ không thực hiện nghĩa vụ không?",
+    "expected_behavior": "answer_with_citation",
+    "must_refuse": false,
+    "ground_truth": "Theo khoản 2 Điều 520 Bộ luật Dân sự 2015, trường hợp bên sử dụng dịch vụ không thực hiện nghĩa vụ của mình hoặc thực hiện không đúng thỏa thuận thì bên cung ứng dịch vụ có quyền đơn phương chấm dứt thực hiện hợp đồng và yêu cầu bồi thường thiệt hại."
+  },
+  {
+    "id": "H3_IN_TC_FACT_10",
+    "group": "in_domain_fact",
+    "group_desc": "Câu hỏi trong phạm vi và có căn cứ pháp lý trong CSDL",
+    "question": "Hợp đồng dịch vụ hết thời hạn mà bên cung ứng vẫn tiếp tục thực hiện công việc thì được xử lý thế nào theo Điều 521 BLDS?",
+    "expected_behavior": "answer_with_citation",
+    "must_refuse": false,
+    "ground_truth": "Theo Điều 521 Bộ luật Dân sự 2015, sau khi kết thúc thời hạn thực hiện dịch vụ mà công việc chưa hoàn thành và bên cung ứng dịch vụ vẫn tiếp tục thực hiện công việc, bên sử dụng dịch vụ biết nhưng không phản đối thì hợp đồng dịch vụ đương nhiên được tiếp tục thực hiện theo nội dung và thời hạn đã thỏa thuận cho đến khi công việc hoàn thành."
+  },
+  {
+    "id": "H3_IN_TC_FACT_13",
+    "group": "in_domain_fact",
+    "group_desc": "Câu hỏi trong phạm vi và có căn cứ pháp lý trong CSDL",
+    "question": "Trách nhiệm bồi thường thiệt hại do vi phạm nghĩa vụ được quy định như thế nào tại Điều 360 BLDS 2015?",
+    "expected_behavior": "answer_with_citation",
+    "must_refuse": false,
+    "ground_truth": "Theo Điều 360 Bộ luật Dân sự 2015, trường hợp có thiệt hại do vi phạm nghĩa vụ gây ra thì bên có nghĩa vụ phải bồi thường toàn bộ thiệt hại, trừ trường hợp có thỏa thuận khác hoặc luật có quy định khác."
+  },
+  {
+    "id": "H3_IN_TC_FACT_14",
+    "group": "in_domain_fact",
+    "group_desc": "Câu hỏi trong phạm vi và có căn cứ pháp lý trong CSDL",
+    "question": "Phạt vi phạm theo Bộ luật Dân sự 2015 có được áp dụng đồng thời với bồi thường thiệt hại không?",
+    "expected_behavior": "answer_with_citation",
+    "must_refuse": false,
+    "ground_truth": "Theo khoản 2 Điều 418 Bộ luật Dân sự 2015, các bên có thể thỏa thuận về việc bên vi phạm nghĩa vụ chỉ phải chịu phạt vi phạm mà không phải bồi thường thiệt hại hoặc vừa phải chịu phạt vi phạm và vừa phải bồi thường thiệt hại. Nếu có thỏa thuận phạt vi phạm nhưng không thỏa thuận về bồi thường thiệt hại thì bên vi phạm chỉ phải chịu phạt vi phạm."
+  },
+  {
+    "id": "H3_IN_TC_FACT_17",
+    "group": "in_domain_fact",
+    "group_desc": "Câu hỏi trong phạm vi và có căn cứ pháp lý trong CSDL",
+    "question": "Hình thức hợp đồng dịch vụ theo quy định tại Điều 74 Luật Thương mại 2005 là gì?",
+    "expected_behavior": "answer_with_citation",
+    "must_refuse": false,
+    "ground_truth": "Theo Điều 74 Luật Thương mại 2005, hợp đồng dịch vụ được thể hiện bằng lời nói, bằng văn bản hoặc được xác lập bằng hành vi cụ thể. Đối với các loại hợp đồng dịch vụ mà pháp luật quy định phải được lập thành văn bản thì phải tuân theo các quy định đó."
+  },
+  {
+    "id": "H3_IN_TC_FACT_20",
+    "group": "in_domain_fact",
+    "group_desc": "Câu hỏi trong phạm vi và có căn cứ pháp lý trong CSDL",
+    "question": "Nghĩa vụ cung ứng dịch vụ theo nỗ lực cao nhất được quy định thế nào tại Điều 80 Luật Thương mại?",
+    "expected_behavior": "answer_with_citation",
+    "must_refuse": false,
+    "ground_truth": "Theo Điều 80 Luật Thương mại 2005, nếu tính chất của loại dịch vụ được cung ứng yêu cầu bên cung ứng dịch vụ phải nỗ lực cao nhất để đạt được kết quả thì bên cung ứng dịch vụ phải thực hiện nghĩa vụ cung ứng dịch vụ đó với nỗ lực cao nhất theo tiêu chuẩn nghề nghiệp thông thường."
+  },
+  {
+    "id": "H3_IN_TC_FACT_22",
+    "group": "in_domain_fact",
+    "group_desc": "Câu hỏi trong phạm vi và có căn cứ pháp lý trong CSDL",
+    "question": "Thời hạn hoàn thành dịch vụ theo Điều 83 Luật Thương mại 2005 được xác định như thế nào?",
+    "expected_behavior": "answer_with_citation",
+    "must_refuse": false,
+    "ground_truth": "Theo Điều 83 Luật Thương mại 2005, bên cung ứng dịch vụ phải hoàn thành dịch vụ đúng thời hạn đã thoả thuận trong hợp đồng. Trường hợp không có thoả thuận về thời hạn thì bên cung ứng dịch vụ phải hoàn thành dịch vụ trong một thời hạn hợp lý trên cơ sở tính đến tất cả các điều kiện và hoàn cảnh cụ thể."
+  },
+  {
+    "id": "H3_IN_TC_FACT_24",
+    "group": "in_domain_fact",
+    "group_desc": "Câu hỏi trong phạm vi và có căn cứ pháp lý trong CSDL",
+    "question": "Nghĩa vụ của khách hàng trong hợp đồng dịch vụ theo Điều 85 Luật Thương mại 2005 gồm những gì?",
+    "expected_behavior": "answer_with_citation",
+    "must_refuse": false,
+    "ground_truth": "Theo Điều 85 Luật Thương mại 2005, khách hàng có nghĩa vụ: Thanh toán tiền cung ứng dịch vụ như đã thoả thuận trong hợp đồng; Cung cấp kịp thời các kế hoạch, chỉ dẫn và những chi tiết khác để việc cung ứng dịch vụ không bị trì hoãn hay gián đoạn; Hợp tác trong tất cả những vấn đề cần thiết khác để bên cung ứng dịch vụ có thể thực hiện công việc thích hợp."
+  },
+  {
+    "id": "H3_IN_TC_FACT_27",
+    "group": "in_domain_fact",
+    "group_desc": "Câu hỏi trong phạm vi và có căn cứ pháp lý trong CSDL",
+    "question": "Luật Thương mại 2005 quy định những loại chế tài nào trong thương mại tại Điều 292?",
+    "expected_behavior": "answer_with_citation",
+    "must_refuse": false,
+    "ground_truth": "Theo Điều 292 Luật Thương mại 2005, các loại chế tài trong thương mại gồm: 1. Buộc thực hiện đúng hợp đồng; 2. Phạt vi phạm; 3. Buộc bồi thường thiệt hại; 4. Tạm ngừng thực hiện hợp đồng; 5. Đình chỉ thực hiện hợp đồng; 6. Huỷ bỏ hợp đồng; 7. Các biện pháp khác do các bên thoả thuận không trái với nguyên tắc cơ bản của pháp luật Việt Nam."
+  },
+  {
+    "id": "H3_IN_TC_FACT_30",
+    "group": "in_domain_fact",
+    "group_desc": "Câu hỏi trong phạm vi và có căn cứ pháp lý trong CSDL",
+    "question": "Mức phạt vi phạm hợp đồng tối đa trong quan hệ thương mại theo Điều 301 Luật Thương mại 2005 là bao nhiêu?",
+    "expected_behavior": "answer_with_citation",
+    "must_refuse": false,
+    "ground_truth": "Theo Điều 301 Luật Thương mại 2005, mức phạt đối với vi phạm nghĩa vụ hợp đồng hoặc tổng mức phạt đối với nhiều vi phạm do các bên thoả thuận trong hợp đồng, nhưng không quá 8% giá trị phần nghĩa vụ hợp đồng bị vi phạm, trừ trường hợp quy định tại Điều 266 của Luật này."
+  },
+  {
+    "id": "H3_IN_TC_FACT_33",
+    "group": "in_domain_fact",
+    "group_desc": "Câu hỏi trong phạm vi và có căn cứ pháp lý trong CSDL",
+    "question": "Thời hiệu khởi kiện áp dụng đối với các tranh chấp thương mại là bao lâu theo Điều 319 Luật Thương mại 2005?",
+    "expected_behavior": "answer_with_citation",
+    "must_refuse": false,
+    "ground_truth": "Theo Điều 319 Luật Thương mại 2005, thời hiệu khởi kiện áp dụng đối với các tranh chấp thương mại là chín tháng, kể từ thời điểm quyền và lợi ích hợp pháp bị xâm phạm, trừ trường hợp quy định tại điểm e khoản 1 Điều 237 của Luật này."
+  },
+  {
+    "id": "H3_OUTDATED_TC_NEG_01",
+    "group": "outdated_or_fake_law",
+    "group_desc": "Viện dẫn luật hết hiệu lực hoặc văn bản giả mạo",
+    "question": "Hợp đồng dịch vụ ký năm 2026 áp dụng Luật Giao dịch điện tử số 51/2005/QH11 có hợp pháp không?",
+    "expected_behavior": "safe_refusal",
+    "must_refuse": true,
+    "ground_truth": "Không hợp pháp. Luật Giao dịch điện tử số 51/2005/QH11 đã hết hiệu lực từ ngày 01/07/2024 và được thay thế toàn bộ bởi Luật Giao dịch điện tử 2023 (Luật số 20/2023/QH15). Hợp đồng cần viện dẫn Luật Giao dịch điện tử 2023."
+  },
+  {
+    "id": "H3_OUTDATED_TC_NEG_02",
+    "group": "outdated_or_fake_law",
+    "group_desc": "Viện dẫn luật hết hiệu lực hoặc văn bản giả mạo",
+    "question": "Sau ngày 01/07/2026, hợp đồng dịch vụ phần mềm còn được viện dẫn Luật Công nghệ thông tin số 67/2006/QH11 không?",
+    "expected_behavior": "safe_refusal",
+    "must_refuse": true,
+    "ground_truth": "Không còn được viện dẫn. Theo Điều 47 Luật Chuyển đổi số 2025 (Luật số 148/2025/QH15), Luật Công nghệ thông tin số 67/2006/QH11 chính thức hết hiệu lực kể từ ngày 01/07/2026 và được thay thế bởi Luật Chuyển đổi số 2025."
+  },
+  {
+    "id": "H3_OUTDATED_TC_NEG_03",
+    "group": "outdated_or_fake_law",
+    "group_desc": "Viện dẫn luật hết hiệu lực hoặc văn bản giả mạo",
+    "question": "Quy định bảo vệ quyền lợi người tiêu dùng trong hợp đồng dịch vụ có được áp dụng Luật số 59/2010/QH12 hiện nay không?",
+    "expected_behavior": "safe_refusal",
+    "must_refuse": true,
+    "ground_truth": "Không. Luật Bảo vệ quyền lợi người tiêu dùng số 59/2010/QH12 đã hết hiệu lực từ ngày 01/07/2024 và bị thay thế toàn bộ bởi Luật Bảo vệ quyền lợi người tiêu dùng 2023 (Luật số 19/2023/QH15)."
+  },
+  {
+    "id": "H3_OUTDATED_TC_NEG_04",
+    "group": "outdated_or_fake_law",
+    "group_desc": "Viện dẫn luật hết hiệu lực hoặc văn bản giả mạo",
+    "question": "Hợp đồng dịch vụ thương mại ký căn cứ 'Luật Thương mại 2020' thì có giá trị pháp lý không?",
+    "expected_behavior": "safe_refusal",
+    "must_refuse": true,
+    "ground_truth": "Không tồn tại văn bản quy phạm pháp luật nào tên là 'Luật Thương mại 2020'. Văn bản pháp luật điều chỉnh quan hệ thương mại hiện hành là Luật Thương mại số 36/2005/QH11 được Quốc hội thông qua ngày 14/06/2005 (đã được hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH năm 2025)."
+  },
+  {
+    "id": "H3_OUTDATED_TC_NEG_05",
+    "group": "outdated_or_fake_law",
+    "group_desc": "Viện dẫn luật hết hiệu lực hoặc văn bản giả mạo",
+    "question": "Hợp đồng dịch vụ hiện nay có được áp dụng Bộ luật Dân sự số 33/2005/QH11 không?",
+    "expected_behavior": "safe_refusal",
+    "must_refuse": true,
+    "ground_truth": "Không. Bộ luật Dân sự số 33/2005/QH11 đã hết hiệu lực từ ngày 01/01/2017 theo quy định chuyển tiếp tại Điều 688 Bộ luật Dân sự 2015 (Luật số 91/2015/QH13). Mọi giao dịch dân sự hiện nay phải áp dụng Bộ luật Dân sự 2015."
+  },
+  {
+    "id": "H3_OUTDATED_TC_NEG_06",
+    "group": "outdated_or_fake_law",
+    "group_desc": "Viện dẫn luật hết hiệu lực hoặc văn bản giả mạo",
+    "question": "Luật Thương mại năm 1997 hiện nay còn hiệu lực áp dụng cho các hoạt động cung ứng dịch vụ thương mại không?",
+    "expected_behavior": "safe_refusal",
+    "must_refuse": true,
+    "ground_truth": "Không. Luật Thương mại năm 1997 đã hết hiệu lực thi hành kể từ ngày 01/01/2006 và được thay thế bởi Luật Thương mại số 36/2005/QH11."
+  },
+  {
+    "id": "H3_OOD_01",
+    "group": "out_of_domain",
+    "group_desc": "Câu hỏi ngoài phạm vi hợp đồng dịch vụ (Hình sự, Đất đai, Hôn nhân, Lao động...)",
+    "question": "Mức hình phạt đối với tội lừa đảo chiếm đoạt tài sản theo Bộ luật Hình sự là bao nhiêu năm tù?",
+    "expected_behavior": "safe_refusal",
+    "must_refuse": true,
+    "ground_truth": "Ngoài phạm vi. Hệ thống Lexdraft chuyên trách về hợp đồng dịch vụ và pháp luật thương mại/dân sự, không hỗ trợ tư vấn Bộ luật Hình sự."
+  },
+  {
+    "id": "H3_OOD_02",
+    "group": "out_of_domain",
+    "group_desc": "Câu hỏi ngoài phạm vi hợp đồng dịch vụ (Hình sự, Đất đai, Hôn nhân, Lao động...)",
+    "question": "Điều kiện chuyển nhượng quyền sử dụng đất nông nghiệp theo Luật Đất đai mới nhất là gì?",
+    "expected_behavior": "safe_refusal",
+    "must_refuse": true,
+    "ground_truth": "Ngoài phạm vi. Hệ thống không hỗ trợ giao dịch chuyển nhượng bất động sản và quyền sử dụng đất theo Luật Đất đai."
+  },
+  {
+    "id": "H3_OOD_03",
+    "group": "out_of_domain",
+    "group_desc": "Câu hỏi ngoài phạm vi hợp đồng dịch vụ (Hình sự, Đất đai, Hôn nhân, Lao động...)",
+    "question": "Thủ tục ly hôn thuận tình và phân chia tài sản chung vợ chồng được quy định như thế nào?",
+    "expected_behavior": "safe_refusal",
+    "must_refuse": true,
+    "ground_truth": "Ngoài phạm vi. Pháp luật về quan hệ hôn nhân và gia đình không thuộc phạm vi cơ sở tri thức hợp đồng dịch vụ."
+  },
+  {
+    "id": "H3_OOD_04",
+    "group": "out_of_domain",
+    "group_desc": "Câu hỏi ngoài phạm vi hợp đồng dịch vụ (Hình sự, Đất đai, Hôn nhân, Lao động...)",
+    "question": "Thời giờ làm việc bình thường của người lao động theo Bộ luật Lao động là bao nhiêu giờ một ngày và một tuần?",
+    "expected_behavior": "safe_refusal",
+    "must_refuse": true,
+    "ground_truth": "Ngoài phạm vi. Quan hệ lao động thuộc điều chỉnh của Bộ luật Lao động, khác biệt với quan hệ hợp đồng dịch vụ thương mại."
+  },
+  {
+    "id": "H3_OOD_05",
+    "group": "out_of_domain",
+    "group_desc": "Câu hỏi ngoài phạm vi hợp đồng dịch vụ (Hình sự, Đất đai, Hôn nhân, Lao động...)",
+    "question": "Mức phạt vi phạm nồng độ cồn khi điều khiển xe ô tô theo quy định xử phạt vi phạm giao thông hiện hành là bao nhiêu?",
+    "expected_behavior": "safe_refusal",
+    "must_refuse": true,
+    "ground_truth": "Ngoài phạm vi. Quy định xử phạt vi phạm hành chính giao thông đường bộ nằm ngoài phạm vi đề tài."
+  },
+  {
+    "id": "H3_OOD_06",
+    "group": "out_of_domain",
+    "group_desc": "Câu hỏi ngoài phạm vi hợp đồng dịch vụ (Hình sự, Đất đai, Hôn nhân, Lao động...)",
+    "question": "Hồ sơ hưởng chế độ thai sản của lao động nữ theo Luật Bảo hiểm xã hội gồm những giấy tờ nào?",
+    "expected_behavior": "safe_refusal",
+    "must_refuse": true,
+    "ground_truth": "Ngoài phạm vi. Chế độ bảo hiểm xã hội không thuộc phạm vi cơ sở tri thức của hệ thống."
+  },
+  {
+    "id": "H3_OOD_07",
+    "group": "out_of_domain",
+    "group_desc": "Câu hỏi ngoài phạm vi hợp đồng dịch vụ (Hình sự, Đất đai, Hôn nhân, Lao động...)",
+    "question": "Điều kiện để được cấp Giấy phép xây dựng nhà ở riêng lẻ tại đô thị gồm những tiêu chuẩn nào?",
+    "expected_behavior": "safe_refusal",
+    "must_refuse": true,
+    "ground_truth": "Ngoài phạm vi. Hợp đồng xây dựng và thủ tục cấp phép xây dựng không nằm trong phạm vi hợp đồng dịch vụ của đề tài."
+  },
+  {
+    "id": "H3_OOD_08",
+    "group": "out_of_domain",
+    "group_desc": "Câu hỏi ngoài phạm vi hợp đồng dịch vụ (Hình sự, Đất đai, Hôn nhân, Lao động...)",
+    "question": "Quy trình tố tụng thụ lý đơn khởi kiện dân sự tại Tòa án nhân dân cấp quận/huyện diễn ra theo các bước nào?",
+    "expected_behavior": "safe_refusal",
+    "must_refuse": true,
+    "ground_truth": "Ngoài phạm vi. Trình tự thủ tục tố tụng tư pháp tại Tòa án nằm ngoài phạm vi hỗ trợ soạn thảo hợp đồng dịch vụ."
+  },
+  {
+    "id": "H3_NONEXIST_01",
+    "group": "non_existent_article",
+    "group_desc": "Yêu cầu tra cứu Điều/Khoản giả định không có thật trong luật",
+    "question": "Điều 999 Bộ luật Dân sự 2015 quy định về mức phạt vi phạm hợp đồng dịch vụ như thế nào?",
+    "expected_behavior": "safe_refusal",
+    "must_refuse": true,
+    "ground_truth": "Điều luật không tồn tại. Bộ luật Dân sự năm 2015 chỉ có tổng cộng 689 Điều, không có Điều 999. Hệ thống phải từ chối hoặc chỉ rõ điều luật không tồn tại."
+  },
+  {
+    "id": "H3_NONEXIST_02",
+    "group": "non_existent_article",
+    "group_desc": "Yêu cầu tra cứu Điều/Khoản giả định không có thật trong luật",
+    "question": "Mức bồi thường thiệt hại được quy định tại Điều 888 Luật Thương mại 2005 là bao nhiêu phần trăm?",
+    "expected_behavior": "safe_refusal",
+    "must_refuse": true,
+    "ground_truth": "Điều luật không tồn tại. Luật Thương mại năm 2005 chỉ có 324 Điều, hoàn toàn không có Điều 888."
+  },
+  {
+    "id": "H3_NONEXIST_03",
+    "group": "non_existent_article",
+    "group_desc": "Yêu cầu tra cứu Điều/Khoản giả định không có thật trong luật",
+    "question": "Quy định về bảo hộ phần mềm theo Điều 500 Luật Sở hữu trí tuệ bao gồm những nguyên tắc gì?",
+    "expected_behavior": "safe_refusal",
+    "must_refuse": true,
+    "ground_truth": "Điều luật không tồn tại. Luật Sở hữu trí tuệ chỉ có 222 Điều, không tồn tại Điều 500."
+  },
+  {
+    "id": "H3_NONEXIST_04",
+    "group": "non_existent_article",
+    "group_desc": "Yêu cầu tra cứu Điều/Khoản giả định không có thật trong luật",
+    "question": "Điều 777 Luật Giao dịch điện tử 2023 hướng dẫn lưu trữ chứng từ hợp đồng điện tử như thế nào?",
+    "expected_behavior": "safe_refusal",
+    "must_refuse": true,
+    "ground_truth": "Điều luật không tồn tại. Luật Giao dịch điện tử 2023 chỉ có 53 Điều, không tồn tại Điều 777."
+  },
+  {
+    "id": "H3_NONEXIST_05",
+    "group": "non_existent_article",
+    "group_desc": "Yêu cầu tra cứu Điều/Khoản giả định không có thật trong luật",
+    "question": "Mức phạt tiền xử phạt hành chính tại Điều 999 Luật Bảo vệ dữ liệu cá nhân 2025 là bao nhiêu?",
+    "expected_behavior": "safe_refusal",
+    "must_refuse": true,
+    "ground_truth": "Điều luật không tồn tại. Luật Bảo vệ dữ liệu cá nhân không có Điều 999."
+  },
+  {
+    "id": "H3_NONEXIST_06",
+    "group": "non_existent_article",
+    "group_desc": "Yêu cầu tra cứu Điều/Khoản giả định không có thật trong luật",
+    "question": "Điều 650 Luật Thương mại 2005 quy định chế tài gì đối với bên vi phạm nghĩa vụ giao hàng dịch vụ?",
+    "expected_behavior": "safe_refusal",
+    "must_refuse": true,
+    "ground_truth": "Điều luật không tồn tại. Luật Thương mại 2005 chỉ có 324 Điều, không tồn tại Điều 650."
+  }
+]

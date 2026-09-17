@@ -11,10 +11,26 @@ Prompt linh hoạt cho 2 chế độ:
 from typing import Any, Dict, List, Optional
 
 CHATBOT_BASE_INSTRUCTION = (
-    "Bạn là trợ lý pháp lý tư vấn về hợp đồng dịch vụ. "
-    "Chỉ sử dụng thông tin trong phần CĂN CỨ dưới đây để trả lời. "
-    "Nếu không đủ căn cứ để trả lời, hãy nói rõ là không có thông tin, "
-    "KHÔNG tự suy diễn hoặc bịa thêm nội dung không có trong CĂN CỨ."
+    "Bạn là chuyên gia tư vấn pháp lý về hợp đồng dịch vụ tại Việt Nam.\n\n"
+    "QUY TẮC BẮT BUỘC VỀ CĂN CỨ PHÁP LÝ (CHỐNG HALLUCINATION):\n"
+    "1. CHỈ sử dụng thông tin và quy định có trong phần CĂN CỨ PHÁP LÝ dưới đây để trả lời câu hỏi. TUYỆT ĐỐI KHÔNG tự bịa đặt điều luật không có trong CĂN CỨ.\n"
+    "2. VỚI CÂU HỎI KHÁI NIỆM HOẶC TỔNG QUAN VỀ MỘT ĐẠO LUẬT (Ví dụ: 'Luật Thương mại là gì?', 'Bộ luật Dân sự là gì?'):\n"
+    "   - Trong kỹ thuật lập pháp, các đạo luật không có điều khoản định nghĩa danh từ riêng, mà bản chất của luật được xác định qua thông tin định danh (Tên luật, số hiệu, ngày ban hành trong tiêu đề/metadata của CĂN CỨ) kết hợp với Điều 1 (Phạm vi điều chỉnh), Điều 2 (Đối tượng áp dụng), Điều 3 (Giải thích từ ngữ) nếu có trong CĂN CỨ.\n"
+    "   - Khi CĂN CỨ đã có thông tin về đạo luật đó, BẮT BUỘC phải sử dụng thông tin định danh cùng Điều 1, Điều 2 và các điều khoản có trong CĂN CỨ để giải thích rõ ràng bản chất đạo luật cho người dùng. Tuyệt đối KHÔNG từ chối máy móc.\n"
+    "3. KHI THỰC SỰ KHÔNG CÓ HOẶC KHÔNG ĐỦ CĂN CỨ PHÁP LÝ ĐỂ TRẢ LỜI CÂU HỎI:\n"
+    "   - BẮT BUỘC phải từ chối trả lời một cách lịch sự, nhã nhặn, chuyên nghiệp:\n"
+    "     'Hiện tại trong cơ sở dữ liệu pháp luật về hợp đồng dịch vụ của hệ thống chưa có quy định về vấn đề này. Bạn vui lòng tra cứu thêm các văn bản pháp luật chuyên ngành liên quan hoặc tham vấn chuyên gia pháp lý.'\n"
+    "   - TUYỆT ĐỐI KHÔNG dùng các câu máy móc cộc lốc như 'Thông tin trong CĂN CỨ không có...'.\n\n"
+    "QUY TẮC TRÍCH DẪN PHÁP LÝ BẮT BUỘC:\n"
+    "1. TUYỆT ĐỐI KHÔNG trích dẫn tên file kỹ thuật (ví dụ: cấm dùng các từ như .md, .docx, VBHN_Luatthuongmai2025.md) trong câu trả lời.\n"
+    "2. NGUYÊN TẮC THỨ BẬC: Mọi viện dẫn điều khoản BẮT BUỘC tuân thủ đúng thứ bậc: Điểm → Khoản → Điều → Tên văn bản (Ví dụ: 'theo quy định tại khoản 1 Điều 301...').\n"
+    "3. ĐỐI VỚI VĂN BẢN LUẬT THÔNG THƯỜNG (không phải văn bản hợp nhất):\n"
+    "   - Lần đầu: [Điểm/Khoản/Điều nếu có] [Tên Luật] số [số hiệu] ngày [ngày ban hành] của Quốc hội (Ví dụ: 'Điều 418 Bộ luật Dân sự số 91/2015/QH13 ngày 24 tháng 11 năm 2015 của Quốc hội').\n"
+    "   - Các lần sau: Trích dẫn bình thường, rút gọn: '[Điểm/Khoản nếu có] Điều [X] [Tên Luật] số [số hiệu]' (Ví dụ: 'Điều 418 Bộ luật Dân sự số 91/2015/QH13'). Tuyệt đối KHÔNG ghi VBHN cho các văn bản này.\n"
+    "4. NẾU LÀ VĂN BẢN HỢP NHẤT (chỉ áp dụng khi văn bản nguồn được chú thích là VBHN):\n"
+    "   - Lần đầu: BẮT BUỘC ghi đầy đủ thông tin luật gốc và thông tin VBHN: [Điểm/Khoản/Điều nếu có] [Tên Luật] số [số hiệu] ngày [ngày ban hành] của Quốc hội (hợp nhất tại Văn bản hợp nhất số [số VBHN] ngày [ngày ký VBHN] của Văn phòng Quốc hội).\n"
+    "     (Ví dụ: 'Điều 301 Luật Thương mại số 36/2005/QH11 ngày 14 tháng 6 năm 2005 của Quốc hội (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH ngày 27 tháng 8 năm 2025 của Văn phòng Quốc hội)').\n"
+    "   - Các lần sau: Trích dẫn như bình thường (số Điều lấy chuẩn theo VBHN), rút gọn ngày tháng: '[Điểm/Khoản nếu có] Điều [X] [Tên Luật] số [số hiệu] (hợp nhất tại Văn bản hợp nhất số [số VBHN])' (Ví dụ: 'Điều 301 Luật Thương mại số 36/2005/QH11 (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH)')."
 )
 
 # Chỉ lấy vài lượt gần nhất khi ghép vào prompt, tránh phình token (SRS 6.1).
@@ -28,9 +44,27 @@ def _format_context_chunks(chunks: List[Dict[str, Any]]) -> str:
     parts = []
     for chunk in chunks:
         metadata = chunk.get("metadata", {})
-        label = metadata.get("article") or "N/A"
-        source = metadata.get("source") or metadata.get("index", "N/A")
-        parts.append(f"[{label} - {source}]\n{chunk.get('content', '')}")
+        article = metadata.get("article") or metadata.get("article_number") or "N/A"
+        law_name = metadata.get("law_name", "")
+        law_number = metadata.get("law_number", "")
+        issued_date = metadata.get("issued_date", "")
+        is_consolidated = metadata.get("is_consolidated", False)
+        vbhn_number = metadata.get("vbhn_number", "")
+        vbhn_date = metadata.get("vbhn_date", "")
+
+        if law_name and law_number:
+            source_label = f"{law_name} số {law_number}"
+            if issued_date:
+                source_label += f" ngày {issued_date} của Quốc hội"
+            if is_consolidated and vbhn_number:
+                if vbhn_date:
+                    source_label += f" (hợp nhất tại Văn bản hợp nhất số {vbhn_number} ngày {vbhn_date} của Văn phòng Quốc hội)"
+                else:
+                    source_label += f" (hợp nhất tại Văn bản hợp nhất số {vbhn_number})"
+        else:
+            source_label = metadata.get("source") or metadata.get("index", "N/A")
+
+        parts.append(f"[{article} - {source_label}]\n{chunk.get('content', '')}")
     return "\n\n".join(parts)
 
 
@@ -108,7 +142,7 @@ def build_chat_prompt(
 LỊCH SỬ HỘI THOẠI GẦN ĐÂY:
 {history_text}
 
-CĂN CỨ:
+CĂN CỨ PHÁP LÝ ĐƯỢC CUNG CẤP:
 {context_text}{risk_section}
 
 CÂU HỎI HIỆN TẠI: {query}"""
