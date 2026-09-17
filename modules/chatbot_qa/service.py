@@ -107,9 +107,13 @@ def handle_chat(
     )
 
     # Gọi LLM qua cơ chế chống hallucination chung (Phần 6)
+    # Chế độ A (đã có context hợp đồng): điều chỉnh ngưỡng cân bằng 0.6 để hỗ trợ hỏi đào sâu nhưng vẫn lọc rác.
+    # Chế độ B (tra cứu luật chung): giữ ngưỡng nghiêm ngặt 0.75 để chặn câu hỏi ngoài phạm vi.
+    chat_threshold = 0.6 if session.has_contract_context else 0.75
     result = llm_client.generate_grounded_response(
         query=prompt,
         retrieved_chunks=context_chunks,
+        threshold=chat_threshold,
     )
 
     answer = result.get("answer", "")
