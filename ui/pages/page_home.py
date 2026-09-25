@@ -36,7 +36,7 @@ def render():
         if st.button(
             "🚀 Bắt đầu Rà soát", use_container_width=True, key="home_nav_risk"
         ):
-            st.session_state["page"] = "📤 Gợi ý Rủi ro Pháp lý"
+            st.session_state["nav_page"] = "📤 Gợi ý Rủi ro Pháp lý"
             st.rerun()
 
     with col2:
@@ -51,7 +51,7 @@ def render():
         if st.button(
             "📝 Soạn thảo ngay", use_container_width=True, key="home_nav_draft"
         ):
-            st.session_state["page"] = "📝 Hỗ trợ Soạn thảo Hợp đồng"
+            st.session_state["nav_page"] = "📝 Hỗ trợ Soạn thảo Hợp đồng"
             st.rerun()
 
     with col3:
@@ -64,5 +64,5 @@ def render():
             unsafe_allow_html=True,
         )
         if st.button("💬 Mở Chatbot", use_container_width=True, key="home_nav_chat"):
-            st.session_state["page"] = "💬 Chatbot Hỏi – Đáp (Q&A)"
+            st.session_state["nav_page"] = "💬 Chatbot Hỏi – Đáp (Q&A)"
             st.rerun()
