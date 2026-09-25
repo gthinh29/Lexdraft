@@ -187,7 +187,8 @@ with st.sidebar:
         st.session_state.pending_risk_draft = False
         st.session_state.pending_risk_upload = False
         st.session_state.session_id = str(uuid.uuid4())
-        st.session_state["page"] = "🏠 Trang chủ"
+        st.session_state["nav_page"] = "🏠 Trang chủ"
+        st.rerun()
         if chatbot_service:
             chatbot_service.attach_contract_context(
                 session_id=st.session_state.session_id,
