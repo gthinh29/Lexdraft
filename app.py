@@ -170,7 +170,7 @@ with st.sidebar:
         st.write(
             "Risk Assessment:", "✅ Ready" if risk_assessment_service else "⚠️ Disabled"
         )
-        st.write("LLM Engine:", "🟢 Gemini 3.6 Flash")
+        st.write("LLM Engine:", "🟢 Gemini 3.5 Flash Lite")
 
     st.divider()
     if st.button("🗑️ Xóa phiên làm việc", use_container_width=True):
@@ -205,7 +205,7 @@ st.markdown(
     "<div class='system-title'>Lexdraft — Legal Contract Drafting & Risk Assessment System</div>"
     "<div class='system-subtitle'>Hệ thống Hỗ trợ Soạn thảo và Gợi ý Rủi ro Hợp đồng Dịch vụ bằng LLM kết hợp RAG</div>"
     "<div class='system-status-pills'>"
-    "<span class='status-pill'>⚡ LLM Engine: Gemini 3.6 Flash</span>"
+    "<span class='status-pill'>⚡ LLM Engine: Gemini 3.5 Flash Lite</span>"
     "<span class='status-pill'>📚 Knowledge: FAISS VectorDB (Dân sự & Thương mại)</span>"
     "<span class='status-pill'>🛡️ Validation: Tiered Expired Laws Checker</span>"
     "</div>"
