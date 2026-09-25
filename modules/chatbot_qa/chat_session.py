@@ -90,6 +90,8 @@ class ChatSession:
             self.contract_vector_db = None
         else:
             self.has_contract_context = True
-            self.contract_chunks = contract_chunks
-            self.risk_report = risk_report
-            self.contract_vector_db = None
+            if contract_chunks:
+                self.contract_chunks = contract_chunks
+                self.contract_vector_db = None
+            if risk_report is not None:
+                self.risk_report = risk_report

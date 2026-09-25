@@ -106,12 +106,10 @@ def search_context(
         contract_db = _get_or_build_contract_db(session)
         if contract_db is not None:
             contract_hits = contract_db.hybrid_search(query, top_k=limit)
-            # Lọc các điều khoản hợp đồng có điểm tương đồng tốt
-            good_contract_hits = [
-                h for h in contract_hits if h.get("score", 0) >= min_score
-            ]
+            # Lấy các điều khoản có độ tương đồng tốt (>= 0.35) hoặc top 5 điều khoản liên quan nhất
+            good_contract_hits = [h for h in contract_hits if h.get("score", 0) >= 0.35]
             chosen_contract = (
-                good_contract_hits if good_contract_hits else contract_hits[:2]
+                good_contract_hits if good_contract_hits else contract_hits[:5]
             )
             for hit in chosen_contract:
                 hit.setdefault("metadata", {})["index"] = "contract_index"

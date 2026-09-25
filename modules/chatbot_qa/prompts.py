@@ -41,9 +41,15 @@ def _format_context_chunks(chunks: List[Dict[str, Any]]) -> str:
     if not chunks:
         return "Không có căn cứ nào được tìm thấy."
 
-    parts = []
+    contract_parts = []
+    law_parts = []
+
     for chunk in chunks:
         metadata = chunk.get("metadata", {})
+        is_contract = metadata.get("index") == "contract_index" or any(
+            str(metadata.get("source", "")).endswith(ext)
+            for ext in (".pdf", ".docx", ".txt", ".md")
+        )
         article = metadata.get("article") or metadata.get("article_number") or "N/A"
         law_name = metadata.get("law_name", "")
         law_number = metadata.get("law_number", "")
@@ -52,20 +58,47 @@ def _format_context_chunks(chunks: List[Dict[str, Any]]) -> str:
         vbhn_number = metadata.get("vbhn_number", "")
         vbhn_date = metadata.get("vbhn_date", "")
 
-        if law_name and law_number:
-            source_label = f"{law_name} số {law_number}"
-            if issued_date:
-                source_label += f" ngày {issued_date} của Quốc hội"
-            if is_consolidated and vbhn_number:
-                if vbhn_date:
-                    source_label += f" (hợp nhất tại Văn bản hợp nhất số {vbhn_number} ngày {vbhn_date} của Văn phòng Quốc hội)"
-                else:
-                    source_label += f" (hợp nhất tại Văn bản hợp nhất số {vbhn_number})"
+        if is_contract:
+            source_label = metadata.get("source") or "Văn bản Hợp đồng"
+            contract_parts.append(
+                f"[{article} - {source_label}]\n{chunk.get('content', '')}"
+            )
         else:
-            source_label = metadata.get("source") or metadata.get("index", "N/A")
+            if law_name and law_number:
+                source_label = f"{law_name} số {law_number}"
+                if issued_date:
+                    source_label += f" ngày {issued_date} của Quốc hội"
+                if is_consolidated and vbhn_number:
+                    if vbhn_date:
+                        source_label += f" (hợp nhất tại Văn bản hợp nhất số {vbhn_number} ngày {vbhn_date} của Văn phòng Quốc hội)"
+                    else:
+                        source_label += (
+                            f" (hợp nhất tại Văn bản hợp nhất số {vbhn_number})"
+                        )
+            else:
+                source_label = metadata.get("source") or metadata.get(
+                    "index", "Căn cứ pháp lý"
+                )
+            law_parts.append(
+                f"[{article} - {source_label}]\n{chunk.get('content', '')}"
+            )
 
-        parts.append(f"[{article} - {source_label}]\n{chunk.get('content', '')}")
-    return "\n\n".join(parts)
+    output_sections = []
+    if contract_parts:
+        output_sections.append(
+            "=== NỘI DUNG ĐIỀU KHOẢN HỢP ĐỒNG ĐƯỢC CUNG CẤP ===\n"
+            + "\n\n".join(contract_parts)
+        )
+    if law_parts:
+        output_sections.append(
+            "=== CĂN CỨ PHÁP LUẬT THAM CHIẾU ===\n" + "\n\n".join(law_parts)
+        )
+
+    return (
+        "\n\n".join(output_sections)
+        if output_sections
+        else "Không có căn cứ nào được tìm thấy."
+    )
 
 
 def _format_risk_report(risk_report: Optional[List[Dict[str, Any]]]) -> str:
@@ -118,9 +151,15 @@ def build_chat_prompt(
 
     if has_contract_context:
         mode_instruction = (
-            "Bạn đang ở CHẾ ĐỘ TƯ VẤN CÓ NGỮ CẢNH HỢP ĐỒNG. Người dùng đã upload/soạn "
-            "một hợp đồng cụ thể và đã có báo cáo rủi ro sơ bộ bên dưới. Hãy trả lời "
-            "bám sát cả nội dung hợp đồng và các điều luật liên quan."
+            "BẠN ĐANG Ở CHẾ ĐỘ TƯ VẤN CÓ NGỮ CẢNH HỢP ĐỒNG (CHẾ ĐỘ A):\n"
+            "Người dùng đã upload/soạn một hợp đồng cụ thể và hệ thống đã trích xuất các điều khoản cùng báo cáo rủi ro sơ bộ bên dưới.\n"
+            "HƯỚNG DẪN TRẢ LỜI CHO CHẾ ĐỘ NÀY:\n"
+            "1. Với câu hỏi về nội dung hợp đồng (các bên tham gia, phạm vi công việc, thời hạn, phí dịch vụ, thanh toán, phạt vi phạm, đánh giá rủi ro hay cách chỉnh sửa điều khoản): "
+            "BẮT BUỘC sử dụng nội dung hợp đồng và báo cáo rủi ro được cung cấp để trả lời rõ ràng, chính xác và giải thích cặn kẽ cho người dùng.\n"
+            "2. Nếu một thông tin cụ thể người dùng hỏi thực sự không xuất hiện trong các điều khoản hợp đồng được cung cấp, hãy nói rõ: "
+            "'Trong nội dung hợp đồng hiện tại không đề cập đến thông tin này...'.\n"
+            "3. CHỈ sử dụng câu từ chối chuẩn ('Hiện tại trong cơ sở dữ liệu pháp luật về hợp đồng dịch vụ của hệ thống chưa có quy định về vấn đề này. Bạn vui lòng tra cứu thêm các văn bản pháp luật chuyên ngành liên quan hoặc tham vấn chuyên gia pháp lý.') "
+            "khi người dùng đặt câu hỏi tra cứu pháp luật chuyên ngành ngoài phạm vi CSDL pháp luật của hệ thống và câu hỏi không liên quan đến hợp đồng."
         )
         risk_report_text = _format_risk_report(risk_report)
         risk_section = (
@@ -142,7 +181,7 @@ def build_chat_prompt(
 LỊCH SỬ HỘI THOẠI GẦN ĐÂY:
 {history_text}
 
-CĂN CỨ PHÁP LÝ ĐƯỢC CUNG CẤP:
+THÔNG TIN VÀ CĂN CỨ ĐƯỢC CUNG CẤP:
 {context_text}{risk_section}
 
 CÂU HỎI HIỆN TẠI: {query}"""

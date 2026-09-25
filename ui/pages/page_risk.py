@@ -467,11 +467,18 @@ def render():
                                         st.session_state.last_expired_alerts = data[
                                             "expired_law_alerts"
                                         ]
+                                        chunks = (
+                                            data.get("contract_chunks")
+                                            or st.session_state.get("contract_chunks")
+                                            or []
+                                        )
+                                        if chunks:
+                                            st.session_state.contract_chunks = chunks
                                         if chatbot_service:
                                             try:
                                                 chatbot_service.attach_contract_context(
                                                     session_id=st.session_state.session_id,
-                                                    contract_chunks=[],
+                                                    contract_chunks=chunks,
                                                     risk_report=data["risk_results"]
                                                     or [],
                                                 )

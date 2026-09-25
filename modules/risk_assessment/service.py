@@ -411,5 +411,6 @@ def stream_analyze_contract(
         {
             "expired_law_alerts": expired_law_alerts,
             "risk_results": risk_results,
+            "contract_chunks": contract_chunks,
         },
     )

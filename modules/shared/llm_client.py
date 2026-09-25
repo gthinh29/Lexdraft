@@ -192,6 +192,7 @@ def generate_grounded_response(
     retrieved_chunks: List[Dict[str, Any]],
     threshold: Optional[float] = None,
     client: Optional[GeminiClient] = None,
+    refusal_message: Optional[str] = None,
 ) -> Dict[str, Any]:
     """
     Sinh phản hồi được ràng buộc căn cứ pháp lý (Grounded Generation) và chống hallucination.
@@ -210,11 +211,17 @@ def generate_grounded_response(
         else getattr(Config, "SIMILARITY_THRESHOLD", 0.75)
     )
 
+    default_refusal = (
+        "Hiện tại trong cơ sở dữ liệu pháp luật về hợp đồng dịch vụ của hệ thống chưa có quy định về vấn đề này. "
+        "Bạn vui lòng tra cứu thêm các văn bản pháp luật chuyên ngành liên quan hoặc tham vấn chuyên gia pháp lý."
+    )
+    active_refusal = refusal_message or default_refusal
+
     # 6.3: Code logic Threshold
     if not retrieved_chunks:
         logger.info("Không có retrieved_chunks nào được cung cấp.")
         return {
-            "answer": "Không tìm thấy căn cứ pháp lý phù hợp trong cơ sở dữ liệu để trả lời câu hỏi này.",
+            "answer": active_refusal,
             "citations": [],
             "refusal": True,
         }
@@ -230,10 +237,7 @@ def generate_grounded_response(
                 active_threshold,
             )
             return {
-                "answer": (
-                    "Hiện tại trong cơ sở dữ liệu pháp luật về hợp đồng dịch vụ của hệ thống chưa có quy định về vấn đề này. "
-                    "Bạn vui lòng tra cứu thêm các văn bản pháp luật chuyên ngành liên quan hoặc tham vấn chuyên gia pháp lý."
-                ),
+                "answer": active_refusal,
                 "citations": [],
                 "refusal": True,
             }

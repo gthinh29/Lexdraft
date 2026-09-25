@@ -107,13 +107,20 @@ def handle_chat(
     )
 
     # Gọi LLM qua cơ chế chống hallucination chung (Phần 6)
-    # Chế độ A (đã có context hợp đồng): điều chỉnh ngưỡng cân bằng 0.6 để hỗ trợ hỏi đào sâu nhưng vẫn lọc rác.
-    # Chế độ B (tra cứu luật chung): giữ ngưỡng nghiêm ngặt 0.75 để chặn câu hỏi ngoài phạm vi.
-    chat_threshold = 0.6 if session.has_contract_context else 0.75
+    # Chế độ A: ngưỡng 0.65 (hỏi đáp bám sát hợp đồng, chặn cứng các câu hỏi ngoài phạm vi < 0.65)
+    # Chế độ B (tra cứu luật chung): giữ ngưỡng nghiêm ngặt 0.75 để chặn câu hỏi ngoài phạm vi
+    chat_threshold = 0.65 if session.has_contract_context else 0.75
+    refusal_msg = (
+        "Nội dung câu hỏi không nằm trong hợp đồng dịch vụ đã đính kèm hoặc cơ sở dữ liệu pháp luật của hệ thống. "
+        "Bạn vui lòng đặt câu hỏi liên quan đến các điều khoản của hợp đồng này hoặc các quy định pháp luật về hợp đồng dịch vụ."
+        if session.has_contract_context
+        else None
+    )
     result = llm_client.generate_grounded_response(
         query=prompt,
         retrieved_chunks=context_chunks,
         threshold=chat_threshold,
+        refusal_message=refusal_msg,
     )
 
     answer = result.get("answer", "")
