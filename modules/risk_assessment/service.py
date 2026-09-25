@@ -227,7 +227,14 @@ def stream_analyze_contract(
 
     if not text.strip():
         logger.warning("[stream] Nội dung hợp đồng rỗng.")
-        yield ("done", {"expired_law_alerts": [], "risk_results": []})
+        yield (
+            "error",
+            {
+                "message": "Không trích xuất được nội dung từ file. "
+                "File có thể bị lỗi, được bảo vệ bằng mật khẩu, "
+                "hoặc không chứa điều khoản hợp đồng nào.",
+            },
+        )
         return
 
     # 0. Tiered Validation
