@@ -135,25 +135,8 @@ with st.sidebar:
         label_visibility="collapsed",
     )
 
-    # Tự động dọn báo cáo rủi ro khi chuyển sang màn hình Soạn thảo hợp đồng
-    if (
-        page == "📝 Hỗ trợ Soạn thảo Hợp đồng"
-        and st.session_state.get("previous_page") != "📝 Hỗ trợ Soạn thảo Hợp đồng"
-    ):
-        st.session_state.last_risk_report = None
-        st.session_state.last_expired_alerts = []
-        st.session_state.risk_source_name = None
-        st.session_state.pending_risk_draft = False
-        st.session_state.pending_risk_upload = False
-        st.session_state.upload_file_name = None
-        st.session_state.upload_tmp_path = None
-        if chatbot_service:
-            chatbot_service.attach_contract_context(
-                session_id=st.session_state.session_id,
-                contract_chunks=[],
-                risk_report=[],
-            )
-
+    # NOTE: Không tự động xóa contract state khi chuyển tab.
+    # State chỉ bị xóa khi người dùng bấm "Gỡ file" hoặc "Xóa phiên làm việc" tường minh.
     st.session_state["previous_page"] = page
 
     st.divider()
