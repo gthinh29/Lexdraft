@@ -375,14 +375,26 @@ h3 {
     justify-content: center !important;
     align-items: center !important;
     padding: 24px 16px !important;
-    background: #131f37 !important;
     border: 1px dashed #334155 !important;
     border-radius: 10px !important;
 }
-[data-testid="stFileUploaderDropzone"] section {
-    text-align: center !important;
+/* Uniform Streamlit Buttons */
+div[data-testid="stButton"] > button {
+    height: 44px !important;
+    min-height: 44px !important;
+    max-height: 44px !important;
+    display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
+    font-size: 0.88rem !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    padding: 0 16px !important;
+    margin: 0 !important;
+    transition: all 0.2s ease !important;
+}
+div[data-testid="stButton"] > button:hover {
+    transform: translateY(-1px) !important;
 }
 </style>
 """

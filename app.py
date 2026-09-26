@@ -135,25 +135,8 @@ with st.sidebar:
         label_visibility="collapsed",
     )
 
-    # Tự động dọn báo cáo rủi ro khi chuyển sang màn hình Soạn thảo hợp đồng
-    if (
-        page == "📝 Hỗ trợ Soạn thảo Hợp đồng"
-        and st.session_state.get("previous_page") != "📝 Hỗ trợ Soạn thảo Hợp đồng"
-    ):
-        st.session_state.last_risk_report = None
-        st.session_state.last_expired_alerts = []
-        st.session_state.risk_source_name = None
-        st.session_state.pending_risk_draft = False
-        st.session_state.pending_risk_upload = False
-        st.session_state.upload_file_name = None
-        st.session_state.upload_tmp_path = None
-        if chatbot_service:
-            chatbot_service.attach_contract_context(
-                session_id=st.session_state.session_id,
-                contract_chunks=[],
-                risk_report=[],
-            )
-
+    # NOTE: Không tự động xóa contract state khi chuyển tab.
+    # State chỉ bị xóa khi người dùng bấm "Gỡ file" hoặc "Xóa phiên làm việc" tường minh.
     st.session_state["previous_page"] = page
 
     st.divider()
@@ -170,7 +153,7 @@ with st.sidebar:
         st.write(
             "Risk Assessment:", "✅ Ready" if risk_assessment_service else "⚠️ Disabled"
         )
-        st.write("LLM Engine:", "🟢 Gemini 3.6 Flash")
+        st.write("LLM Engine:", "🟢 Gemini 3.5 Flash Lite")
 
     st.divider()
     if st.button("🗑️ Xóa phiên làm việc", use_container_width=True):
@@ -187,7 +170,8 @@ with st.sidebar:
         st.session_state.pending_risk_draft = False
         st.session_state.pending_risk_upload = False
         st.session_state.session_id = str(uuid.uuid4())
-        st.session_state["page"] = "🏠 Trang chủ"
+        st.session_state["nav_page"] = "🏠 Trang chủ"
+        st.rerun()
         if chatbot_service:
             chatbot_service.attach_contract_context(
                 session_id=st.session_state.session_id,
@@ -204,7 +188,7 @@ st.markdown(
     "<div class='system-title'>Lexdraft — Legal Contract Drafting & Risk Assessment System</div>"
     "<div class='system-subtitle'>Hệ thống Hỗ trợ Soạn thảo và Gợi ý Rủi ro Hợp đồng Dịch vụ bằng LLM kết hợp RAG</div>"
     "<div class='system-status-pills'>"
-    "<span class='status-pill'>⚡ LLM Engine: Gemini 3.6 Flash</span>"
+    "<span class='status-pill'>⚡ LLM Engine: Gemini 3.5 Flash Lite</span>"
     "<span class='status-pill'>📚 Knowledge: FAISS VectorDB (Dân sự & Thương mại)</span>"
     "<span class='status-pill'>🛡️ Validation: Tiered Expired Laws Checker</span>"
     "</div>"

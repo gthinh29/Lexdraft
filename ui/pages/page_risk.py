@@ -216,10 +216,7 @@ def render():
     with col_main:
         st.subheader("📤 Rà soát & Gợi ý Rủi ro Pháp lý Hợp đồng")
 
-        if (
-            st.session_state.upload_file_name
-            and not st.session_state.pending_risk_upload
-        ):
+        if st.session_state.upload_file_name:
             st.markdown(
                 f"<div class='feature-card' style='border-left: 4px solid #38bdf8; margin-bottom: 16px;'>"
                 f"<div class='feature-card-title'>📄 Hồ sơ Hợp đồng đang làm việc: <b>{st.session_state.upload_file_name}</b></div>"
@@ -227,47 +224,196 @@ def render():
                 f"</div>",
                 unsafe_allow_html=True,
             )
-            c_info, c_btn = st.columns([3, 1])
-            with c_info:
-                if st.session_state.last_risk_report:
-                    risk_report = st.session_state.last_risk_report
-                    risky = [r for r in risk_report if _is_risky(r.get("rui_ro", ""))]
-                    st.success(
-                        f"✅ Complete: 🔴 **{len(risky)}** điều khoản có rủi ro · ✅ **{len(risk_report) - len(risky)}** điều khoản an toàn — *Xem báo cáo ở Panel bên phải →*"
-                    )
-                else:
-                    st.caption("💬 Đang ở Chế độ Hỏi đáp về ngữ cảnh hợp đồng này.")
-            with c_btn:
-                if st.button(
-                    "🗑️ Gỡ file hợp đồng",
-                    use_container_width=True,
-                    key="remove_active_contract",
-                ):
-                    st.session_state.upload_file_name = None
-                    st.session_state.upload_tmp_path = None
-                    st.session_state.last_risk_report = None
-                    st.session_state.last_expired_alerts = []
-                    st.session_state.risk_source_name = None
-                    st.session_state.pending_risk_upload = False
-                    if chatbot_service:
-                        chatbot_service.attach_contract_context(
-                            session_id=st.session_state.session_id,
-                            contract_chunks=[],
-                            risk_report=[],
-                        )
-                    st.rerun()
-
+            # Hiển thị thông báo trạng thái kết quả rà soát
             if st.session_state.last_risk_report:
-                st.divider()
+                risk_report = st.session_state.last_risk_report
+                risky = [r for r in risk_report if _is_risky(r.get("rui_ro", ""))]
+                safe_count = len(risk_report) - len(risky)
                 st.markdown(
-                    "💬 **Bạn muốn hỏi đáp chuyên sâu về các rủi ro đã phát hiện?**"
+                    f"<div style='display:flex;align-items:center;justify-content:space-between;"
+                    f"background:#0f172a;border:1px solid #1e293b;border-radius:10px;padding:10px 16px;margin-bottom:14px;'>"
+                    f"<div style='display:flex;align-items:center;gap:12px;font-size:0.86rem;'>"
+                    f"<span>✅ <b>Đã hoàn tất rà soát:</b></span>"
+                    f"<span style='background:#450a0a;color:#fca5a5;padding:3px 10px;border-radius:20px;border:1px solid #991b1b;font-weight:600;'>🔴 {len(risky)} rủi ro</span>"
+                    f"<span style='background:#064e3b;color:#6ee7b7;padding:3px 10px;border-radius:20px;border:1px solid #047857;font-weight:600;'>✅ {safe_count} an toàn</span>"
+                    f"</div>"
+                    f"<span style='font-size:0.8rem;color:#94a3b8;'>👉 Xem chi tiết ở Panel bên phải</span>"
+                    f"</div>",
+                    unsafe_allow_html=True,
                 )
-                if st.button(
-                    "👉 Chuyển sang Chatbot Hỏi – Đáp (Q&A) để trao đổi chi tiết",
-                    type="primary",
-                ):
-                    st.session_state["nav_page"] = "💬 Chatbot Hỏi – Đáp (Q&A)"
-                    st.rerun()
+
+            # Hàng nút thao tác: Cân đối, bằng chiều cao, chuẩn UI
+            if not st.session_state.last_risk_report:
+                c_run, c_chat, c_btn = st.columns([1, 1, 1], gap="small")
+                with c_run:
+                    run_clicked = st.button(
+                        "🔍 Phân tích rủi ro",
+                        use_container_width=True,
+                        type="primary",
+                        key="active_run_analysis",
+                    )
+                with c_chat:
+                    if st.button(
+                        "💬 Chatbot Q&A",
+                        use_container_width=True,
+                        key="goto_chatbot_from_risk",
+                    ):
+                        st.session_state["nav_page"] = "💬 Chatbot Hỏi – Đáp (Q&A)"
+                        st.rerun()
+                with c_btn:
+                    if st.button(
+                        "🗑️ Gỡ file",
+                        use_container_width=True,
+                        key="remove_active_contract",
+                    ):
+                        st.session_state.upload_file_name = None
+                        st.session_state.upload_tmp_path = None
+                        st.session_state.last_risk_report = None
+                        st.session_state.last_expired_alerts = []
+                        st.session_state.risk_source_name = None
+                        st.session_state.pending_risk_upload = False
+                        if chatbot_service:
+                            chatbot_service.attach_contract_context(
+                                session_id=st.session_state.session_id,
+                                contract_chunks=[],
+                                risk_report=[],
+                            )
+                        st.rerun()
+
+                # Chạy phân tích trực tiếp từ tmp_path đã lưu (không phụ thuộc widget uploader)
+                if run_clicked:
+                    tmp_path = st.session_state.upload_tmp_path
+                    orig_name = st.session_state.upload_file_name
+                    if not tmp_path or not Path(tmp_path).exists():
+                        st.error(
+                            "File hợp đồng không còn khả dụng. Vui lòng tải lên lại."
+                        )
+                    elif risk_assessment_service is None:
+                        st.error("Module phân tích rủi ro chưa sẵn sàng.")
+                    else:
+                        progress_bar = st.progress(0, text="Đang khởi tạo...")
+                        progress_placeholder = st.empty()
+                        accumulated = []
+                        try:
+                            for (
+                                event,
+                                data,
+                            ) in risk_assessment_service.stream_analyze_contract(
+                                file_path_or_text=tmp_path,
+                                session_id=st.session_state.session_id,
+                                original_name=orig_name,
+                            ):
+                                if event == "meta":
+                                    total_chunks = data["total"]
+                                    st.session_state.last_expired_alerts = data[
+                                        "expired_law_alerts"
+                                    ]
+                                    st.session_state.risk_source_name = data["source"]
+                                    progress_placeholder.markdown(
+                                        "📄 **{}** — Trích xuất **{}** điều khoản".format(
+                                            data["source"], total_chunks
+                                        )
+                                    )
+                                elif event == "result":
+                                    idx = data["index"]
+                                    pct = int(idx / max(data["total"], 1) * 100)
+                                    progress_bar.progress(
+                                        pct,
+                                        text="Đang rà soát {}... ({}/{})".format(
+                                            data["dieu_khoan"], idx, data["total"]
+                                        ),
+                                    )
+                                    accumulated.append(
+                                        {
+                                            "dieu_khoan": data["dieu_khoan"],
+                                            "noi_dung": data.get("noi_dung", ""),
+                                            "rui_ro": data.get("rui_ro", ""),
+                                            "can_cu": data.get("can_cu", []),
+                                        }
+                                    )
+                                    st.session_state.last_risk_report = list(
+                                        accumulated
+                                    )
+                                elif event == "progress":
+                                    pct = int(
+                                        data["index"] / max(data["total"], 1) * 100
+                                    )
+                                    progress_bar.progress(
+                                        pct, text=data.get("message", "Đang xử lý...")
+                                    )
+                                elif event == "error":
+                                    progress_bar.empty()
+                                    progress_placeholder.empty()
+                                    st.session_state["_upload_error"] = data.get(
+                                        "message",
+                                        "File không chứa nội dung hợp đồng hợp lệ.",
+                                    )
+                                    st.rerun()
+                                elif event == "done":
+                                    progress_bar.progress(
+                                        100, text="✅ Hoàn tất rà soát rủi ro!"
+                                    )
+                                    progress_placeholder.empty()
+                                    st.session_state.last_risk_report = data[
+                                        "risk_results"
+                                    ]
+                                    st.session_state.last_expired_alerts = data[
+                                        "expired_law_alerts"
+                                    ]
+                                    chunks = (
+                                        data.get("contract_chunks")
+                                        or st.session_state.get("contract_chunks")
+                                        or []
+                                    )
+                                    if chunks:
+                                        st.session_state.contract_chunks = chunks
+                                    if chatbot_service:
+                                        try:
+                                            chatbot_service.attach_contract_context(
+                                                session_id=st.session_state.session_id,
+                                                contract_chunks=chunks,
+                                                risk_report=data["risk_results"] or [],
+                                            )
+                                        except Exception:
+                                            logger.exception(
+                                                "Không thể đồng bộ context sang chatbot_qa."
+                                            )
+                                    st.rerun()
+                        except Exception:
+                            logger.exception("Lỗi khi phân tích.")
+                            st.error(
+                                "Đã có lỗi trong quá trình rà soát. Vui lòng thử lại."
+                            )
+            else:
+                c_chat, c_btn = st.columns([1, 1], gap="medium")
+                with c_chat:
+                    if st.button(
+                        "💬 Chuyển sang Chatbot Q&A",
+                        use_container_width=True,
+                        type="primary",
+                        key="goto_chatbot_from_risk",
+                    ):
+                        st.session_state["nav_page"] = "💬 Chatbot Hỏi – Đáp (Q&A)"
+                        st.rerun()
+                with c_btn:
+                    if st.button(
+                        "🗑️ Gỡ file hợp đồng",
+                        use_container_width=True,
+                        key="remove_active_contract",
+                    ):
+                        st.session_state.upload_file_name = None
+                        st.session_state.upload_tmp_path = None
+                        st.session_state.last_risk_report = None
+                        st.session_state.last_expired_alerts = []
+                        st.session_state.risk_source_name = None
+                        st.session_state.pending_risk_upload = False
+                        if chatbot_service:
+                            chatbot_service.attach_contract_context(
+                                session_id=st.session_state.session_id,
+                                contract_chunks=[],
+                                risk_report=[],
+                            )
+                        st.rerun()
         else:
             # FEATURE OVERVIEW CARDS
             st.markdown(
@@ -291,10 +437,23 @@ def render():
                 unsafe_allow_html=True,
             )
 
+            if "_uploader_key" not in st.session_state:
+                st.session_state["_uploader_key"] = 0
+
+            if st.session_state.get("_upload_error"):
+                st.error(
+                    f"⚠️ **Không thể phân tích file vừa tải lên.**\n\n"
+                    f"{st.session_state['_upload_error']}\n\n"
+                    "ℹ️ Hãy thử lại với file hợp đồng hợp lệ (.pdf hoặc .docx) "
+                    "có nội dung điều khoản rõ ràng."
+                )
+                st.session_state["_upload_error"] = None
+
             uploaded_file = st.file_uploader(
                 "Tải lên file hợp đồng dịch vụ (.pdf, .docx)",
                 type=["pdf", "docx"],
                 label_visibility="collapsed",
+                key=f"file_uploader_{st.session_state['_uploader_key']}",
             )
 
             if uploaded_file is not None:
@@ -310,6 +469,31 @@ def render():
                     st.session_state.last_risk_report = None
                     st.session_state.last_expired_alerts = []
                     st.session_state.risk_source_name = None
+
+                    # Tự động parse và nạp ngay context Điều/Khoản vào Chatbot
+                    # để người dùng có thể chuyển sang tab Chatbot hỏi đáp tức thì mà không cần đợi bấm phân tích
+                    try:
+                        from modules.shared.document_reader import read_document
+                        from modules.shared.chunking import chunk_by_article
+
+                        parsed_text = read_document(st.session_state.upload_tmp_path)
+                        if parsed_text and parsed_text.strip():
+                            chunks = chunk_by_article(
+                                parsed_text,
+                                {"source": uploaded_file.name, "doc_type": "contract"},
+                            )
+                            if chunks:
+                                st.session_state.contract_chunks = chunks
+                                if chatbot_service:
+                                    chatbot_service.attach_contract_context(
+                                        session_id=st.session_state.session_id,
+                                        contract_chunks=chunks,
+                                        risk_report=[],
+                                    )
+                    except Exception as e:
+                        logger.warning(
+                            "Không thể parse và nạp sớm ngữ cảnh hợp đồng: %s", e
+                        )
 
                 st.markdown(
                     f"<div class='feature-card' style='border-left:4px solid #10b981;margin-bottom:12px;'>"
@@ -330,7 +514,7 @@ def render():
                         st.info(
                             "🤖 Vui lòng chọn tác vụ rà soát cho file hợp đồng này:"
                         )
-                        c1, c2, c3 = st.columns([2, 2, 1])
+                        c1, c2 = st.columns([1, 1], gap="medium")
                         with c1:
                             do_analyze = st.button(
                                 "🔍 Phân tích rủi ro ngay",
@@ -339,12 +523,6 @@ def render():
                                 key="confirm_upload_risk",
                             )
                         with c2:
-                            skip = st.button(
-                                "💬 Chỉ tra cứu / Hỏi đáp",
-                                use_container_width=True,
-                                key="skip_upload_risk",
-                            )
-                        with c3:
                             cancel = st.button(
                                 "⛔ Hủy file",
                                 use_container_width=True,
@@ -358,36 +536,16 @@ def render():
                         st.session_state.last_expired_alerts = []
                         st.session_state.risk_source_name = None
                         st.session_state.pending_risk_upload = False
+                        # Tăng key để reset widget file_uploader
+                        st.session_state["_uploader_key"] = (
+                            st.session_state.get("_uploader_key", 0) + 1
+                        )
                         if chatbot_service:
                             chatbot_service.attach_contract_context(
                                 session_id=st.session_state.session_id,
                                 contract_chunks=[],
                                 risk_report=[],
                             )
-                        st.rerun()
-
-                    if skip:
-                        st.session_state.pending_risk_upload = False
-                        st.session_state.last_risk_report = None
-                        st.session_state.last_expired_alerts = []
-                        st.session_state.risk_source_name = None
-                        action_container.empty()
-                        try:
-                            from modules.shared import chunking, document_reader
-
-                            text = document_reader.read_document(
-                                st.session_state.upload_tmp_path
-                            )
-                            chunks = chunking.chunk_contract_by_articles(text)
-                            if chatbot_service:
-                                chatbot_service.attach_contract_context(
-                                    session_id=st.session_state.session_id,
-                                    contract_chunks=chunks or [],
-                                    risk_report=[],
-                                )
-                        except Exception:
-                            logger.exception("Lỗi khi đọc file hợp đồng.")
-                        st.session_state["nav_page"] = "💬 Chatbot Hỏi – Đáp (Q&A)"
                         st.rerun()
 
                     if do_analyze:
@@ -455,6 +613,22 @@ def render():
                                             text=data.get("message", "Đang xử lý..."),
                                         )
 
+                                    elif event == "error":
+                                        progress_bar.empty()
+                                        progress_placeholder.empty()
+                                        st.session_state.pending_risk_upload = False
+                                        st.session_state.upload_file_name = None
+                                        st.session_state.upload_tmp_path = None
+                                        st.session_state["_uploader_key"] = (
+                                            st.session_state.get("_uploader_key", 0) + 1
+                                        )
+                                        # Lưu lỗi để hiển thị sau khi rerun
+                                        st.session_state["_upload_error"] = data.get(
+                                            "message",
+                                            "File không chứa nội dung hợp đồng hợp lệ.",
+                                        )
+                                        st.rerun()
+
                                     elif event == "done":
                                         progress_bar.progress(
                                             100, text="✅ Hoàn tất rà soát rủi ro!"
@@ -466,11 +640,18 @@ def render():
                                         st.session_state.last_expired_alerts = data[
                                             "expired_law_alerts"
                                         ]
+                                        chunks = (
+                                            data.get("contract_chunks")
+                                            or st.session_state.get("contract_chunks")
+                                            or []
+                                        )
+                                        if chunks:
+                                            st.session_state.contract_chunks = chunks
                                         if chatbot_service:
                                             try:
                                                 chatbot_service.attach_contract_context(
                                                     session_id=st.session_state.session_id,
-                                                    contract_chunks=[],
+                                                    contract_chunks=chunks,
                                                     risk_report=data["risk_results"]
                                                     or [],
                                                 )
@@ -485,20 +666,7 @@ def render():
                                 st.error(
                                     "Đã có lỗi trong quá trình rà soát. Vui lòng thử lại."
                                 )
-            else:
-                if st.session_state.upload_file_name is not None:
-                    st.session_state.upload_file_name = None
-                    st.session_state.upload_tmp_path = None
-                    st.session_state.last_risk_report = None
-                    st.session_state.last_expired_alerts = []
-                    st.session_state.risk_source_name = None
-                    st.session_state.pending_risk_upload = False
-                    if chatbot_service:
-                        chatbot_service.attach_contract_context(
-                            session_id=st.session_state.session_id,
-                            contract_chunks=[],
-                            risk_report=[],
-                        )
-                    st.rerun()
+            # NOTE: Không xóa state khi uploader trả về None (xảy ra khi tab qua lại).
+            # State chỉ được xóa khi người dùng bấm nút "Gỡ file" hoặc "Hủy file" một cách tường minh.
 
     render_risk_panel(col_risk)

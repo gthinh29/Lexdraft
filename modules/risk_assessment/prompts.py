@@ -157,10 +157,12 @@ def build_batch_risk_prompt(
     articles_block = ""
     for i, art in enumerate(articles, 1):
         articles_block += (
-            f"\n===DIEU_{i}===\n"
+            f"\n[DIEU_INPUT_{i}]\n"
             f"Tên điều khoản: {art['label']}\n"
             f"Nội dung:\n{art['content'].strip()}\n"
         )
+
+    total = len(articles)
 
     expired_warning_block = ""
     if expired_law_alerts:
@@ -180,22 +182,27 @@ def build_batch_risk_prompt(
             + "\n\nTUYỆT ĐỐI LƯU Ý: Khi đánh giá các Điều khoản bên dưới, nếu thấy có viện dẫn hoặc áp dụng các văn bản đã hết hiệu lực này (đặc biệt là ở Phần Lời Mở Đầu/Căn Cứ), ĐÓ LÀ MỘT RỦI RO PHÁP LÝ NGHIÊM TRỌNG. Bạn BẮT BUỘC phải chỉ ra rủi ro này và yêu cầu thay thế bằng văn bản mới (nếu có).\n"
         )
 
+    # Build explicit per-article output instruction so LLM never skips the last one
+    output_example = ""
+    for i in range(1, min(total + 1, 4)):
+        output_example += f"===DIEU_{i}_KET_QUA===\n- Nhận xét rủi ro: ...\n- Căn cứ pháp lý: ...\n- Đề xuất: ...\n"
+    if total > 3:
+        output_example += f"... (tiếp tục đến ===DIEU_{total}_KET_QUA===)\n"
+
     prompt = f"""{RISK_ASSESSMENT_INSTRUCTION}{expired_warning_block}
 
 CĂN CỨ PHÁP LÝ LIÊN QUAN (dùng chung cho toàn bộ hợp đồng):
 {formatted_law}
 
-CÁC ĐIỀU KHOẢN HỢP ĐỒNG CẦN ĐÁNH GIÁ:
+CÁC ĐIỀU KHOẢN HỢP ĐỒNG CẦN ĐÁNH GIÁ ({total} điều):
 {articles_block}
 
-YÊU CẦU ĐẦU RA — BẮT BUỘC tuân thủ định dạng sau, KHÔNG thêm bất kỳ tiêu đề nào khác:
-Với MỖI điều khoản, bắt đầu bằng dòng ===DIEU_<số>_KET_QUA=== rồi viết đánh giá ngay bên dưới.
-Ví dụ:
-===DIEU_1_KET_QUA===
-- Nhận xét rủi ro: ...
-- Căn cứ pháp lý: ...
-- Đề xuất: ...
-===DIEU_2_KET_QUA===
-..."""
+YÊU CẦU ĐẦU RA — BẮT BUỘC tuân thủ ĐÚNG định dạng sau cho TẤT CẢ {total} ĐIỀU (từ DIEU_1 đến DIEU_{total}):
+- Mỗi điều PHẢI bắt đầu bằng dòng ===DIEU_<số>_KET_QUA=== (KHÔNG được bỏ sót bất kỳ điều nào, kể cả điều cuối cùng).
+- Viết đánh giá ngay bên dưới dòng phân cách.
+- KHÔNG thêm bất kỳ tiêu đề, lời dẫn, hoặc tổng kết nào ngoài định dạng này.
+
+Định dạng mẫu (bắt buộc tuân theo đến hết DIEU_{total}_KET_QUA):
+{output_example}"""
 
     return prompt

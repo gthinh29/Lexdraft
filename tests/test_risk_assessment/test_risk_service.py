@@ -181,10 +181,10 @@ class TestStreamAnalyzeContract:
             assert "total" in ev[1]
             assert "dieu_khoan" in ev[1]
 
-    def test_empty_text_yields_done_immediately(self, patched_risk_deps):
+    def test_empty_text_yields_error_immediately(self, patched_risk_deps):
         events = self._collect_events("")
-        assert events[-1][0] == "done"
-        assert events[-1][1]["risk_results"] == []
+        assert events[-1][0] == "error"
+        assert "message" in events[-1][1]
 
     def test_stream_parses_batch_response(
         self, sample_contract_text, patched_risk_deps

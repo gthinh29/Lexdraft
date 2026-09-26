@@ -106,13 +106,49 @@ def search_context(
         contract_db = _get_or_build_contract_db(session)
         if contract_db is not None:
             contract_hits = contract_db.hybrid_search(query, top_k=limit)
-            # Lọc các điều khoản hợp đồng có điểm tương đồng tốt
-            good_contract_hits = [
-                h for h in contract_hits if h.get("score", 0) >= min_score
-            ]
+            # Lấy các điều khoản có độ tương đồng tốt (>= 0.35) hoặc top 5 điều khoản liên quan nhất
+            good_contract_hits = [h for h in contract_hits if h.get("score", 0) >= 0.35]
             chosen_contract = (
-                good_contract_hits if good_contract_hits else contract_hits[:2]
+                good_contract_hits if good_contract_hits else contract_hits[:5]
             )
+
+            # Đảm bảo nếu câu hỏi về các bên mà chunk Lời mở đầu chưa có trong top thì đính kèm theo điểm tìm kiếm tự nhiên
+            party_keywords = (
+                "bên a",
+                "bên b",
+                "ben a",
+                "ben b",
+                "công ty",
+                "cong ty",
+                "đại diện",
+                "dai dien",
+                "chủ thể",
+                "chu the",
+                "trụ sở",
+                "tru so",
+                "mã số thuế",
+                "ma so thue",
+                "khách hàng",
+                "khach hang",
+            )
+            q_lower = query.lower()
+            if any(kw in q_lower for kw in party_keywords) and session.contract_chunks:
+                has_preamble = any(
+                    h.get("metadata", {}).get("article") == "Lời mở đầu"
+                    for h in chosen_contract
+                )
+                if not has_preamble:
+                    preamble_hit = next(
+                        (
+                            h
+                            for h in contract_hits
+                            if h.get("metadata", {}).get("article") == "Lời mở đầu"
+                        ),
+                        None,
+                    )
+                    if preamble_hit:
+                        chosen_contract.append(preamble_hit)
+
             for hit in chosen_contract:
                 hit.setdefault("metadata", {})["index"] = "contract_index"
             results.extend(chosen_contract)

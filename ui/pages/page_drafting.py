@@ -28,22 +28,10 @@ logger = logging.getLogger(__name__)
 
 def render():
     """Render giao diện chính của trang Hỗ trợ Soạn thảo Hợp đồng."""
-    st.subheader("📝 Studio Soạn thảo Hợp đồng Dịch vụ Chuyên nghiệp")
-
-    # SECURITY & PRIVACY GUARANTEE BANNER
-    st.markdown(
-        "<div class='feature-card' style='border-left:4px solid #10b981;margin-bottom:14px;background:#064e3b22;'>"
-        "<div class='feature-card-title' style='color:#6ee7b7;'>🛡️ CAM KẾT BẢO MẬT & TRẢI NGHIỆM TỐI GIẢN CHUẨN MẪU MAUHOPDONGDICHVU.MD</div>"
-        "<div class='feature-card-desc' style='color:#a7f3d0;'>"
-        "• <b>Xử lý bộ nhớ tạm (In-Memory Session):</b> Dữ liệu xử lý hoàn toàn trên RAM phiên duyệt, KHÔNG lưu đĩa CSDL hay chia sẻ bên thứ 3.<br>"
-        "• <b>Tối giản tối đa:</b> Chỉ cần điền các thông tin cốt lõi nhất. Mọi ô bỏ trống sẽ tự động dùng ký hiệu giữ chỗ <code>[●]</code> theo mẫu pháp lý."
-        "</div>"
-        "</div>",
-        unsafe_allow_html=True,
-    )
+    st.subheader("📝 Hỗ trợ soạn thảo Hợp đồng Dịch vụ")
 
     # QUICK ACTION CHIPS
-    st.markdown("**💡 Thao tác nhanh (1-Click Fill & Clear):**")
+    st.markdown("**💡 Thao tác nhanh:**")
     q1, q2, q_clear = st.columns([1.5, 1.5, 1])
     with q1:
         if st.button(
