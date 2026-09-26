@@ -107,9 +107,9 @@ def handle_chat(
     )
 
     # Gọi LLM qua cơ chế chống hallucination chung (Phần 6)
-    # Chế độ A: ngưỡng 0.65 (hỏi đáp bám sát hợp đồng, chặn cứng các câu hỏi ngoài phạm vi < 0.65)
+    # Chế độ A: ngưỡng 0.60 (hỗ trợ đầy đủ các câu hỏi ngắn về hợp đồng, chặn cứng các câu hỏi ngoài phạm vi < 0.60)
     # Chế độ B (tra cứu luật chung): giữ ngưỡng nghiêm ngặt 0.75 để chặn câu hỏi ngoài phạm vi
-    chat_threshold = 0.65 if session.has_contract_context else 0.75
+    chat_threshold = 0.60 if session.has_contract_context else 0.75
     refusal_msg = (
         "Nội dung câu hỏi không nằm trong hợp đồng dịch vụ đã đính kèm hoặc cơ sở dữ liệu pháp luật của hệ thống. "
         "Bạn vui lòng đặt câu hỏi liên quan đến các điều khoản của hợp đồng này hoặc các quy định pháp luật về hợp đồng dịch vụ."

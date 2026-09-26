@@ -111,6 +111,61 @@ def search_context(
             chosen_contract = (
                 good_contract_hits if good_contract_hits else contract_hits[:5]
             )
+
+            # Ưu tiên đưa chunk 'Lời mở đầu' (chứa thông tin Bên A, Bên B, đại diện, MST...)
+            # nếu người dùng hỏi về chủ thể hoặc các bên của hợp đồng
+            party_keywords = (
+                "bên a",
+                "bên b",
+                "ben a",
+                "ben b",
+                "công ty",
+                "cong ty",
+                "đại diện",
+                "dai dien",
+                "chủ thể",
+                "chu the",
+                "trụ sở",
+                "tru so",
+                "mã số thuế",
+                "ma so thue",
+                "khách hàng",
+                "khach hang",
+            )
+            q_lower = query.lower()
+            if any(kw in q_lower for kw in party_keywords) and session.contract_chunks:
+                preamble_chunk = next(
+                    (
+                        c
+                        for c in session.contract_chunks
+                        if c.get("metadata", {}).get("article") == "Lời mở đầu"
+                    ),
+                    None,
+                )
+                if preamble_chunk:
+                    existing_preamble = next(
+                        (
+                            h
+                            for h in chosen_contract
+                            if h.get("metadata", {}).get("article") == "Lời mở đầu"
+                        ),
+                        None,
+                    )
+                    if existing_preamble:
+                        # Tăng điểm tương đồng cho chunk Lời mở đầu khi câu hỏi khớp chủ thể
+                        existing_preamble["score"] = max(
+                            existing_preamble.get("score", 0.0), 0.85
+                        )
+                    else:
+                        chosen_contract.insert(
+                            0,
+                            {
+                                "content": preamble_chunk.get("content", ""),
+                                "metadata": dict(preamble_chunk.get("metadata", {})),
+                                "score": 0.85,
+                            },
+                        )
+
             for hit in chosen_contract:
                 hit.setdefault("metadata", {})["index"] = "contract_index"
             results.extend(chosen_contract)
