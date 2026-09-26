@@ -358,8 +358,8 @@ def stream_analyze_contract(
     # 5. Parse kết quả — tách theo ===DIEU_N_KET_QUA===
     import re
 
-    parts = re.split(r"===DIEU_(\d+)_KET_QUA===", raw_answer)
-    # parts = ["text trước", "1", "đánh giá Điều 1", "2", "đánh giá Điều 2", ...]
+    # Primary parse: split produces ["preamble","1","text1","2","text2",...]
+    parts = re.split(r"===DIEU_(\d+)_KET_QUA===", raw_answer, flags=re.IGNORECASE)
     parsed: Dict[int, str] = {}
     i = 1
     while i + 1 < len(parts):
@@ -369,6 +369,22 @@ def stream_analyze_contract(
         except ValueError:
             pass
         i += 2
+
+    # Fallback: dùng findall để bắt tất cả block kể cả khi LLM không xuống dòng
+    # Tìm mọi cặp (số, nội dung) trong raw_answer
+    if len(parsed) < len(articles_data):
+        fallback_matches = re.findall(
+            r"===DIEU_(\d+)_KET_QUA===(.*?)(?====DIEU_\d+_KET_QUA===|$)",
+            raw_answer,
+            flags=re.IGNORECASE | re.DOTALL,
+        )
+        for num_str, content in fallback_matches:
+            try:
+                num = int(num_str)
+                if num not in parsed:
+                    parsed[num] = content.strip()
+            except ValueError:
+                pass
 
     # 6. Yield kết quả từng Điều (parse xong là yield ngay)
     all_citations = llm_client.extract_citations_from_chunks(all_law_chunks)

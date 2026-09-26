@@ -9,6 +9,7 @@ Màn hình "💬 Chatbot Hỏi – Đáp (Q&A)":
 """
 
 import logging
+from pathlib import Path
 
 import streamlit as st
 
@@ -69,6 +70,44 @@ def render():
             )
             with st.chat_message("user"):
                 st.markdown(user_message)
+
+            # Đảm bảo context hợp đồng luôn được đồng bộ nếu người dùng vừa upload file ở tab Risk
+            if chatbot_service and (
+                st.session_state.get("contract_chunks")
+                or (
+                    st.session_state.get("upload_tmp_path")
+                    and Path(st.session_state.upload_tmp_path).exists()
+                )
+            ):
+                chunks = st.session_state.get("contract_chunks")
+                if not chunks and st.session_state.get("upload_tmp_path"):
+                    try:
+                        from modules.shared.document_reader import read_document
+                        from modules.shared.chunking import chunk_by_article
+
+                        parsed_text = read_document(st.session_state.upload_tmp_path)
+                        if parsed_text and parsed_text.strip():
+                            chunks = chunk_by_article(
+                                parsed_text,
+                                {
+                                    "source": st.session_state.get(
+                                        "upload_file_name", "contract"
+                                    ),
+                                    "doc_type": "contract",
+                                },
+                            )
+                            st.session_state.contract_chunks = chunks
+                    except Exception as e:
+                        logger.warning(
+                            "Không thể parse contract trong page_chatbot: %s", e
+                        )
+
+                if chunks:
+                    chatbot_service.attach_contract_context(
+                        session_id=st.session_state.session_id,
+                        contract_chunks=chunks,
+                        risk_report=st.session_state.get("last_risk_report") or [],
+                    )
 
             with (
                 st.chat_message("assistant"),
