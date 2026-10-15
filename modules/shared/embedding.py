@@ -32,8 +32,8 @@ DEFAULT_EMBEDDING_MODEL = getattr(
     Config, "EMBEDDING_MODEL_NAME", "models/gemini-embedding-001"
 )
 EMBEDDING_DIMENSION = 768
-BATCH_SIZE = 50
-SLEEP_BETWEEN_BATCHES = 2.0
+BATCH_SIZE = 15
+SLEEP_BETWEEN_BATCHES = 1.0
 
 
 class VectorDB:
@@ -63,7 +63,7 @@ class VectorDB:
                 self._client = None
             self._is_new_sdk = True
         except ImportError:
-            import google.generativeai as legacy_genai
+            import google.generativeai as legacy_genai  # type: ignore
 
             if self.api_key:
                 legacy_genai.configure(api_key=self.api_key)
@@ -119,7 +119,7 @@ class VectorDB:
                         for emb in response.embeddings:
                             all_embeddings.append(emb.values)
                     else:
-                        import google.generativeai as legacy_genai
+                        import google.generativeai as legacy_genai  # type: ignore
 
                         for text in batch:
                             res = legacy_genai.embed_content(

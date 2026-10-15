@@ -74,7 +74,7 @@ class GeminiClient:
                     pass
             self._config = types.GenerateContentConfig(**config_args)
         except ImportError:
-            import google.generativeai as legacy_genai
+            import google.generativeai as legacy_genai  # type: ignore
 
             legacy_genai.configure(api_key=self.api_key)
             self._is_new_sdk = False
