@@ -1,6 +1,6 @@
-"""modules/drafting/document_utils.py
-
-Xử lý xuất tài liệu Word (.docx) và kết xuất HTML A4 preview cho Hợp đồng.
+"""
+modules/drafting/document_utils.py
+Tiện ích xuất bản hợp đồng ra định dạng Word (.docx) và HTML hiển thị.
 """
 
 import io

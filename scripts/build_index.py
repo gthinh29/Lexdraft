@@ -1,14 +1,6 @@
 """
 scripts/build_index.py
-
-Script chạy offline một lần để xây dựng Vector Database (FAISS Index)
-cho toàn bộ văn bản luật (law_index) và mẫu hợp đồng (template_index).
-
-Tuân thủ:
-- Implementation Plan Phần 5
-- SRS 5.1, 5.2
-- Hỗ trợ chế độ dry-run (--dry-run) để kiểm tra số lượng chunk và nội dung
-  trước khi kích hoạt API embedding thật.
+Script xây dựng Vector Database (FAISS Index) từ kho văn bản luật và mẫu hợp đồng.
 """
 
 import argparse

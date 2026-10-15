@@ -1,8 +1,3 @@
-"""tests/test_eval/test_eval_pipeline.py
-
-Unit tests for eval package (schema, dataset_manager, eval_runner).
-"""
-
 import tempfile
 from pathlib import Path
 from unittest.mock import patch

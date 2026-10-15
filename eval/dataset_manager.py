@@ -1,9 +1,3 @@
-"""eval/dataset_manager.py
-
-Quản lý nạp, thẩm định (validation) và lưu trữ Golden Dataset.
-Đảm bảo 100% dữ liệu đầu vào đáp ứng đúng tiêu chuẩn kiểm thử Ragas.
-"""
-
 import json
 import logging
 from pathlib import Path

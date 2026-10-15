@@ -1,13 +1,3 @@
-"""eval/eval_runner.py
-
-Runner chính thực thi pipeline đánh giá RAG trong Lexdraft:
-1. Đọc Golden Dataset từ data/eval/golden_dataset.json.
-2. Chạy từng câu hỏi qua Chatbot Service (chế độ tra cứu luật).
-3. Thu thập: câu trả lời thực tế (system_answer), các chunk trích dẫn (retrieved_contexts).
-4. Tính toán các chỉ số cơ bản (Keyword/Law Citation Match, Length, Relevance).
-5. Xuất báo cáo chi tiết ra file CSV/JSON trong data/eval/.
-"""
-
 import json
 import logging
 from pathlib import Path

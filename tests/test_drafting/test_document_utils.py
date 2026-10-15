@@ -1,9 +1,3 @@
-"""tests/test_drafting/test_document_utils.py
-
-Unit tests for modules.drafting.document_utils
-Covers: format_draft_as_a4_html, build_docx_bytes, docx_bytes_to_preview_html
-"""
-
 import io
 
 

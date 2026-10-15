@@ -1,11 +1,6 @@
-"""ui/pages/page_chatbot.py
-
-Màn hình "💬 Chatbot Hỏi – Đáp (Q&A)":
-- Chatbot Trợ lý Tra cứu Pháp lý & Phân tích Hợp đồng
-- Dual Mode:
-  + Chế độ A: Theo dõi ngữ cảnh hợp đồng vừa tải lên / phân tích rủi ro
-  + Chế độ B: Tra cứu Pháp luật Chung (Bộ luật Dân sự 2015 & Luật Thương mại 2005)
-- Hiển thị trích dẫn pháp lý Grounded Citations
+"""
+ui/pages/page_chatbot.py
+Giao diện phân hệ chatbot hỏi đáp pháp lý hợp đồng.
 """
 
 import logging

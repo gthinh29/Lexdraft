@@ -1,17 +1,3 @@
-"""
-evaluation/test_h3_hallucination_refusal.py
-
-Bộ Test 3 - Kiểm chứng Giả thiết 3 (Mục 3.3.3):
-"Cơ chế yêu cầu LLM chỉ sử dụng thông tin được truy xuất và từ chối khi không có căn cứ
-phù hợp giúp giảm các câu trả lời không có căn cứ pháp lý."
-
-Phương pháp: Ma trận kiểm thử 4 nhóm câu hỏi (35 mẫu):
-1. In-domain Fact (15 mẫu): Bắt buộc trả lời có căn cứ, KHÔNG được từ chối nhầm.
-2. Outdated / Fake Law (6 mẫu): Bắt buộc từ chối an toàn hoặc cảnh báo hết hiệu lực/giả mạo.
-3. Out-of-Domain (8 mẫu): Hỏi về Đất đai, Hình sự, Hôn nhân... -> Bắt buộc từ chối ngoài phạm vi.
-4. Non-existent Article (6 mẫu): Hỏi về Điều 999 BLDS, Điều 888 Luật TM... -> Bắt buộc từ chối, KHÔNG bịa nội dung.
-"""
-
 import argparse
 import json
 import logging

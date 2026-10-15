@@ -1,18 +1,6 @@
 """
 modules/chatbot_qa/retrieval.py
-
-PRIVATE - chỉ được import từ modules/chatbot_qa/service.py.
-
-search_context(query, has_session):
-  - has_session=False (Chế độ B): chỉ search law_index.
-  - has_session=True  (Chế độ A): search cả contract_index (ephemeral, theo
-    session hiện tại) + law_index.
-
-LƯU Ý ranh giới module (SRS 3.2): contract_index của phiên KHÔNG được đọc
-trực tiếp từ state nội bộ của risk_assessment. Dữ liệu contract_chunks phải
-được truyền vào từ bên ngoài qua interface công khai
-(chatbot_qa/service.py::attach_contract_context), sau đó module này tự build
-và cache 1 VectorDB ephemeral ngay trên object ChatSession.
+Truy vấn văn bản luật và dữ liệu hợp đồng liên quan phục vụ chatbot.
 """
 
 import logging

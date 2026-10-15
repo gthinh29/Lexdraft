@@ -1,15 +1,3 @@
-"""
-scripts/generate_charts.py
-
-Tạo biểu đồ trực quan hóa chuyên nghiệp (độ phân giải cao 300 DPI, nền trắng)
-phục vụ Báo cáo Thực tập tốt nghiệp / Đồ án cho cả 3 Bộ Test khoa học:
-- Bộ Test 1: A/B Testing (Zero-shot LLM vs. Lexdraft RAG)
-- Bộ Test 2: Ablation Study (Có vs. Không Metadata & Hit Rate FAISS)
-- Bộ Test 3: Safe Refusal Matrix (Kiểm soát ảo giác & Từ chối an toàn)
-
-Sử dụng matplotlib kết hợp font chữ Windows hỗ trợ tiếng Việt đầy đủ.
-"""
-
 import sys
 from pathlib import Path
 

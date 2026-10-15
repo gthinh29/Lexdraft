@@ -1,8 +1,3 @@
-"""tests/test_shared/test_document_reader.py
-
-Unit tests for modules.shared.document_reader.
-"""
-
 import sys
 import tempfile
 import types

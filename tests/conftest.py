@@ -1,8 +1,3 @@
-"""tests/conftest.py
-
-Shared fixtures for Lexdraft unit and integration tests.
-"""
-
 import sys
 import tempfile
 from pathlib import Path

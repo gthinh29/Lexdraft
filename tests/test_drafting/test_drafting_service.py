@@ -1,9 +1,3 @@
-"""tests/test_drafting/test_drafting_service.py
-
-Unit tests for modules.drafting.service
-Covers: generate_contract_draft (happy path, missing key, llm_client=None)
-"""
-
 import pytest
 from unittest.mock import MagicMock, patch
 

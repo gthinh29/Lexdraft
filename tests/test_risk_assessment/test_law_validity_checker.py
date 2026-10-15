@@ -1,10 +1,3 @@
-"""tests/test_risk_assessment/test_law_validity_checker.py
-
-Unit tests for modules.risk_assessment.law_validity_checker
-Covers: Tier 1 (expired_laws.json), Tier 2 (law_index), Tier 3 (LLM fallback),
-        check_expired_laws() integration-like test with mocked data.
-"""
-
 import json
 from unittest.mock import patch
 

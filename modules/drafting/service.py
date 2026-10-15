@@ -1,9 +1,6 @@
 """
 modules/drafting/service.py
-
-PUBLIC - đây là interface DUY NHẤT mà module drafting expose ra bên ngoài
-(app.py hoặc module khác chỉ được gọi qua đây, KHÔNG được import thẳng
-retrieval.py hay prompts.py).
+Service hỗ trợ soạn thảo và rà soát hợp đồng theo mẫu chuẩn pháp lý.
 """
 
 import logging

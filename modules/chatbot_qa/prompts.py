@@ -1,11 +1,6 @@
 """
 modules/chatbot_qa/prompts.py
-
-PRIVATE - chỉ được import từ modules/chatbot_qa/service.py.
-
-Prompt linh hoạt cho 2 chế độ:
-  - Chế độ A: có ngữ cảnh hợp đồng & báo cáo rủi ro (tiếp nối Module 1/2).
-  - Chế độ B: chỉ tra cứu luật chung, độc lập.
+Định nghĩa các mẫu prompt cho chatbot tư vấn pháp lý và giải đáp điều khoản.
 """
 
 from typing import Any, Dict, List, Optional

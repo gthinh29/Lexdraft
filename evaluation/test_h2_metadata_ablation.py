@@ -1,21 +1,3 @@
-"""
-evaluation/test_h2_metadata_ablation.py
-
-Bộ Test 2 - Kiểm chứng Giả thiết 2 (Mục 3.3.2):
-"Việc tổ chức dữ liệu pháp luật theo Điều/Khoản và lưu metadata nguồn giúp hệ thống
-truy xuất và cung cấp căn cứ pháp lý chính xác hơn."
-
-Phương pháp: Thử nghiệm bóc tách (Ablation Study)
-- Cùng 44 câu hỏi Fact Retrieval
-- Nhánh B (With Metadata - Lexdraft): Context có gắn thẻ [Nguồn: law_name | article | clause], trích xuất structured citations.
-- Nhánh A (Without Metadata): Strip bỏ toàn bộ thẻ metadata, chỉ cung cấp nội dung text thô.
-- Đo lường:
-  1. Hit Rate@1, Hit Rate@3, Hit Rate@5 trên FAISS law_index
-  2. Law Title Accuracy (% xác định đúng tên luật, tránh nhầm BLDS & LTM)
-  3. Article/Clause Accuracy (% trích dẫn đúng số hiệu Điều/Khoản)
-  4. Structured Citation Rate (% xuất được căn cứ đối soát có cấu trúc)
-"""
-
 import argparse
 import json
 import logging

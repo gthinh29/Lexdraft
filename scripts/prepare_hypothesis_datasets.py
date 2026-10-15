@@ -1,12 +1,3 @@
-"""
-scripts/prepare_hypothesis_datasets.py
-
-Khởi tạo và thẩm định 3 file dataset độc lập tương ứng với 3 Giả thiết khoa học (Mục 3.3):
-1. data/eval/dataset_h1_ab.json (50 câu A/B testing)
-2. data/eval/dataset_h2_metadata.json (44 câu Fact Retrieval + Metadata chuẩn)
-3. data/eval/dataset_h3_refusal.json (35 câu ma trận 4 nhóm: In-domain, Outdated, Out-of-Domain, Non-existent)
-"""
-
 import json
 import re
 import sys

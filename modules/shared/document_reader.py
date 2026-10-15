@@ -1,10 +1,6 @@
 """
 modules/shared/document_reader.py
-
-Module dùng chung: đọc nội dung text thô từ file PDF / DOCX.
-Không xử lý logic chunking / cấu trúc pháp lý tại đây (xem chunking.py).
-
-Phạm vi hỗ trợ (theo SRS 1.3): chỉ đọc PDF dạng text (không OCR ảnh scan).
+Module đọc và trích xuất nội dung văn bản thô từ file PDF và DOCX.
 """
 
 import logging

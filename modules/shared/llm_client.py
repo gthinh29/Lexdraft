@@ -1,15 +1,6 @@
 """
 modules/shared/llm_client.py
-
-Client tương tác với LLM (Google Gemini API) phục vụ các tác vụ sinh nội dung
-có kiểm chứng căn cứ (Grounded Generation) và chống bịa đặt (Hallucination Control).
-
-Sử dụng SDK mới nhất: `google.genai` (chuẩn Google GenAI SDK v2.0+),
-tương thích hoàn toàn với fallback qua `google.generativeai` nếu môi trường cũ.
-
-Tuân thủ:
-- TODO List Phần 6 (6.1 -> 6.5)
-- SRS 4.1, 4.2, 4.3, 6.1
+Client tương tác với Google Gemini API phục vụ sinh văn bản và kiểm soát căn cứ.
 """
 
 import logging

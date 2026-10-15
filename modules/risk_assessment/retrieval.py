@@ -1,11 +1,6 @@
 """
 modules/risk_assessment/retrieval.py
-
-PRIVATE - chỉ được import từ modules/risk_assessment/service.py.
-Không được import trực tiếp từ module khác hoặc từ app.py (đúng SRS 3.2).
-
-Truy xuất các điều luật liên quan từ `law_index` phục vụ phân tích rủi ro.
-Áp dụng cơ chế module-level cache để load FAISS index 1 lần duy nhất.
+Truy vấn căn cứ pháp luật và mẫu hợp đồng tham chiếu phục vụ đánh giá rủi ro.
 """
 
 import logging

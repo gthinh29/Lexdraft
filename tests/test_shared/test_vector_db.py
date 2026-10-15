@@ -1,8 +1,3 @@
-"""tests/test_shared/test_vector_db.py
-
-Unit tests for modules.shared.embedding.VectorDB.
-"""
-
 import sys
 import tempfile
 from pathlib import Path

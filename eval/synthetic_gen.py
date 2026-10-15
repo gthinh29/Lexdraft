@@ -1,9 +1,3 @@
-"""eval/synthetic_gen.py
-
-Công cụ tự động sinh câu hỏi & Ground Truth dựa trên chính các Điều luật thực tế trong VectorDB.
-Giúp xây dựng Golden Dataset có căn cứ 100%, không bị ảo giác và tiết kiệm thời gian.
-"""
-
 import json
 import logging
 from typing import List, Optional

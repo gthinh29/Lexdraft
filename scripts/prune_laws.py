@@ -1,11 +1,3 @@
-"""
-scripts/prune_laws.py
-
-Script tiện ích hỗ trợ kiểm tra và lọc dữ liệu văn bản pháp luật (.md)
-trong thư mục data/raw/law/.md/ theo phạm vi hợp đồng dịch vụ.
-Hỗ trợ kiểm tra đơn lẻ 1 file (--file) hoặc toàn bộ thư mục.
-"""
-
 import argparse
 import logging
 import re

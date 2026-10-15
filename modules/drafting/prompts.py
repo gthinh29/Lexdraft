@@ -1,12 +1,6 @@
 """
 modules/drafting/prompts.py
-
-PRIVATE - chỉ được import từ modules/drafting/service.py.
-
-Prompt template sinh bản nháp hợp đồng dịch vụ, ghép từ 3 biến:
-  - {user_input}  : thông tin người dùng nhập trên form       — xác định nhiệm vụ
-  - {law_context} : các điều luật liên quan (từ law_index)    — nguồn nội dung ưu tiên
-  - {template}    : cấu trúc mẫu hợp đồng (từ template_index) — tham chiếu bố cục
+Định nghĩa các mẫu prompt phục vụ sinh nội dung và hoàn thiện hợp đồng.
 """
 
 from typing import Any, Dict, List

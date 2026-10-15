@@ -1,11 +1,6 @@
 """
 modules/shared/chunking.py
-
-Module dùng chung: chia văn bản pháp lý / hợp đồng thành các chunk theo
-đơn vị "Điều" (structure-aware chunking), đúng theo SRS Chương 5.2.
-
-Không dùng Fixed-size / Recursive / Semantic chunking vì văn bản luật
-và hợp đồng đã có ranh giới cấu trúc rõ ràng theo Điều/Khoản.
+Phân đoạn văn bản pháp lý và hợp đồng theo cấu trúc Điều/Khoản.
 """
 
 import logging

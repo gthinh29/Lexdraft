@@ -1,17 +1,6 @@
 """
 modules/shared/embedding.py
-
 Module quản lý Vector Database dùng FAISS và Google Gemini Embedding API.
-Hỗ trợ:
-- Embedding qua Gemini API (models/text-embedding-004) với Batching + Exponential Backoff.
-- IndexFlatIP (Cosine Similarity sau khi chuẩn hóa L2).
-- Metadata Filtering linh hoạt theo số Điều, văn bản nguồn...
-- Lưu/Tải index (.faiss + .pkl).
-- Tương thích hoàn toàn interface hybrid_search() và search_with_metadata().
-
-Tuân thủ:
-- Implementation Plan Phần 4 (4.1 -> 4.5)
-- SRS 5.1, 5.2, 6.2
 """
 
 import logging
@@ -29,7 +18,7 @@ from config import Config
 logger = logging.getLogger(__name__)
 
 DEFAULT_EMBEDDING_MODEL = getattr(
-    Config, "EMBEDDING_MODEL_NAME", "models/gemini-embedding-001"
+    Config, "EMBEDDING_MODEL_NAME", "models/gemini-embedding-002"
 )
 EMBEDDING_DIMENSION = 768
 BATCH_SIZE = 15

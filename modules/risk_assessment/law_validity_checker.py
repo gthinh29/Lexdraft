@@ -1,20 +1,6 @@
 """
 modules/risk_assessment/law_validity_checker.py
-
-PRIVATE — Chỉ được import từ modules/risk_assessment/service.py.
-
-Cơ chế kiểm tra hiệu lực văn bản pháp luật 3 tầng (Tiered Validation):
-
-  Cấp 1 (100% tin cậy): Đối chiếu với danh mục kiểm duyệt thủ công `data/expired_laws.json`.
-  Cấp 2 (~95% tin cậy): Trích xuất quan hệ thay thế từ "Điều khoản thi hành" của các
-                         văn bản luật đã được nạp vào law_index (sẽ bổ sung sau khi có data).
-  Cấp 3 (~80% tin cậy): Fallback — Hỏi LLM phán đoán dựa trên tri thức nội tại.
-
-Phân cấp ưu tiên khi xung đột:
-  Cấp 1 > Cấp 2 > Cấp 3
-
-Mọi cảnh báo từ Cấp 3 sẽ được gắn nhãn "Cần xác minh" để người dùng không
-nhầm lẫn với kết quả từ nguồn chính thức.
+Kiểm tra hiệu lực và trạng thái các văn bản pháp luật dẫn chiếu trong hợp đồng.
 """
 
 import json

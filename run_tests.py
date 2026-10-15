@@ -1,14 +1,3 @@
-"""run_tests.py
-
-Script chạy toàn bộ bộ test Lexdraft không cần vào UI.
-Sử dụng: python run_tests.py [--fast] [--module <tên>] [-v]
-
-Options:
-  --fast       Bỏ qua slow test (marker @pytest.mark.slow)
-  --module     Chỉ chạy 1 module cụ thể: shared | drafting | risk | chatbot
-  -v           Verbose output (mặc định bật)
-"""
-
 import subprocess
 import sys
 import argparse

@@ -1,20 +1,3 @@
-"""
-evaluation/run_ragas_eval.py
-
-Script đánh giá định lượng chất lượng RAG bằng framework RAGAS (SRS Chương 7).
-Đánh giá 3 chỉ số cốt lõi (Sử dụng Gemini Judge LLM: gemini-3.5-flash-lite):
-1. Faithfulness (Độ trung thực, chống ảo giác)
-2. Context Precision (Độ chính xác và độ liên quan của ngữ cảnh pháp lý truy xuất)
-3. Context Recall (Độ bao phủ của ngữ cảnh pháp lý so với ground truth)
-
-Quy trình:
-- Đọc bộ câu hỏi & ground truth từ evaluation/testset.csv (hoặc data/eval/golden_dataset.json)
-- Chạy từng câu hỏi qua Module Chatbot Chế độ B (handle_chat) và retrieval (search_context)
-- Thu thập question, answer, contexts, ground_truth
-- Đưa vào Ragas Dataset và tính điểm đánh giá với GeminiRagasLLM (gemini-3.5-flash-lite)
-- Xuất báo cáo kết quả ra terminal và file evaluation/ragas_report.json
-"""
-
 import argparse
 import asyncio
 import csv

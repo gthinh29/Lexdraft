@@ -1,15 +1,6 @@
 """
 modules/risk_assessment/service.py
-
-PUBLIC - interface DUY NHẤT mà module risk_assessment expose ra bên ngoài
-(app.py hoặc module drafting chỉ được gọi qua đây, KHÔNG được import thẳng
-retrieval.py hay prompts.py).
-
-Tuân thủ:
-- Implementation Plan Phần 8 (8A, 8B, 8C)
-- SRS 4.2: Phân tích rủi ro hợp đồng dịch vụ theo pipeline One-shot
-- Tự động liên kết context sang Chatbot (Chế độ A)
-- Tiered Validation: Kiểm tra hiệu lực văn bản 3 tầng trước khi phân tích rủi ro
+Service điều phối phân tích rủi ro pháp lý và đối soát điều khoản hợp đồng.
 """
 
 import logging

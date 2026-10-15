@@ -1,6 +1,6 @@
-"""ui/pages/page_home.py
-
-Màn hình "🏠 Trang chủ" — Tổng quan hệ thống Lexdraft và điều hướng nhanh.
+"""
+ui/pages/page_home.py
+Giao diện trang chủ và giới thiệu hệ thống Lexdraft.
 """
 
 import streamlit as st

@@ -1,9 +1,6 @@
 """
 modules/chatbot_qa/service.py
-
-PUBLIC - đây là interface DUY NHẤT mà module chatbot_qa expose ra bên ngoài
-(app.py hoặc module khác chỉ được gọi qua đây, KHÔNG được import thẳng
-retrieval.py, prompts.py hay chat_session.py).
+Service điều phối chatbot tư vấn pháp lý và giải đáp thắc mắc hợp đồng.
 """
 
 import logging

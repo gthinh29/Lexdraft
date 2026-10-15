@@ -1,19 +1,3 @@
-"""
-evaluation/test_h1_ab_comparison.py
-
-Bộ Test 1 - Kiểm chứng Giả thiết 1 (Mục 3.3.1):
-"Việc kết hợp LLM với RAG giúp cải thiện khả năng trả lời các câu hỏi pháp lý
-liên quan đến hợp đồng dịch vụ so với việc sử dụng LLM không có cơ chế truy xuất."
-
-Phương pháp: Thử nghiệm đối chứng A/B trên cùng 50 câu hỏi:
-- Nhánh A (Zero-shot LLM Baseline): Gửi câu hỏi trực tiếp cho Gemini (gemini-3.5-flash-lite) mà không có RAG.
-- Nhánh B (Lexdraft LLM + RAG): Chạy qua pipeline RAG của Lexdraft (truy xuất FAISS + prompt grounded + citations).
-- Đo lường:
-  1. Citation Accuracy (% trích dẫn đúng số hiệu văn bản và Điều/Khoản luật)
-  2. Outdated / Fake Law Hallucination Rate (% bị lừa viện dẫn luật hết hiệu lực hoặc luật không tồn tại)
-  3. Grounded Completeness Rate (% câu trả lời đạt đầy đủ căn cứ so với Ground Truth)
-"""
-
 import argparse
 import json
 import logging

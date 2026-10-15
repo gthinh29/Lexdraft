@@ -1,9 +1,6 @@
-"""app.py
-
-Lexdraft — Legal Contract Drafting & Risk Assessment System
-Hệ thống Hỗ trợ Soạn thảo và Gợi ý Rủi ro Hợp đồng Dịch vụ bằng LLM kết hợp RAG.
-
-Entry point ứng dụng Streamlit (Modular Architecture).
+"""
+app.py
+Điểm khởi chạy ứng dụng Lexdraft trên nền tảng Streamlit.
 """
 
 import logging

@@ -1,9 +1,3 @@
-"""eval/schema.py
-
-Pydantic schemas cho bộ dữ liệu đánh giá (Golden Dataset) và kết quả Ragas.
-Đảm bảo tính hợp lệ, đầy đủ của dữ liệu trước khi đưa vào pipeline đánh giá.
-"""
-
 from typing import Any, List, Optional
 from pydantic import BaseModel, Field
 

@@ -1,9 +1,3 @@
-"""tests/test_risk_assessment/test_risk_service.py
-
-Unit tests for modules.risk_assessment.service
-Covers: analyze_contract, stream_analyze_contract
-"""
-
 import pytest
 from unittest.mock import MagicMock, patch
 

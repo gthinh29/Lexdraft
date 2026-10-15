@@ -1,11 +1,3 @@
-"""run_eval.py
-
-Script 1 lệnh tiện lợi để thẩm định Golden Dataset và chạy kiểm thử RAG.
-Cách sử dụng:
-    python run_eval.py --validate-only    # Chỉ kiểm tra chất lượng file dataset
-    python run_eval.py                    # Chạy toàn bộ pipeline kiểm thử và xuất báo cáo CSV
-"""
-
 import argparse
 import sys
 

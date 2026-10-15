@@ -1,23 +1,3 @@
-"""
-scripts/test_risky_contract.py
-
-Kiểm thử định lượng khả năng phát hiện rủi ro và điều khoản vi phạm
-trên bộ 5 hợp đồng đối sánh (2 Hợp đồng chuẩn sạch + 3 Hợp đồng cài cắm rủi ro).
-
-Danh sách 5 hợp đồng:
-1. mau_hop_dong_thiet_ke_website.md (Clean 1, 15 điều, mẫu chuẩn đã tinh chỉnh Điều 11 & 12, 0 lỗi kỳ vọng)
-2. test_contract_consulting_clean.docx (Clean 2, 8 điều, HĐ dịch vụ tư vấn ERP chuẩn pháp lý, 0 lỗi kỳ vọng)
-3. test_contract_risky.docx (Risky 1, 7 điều, HĐ phần mềm với 5 lỗi cài cắm)
-4. test_contract_risky_2.docx (Risky 2, 7 điều, HĐ bảo trì máy chủ với 4 lỗi cài cắm)
-5. test_contract_risky_3.docx (Risky 3, 6 điều, HĐ Digital Marketing & SEO với 4 lỗi cài cắm)
-
-Tổng số lỗi cài cắm (Ground Truth Faults): 13 lỗi
-Tính toán:
-- Tỉ lệ phát hiện lỗi (Recall / Sensitivity) = TP / (TP + FN)
-- Tỉ lệ cảnh báo sai (False Positive Rate) trên các hợp đồng sạch / điều khoản sạch
-- Báo cáo chi tiết từng hợp đồng ra data/eval/contract_benchmark_report.json
-"""
-
 import json
 import logging
 import sys

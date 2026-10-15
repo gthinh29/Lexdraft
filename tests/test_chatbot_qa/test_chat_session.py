@@ -1,9 +1,3 @@
-"""tests/test_chatbot_qa/test_chat_session.py
-
-Unit tests for modules.chatbot_qa.chat_session.ChatSession
-Covers: Mode A/B switching, history management, contract context lifecycle.
-"""
-
 import pytest
 
 from modules.chatbot_qa.chat_session import ChatSession

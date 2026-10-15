@@ -1,9 +1,6 @@
-"""ui/pages/page_risk.py
-
-Màn hình "📤 Gợi ý Rủi ro Pháp lý":
-- Tải lên file hợp đồng (.pdf, .docx)
-- Rà soát tự động 100% bằng One-shot stream pipeline
-- Báo cáo rủi ro chi tiết, cảnh báo luật hết hiệu lực và panel đánh giá tổng quan.
+"""
+ui/pages/page_risk.py
+Giao diện phân hệ phân tích rủi ro hợp đồng.
 """
 
 import logging

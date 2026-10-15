@@ -1,8 +1,3 @@
-"""tests/test_shared/test_chunking.py
-
-Unit tests for modules.shared.chunking.
-"""
-
 from modules.shared.chunking import (
     chunk_by_article,
     chunk_contract_by_articles,

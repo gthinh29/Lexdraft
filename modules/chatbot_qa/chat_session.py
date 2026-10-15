@@ -1,13 +1,6 @@
 """
 modules/chatbot_qa/chat_session.py
-
-Quản lý 1 phiên hội thoại chatbot Q&A.
-
-LƯU Ý QUAN TRỌNG (SRS 6.1 - Tối ưu token/độ trễ):
-Lịch sử hội thoại (self._messages) CHỈ lưu role + text ngắn gọn.
-KHÔNG được lưu context RAG (các chunk truy xuất được) vào lịch sử - context đó
-chỉ đính kèm cho câu hỏi hiện tại tại thời điểm gọi LLM, tránh phình token
-qua từng lượt hỏi.
+Quản lý phiên hội thoại, lịch sử chat và ngữ cảnh truy vấn của người dùng.
 """
 
 from datetime import datetime, timezone

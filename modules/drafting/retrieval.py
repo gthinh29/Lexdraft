@@ -1,13 +1,6 @@
 """
 modules/drafting/retrieval.py
-
-PRIVATE - chỉ được import từ modules/drafting/service.py.
-Không được import trực tiếp từ module khác hoặc từ app.py (đúng nguyên tắc
-ranh giới module trong SRS 3.2).
-
-Truy xuất:
-  - Mẫu hợp đồng phù hợp từ `template_index`.
-  - Điều luật liên quan từ `law_index`.
+Truy vấn mẫu hợp đồng và điều khoản tham chiếu cho phân hệ soạn thảo.
 """
 
 import logging

@@ -1,6 +1,6 @@
-"""ui/styles.py
-
-Toàn bộ CSS giao diện Ultra Clean & Sleek Dark Modern Theme của Lexdraft.
+"""
+ui/styles.py
+Định nghĩa giao diện, phong cách và CSS tùy chỉnh cho ứng dụng.
 """
 
 import streamlit as st

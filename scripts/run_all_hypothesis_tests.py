@@ -1,14 +1,3 @@
-"""
-scripts/run_all_hypothesis_tests.py
-
-Master Runner thực thi toàn bộ 3 bộ test tương ứng với 3 Giả thiết khoa học (Mục 3.3):
-- Bộ Test 1: evaluation/test_h1_ab_comparison.py (Giả thiết 1: A/B Testing Zero-shot vs RAG)
-- Bộ Test 2: evaluation/test_h2_metadata_ablation.py (Giả thiết 2: Ablation Study Có vs Không Metadata)
-- Bộ Test 3: evaluation/test_h3_hallucination_refusal.py (Giả thiết 3: Ma trận Từ chối an toàn & Hallucination)
-
-Và tự động tổng hợp kết quả, vẽ biểu đồ so sánh xuất ra thư mục data/eval/.
-"""
-
 import argparse
 import json
 import logging

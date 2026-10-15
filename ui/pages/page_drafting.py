@@ -1,11 +1,6 @@
-"""ui/pages/page_drafting.py
-
-Màn hình "📝 Hỗ trợ Soạn thảo Hợp đồng":
-- Studio soạn thảo hợp đồng dịch vụ chuẩn mẫu
-- 1-Click Preset & Clear
-- Tự động điền ký hiệu giữ chỗ [●]
-- Xem trước tài liệu chuẩn A4 Paper View (chuẩn Nghị định 30/2020/NĐ-CP)
-- Tùy chỉnh tỷ lệ Zoom preview và Tải về file Word (.docx)
+"""
+ui/pages/page_drafting.py
+Giao diện phân hệ hỗ trợ soạn thảo hợp đồng.
 """
 
 import logging

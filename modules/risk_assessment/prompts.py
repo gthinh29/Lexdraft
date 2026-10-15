@@ -1,11 +1,6 @@
 """
 modules/risk_assessment/prompts.py
-
-PRIVATE - chỉ được import từ modules/risk_assessment/service.py.
-Không được import trực tiếp từ module khác hoặc từ app.py (đúng SRS 3.2).
-
-Prompt template phục vụ đánh giá rủi ro pháp lý cho từng Điều khoản trong hợp đồng.
-Ràng buộc chặt chẽ LLM với căn cứ pháp lý được truy xuất, chống hallucination (SRS 5.3).
+Định nghĩa các mẫu prompt phục vụ phân tích rủi ro và gợi ý điều khoản thay thế.
 """
 
 from typing import Any, Dict, List
