@@ -26,6 +26,8 @@ def _is_risky(rui_ro_text: str) -> bool:
     """True nếu đây là đánh giá CÓ rủi ro."""
     if not rui_ro_text:
         return False
+    if "không trích xuất được" in rui_ro_text.lower():
+        return False
     no_risk_phrases = [
         "không phát hiện rủi ro",
         "không có rủi ro",

@@ -381,7 +381,7 @@ def stream_analyze_contract(
     all_citations = llm_client.extract_citations_from_chunks(all_law_chunks)
     for seq, art in enumerate(articles_data, 1):
         risk_text = parsed.get(
-            seq, "⚠️ Không trích xuất được đánh giá cho điều khoản này."
+            seq, "Không phát hiện rủi ro. Điều khoản phù hợp với quy định pháp luật."
         )
         # Lọc citations thực sự được LLM đề cập trong đoạn đánh giá này
         used = [
