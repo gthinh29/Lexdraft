@@ -1,6 +1,7 @@
 """
 modules/drafting/service.py
-Service hỗ trợ soạn thảo và rà soát hợp đồng theo mẫu chuẩn pháp lý.
+Service hỗ trợ soạn thảo hợp đồng theo Phân loại (Taxonomy), Vị thế Bảo vệ Pháp lý (Stance)
+và cung cấp dữ liệu White-Box RAG Inspector.
 """
 
 import logging
@@ -25,32 +26,13 @@ logger = logging.getLogger(__name__)
 
 def generate_contract_draft(user_input_dict: Dict[str, Any]) -> Dict[str, Any]:
     """
-    Sinh bản nháp hợp đồng dịch vụ và tự động chạy gợi ý rủi ro cho bản nháp đó.
+    Sinh bản nháp hợp đồng dịch vụ theo Phân loại (Taxonomy) & Vị thế Bảo vệ Pháp lý (Stance).
 
-    Luồng xử lý (đúng SRS 4.1):
-        1. Lấy mẫu từ template_index dựa trên loại hợp đồng.
-        2. Lấy luật liên quan từ law_index.
-        3. Ghép prompt và gọi LLM sinh bản nháp.
-        4. Tự động gọi risk_assessment.service.analyze_contract() cho bản nháp
-           vừa sinh, trả về cả bản nháp và báo cáo rủi ro.
-
-    Args:
-        user_input_dict: dict thông tin từ form. BẮT BUỘC có key "contract_type"
-            (mô tả loại hợp đồng, vd "hợp đồng thiết kế website") để làm query
-            truy xuất mẫu + luật. Các key khác (bên A, bên B, giá trị hợp đồng,
-            thời hạn, phạm vi công việc...) tùy theo thiết kế form ở Phần 10.
-            Có thể kèm "session_id" nếu muốn liên kết luôn với 1 phiên chatbot.
-
-    Returns:
-        {
-            "draft": str,                       # bản nháp hợp đồng
-            "risk_report": list | None,         # kết quả Phần 8, None nếu Phần 8
-                                                 # chưa sẵn sàng hoặc lỗi khi phân tích
-        }
-
-    Raises:
-        ValueError: nếu thiếu "contract_type" trong user_input_dict.
-        RuntimeError: nếu modules.shared.llm_client (Phần 6) chưa sẵn sàng.
+    Luồng xử lý:
+        1. Lấy khung phân loại chuẩn (Clause Playbook) từ contract_taxonomy.json (hoặc fallback template_index).
+        2. Lấy các điều luật liên quan từ law_index (Multi-query RAG theo phân loại + yêu cầu người dùng).
+        3. Ghép prompt kèm Chiến lược Vị thế Bảo vệ (Bên A / Bên B / Cân bằng) và gọi LLM sinh bản nháp.
+        4. Trả về bản nháp, danh sách căn cứ pháp lý đã sử dụng, và debug_trace cho White-Box Inspector.
     """
     if "contract_type" not in user_input_dict:
         raise ValueError(
@@ -58,9 +40,10 @@ def generate_contract_draft(user_input_dict: Dict[str, Any]) -> Dict[str, Any]:
         )
 
     contract_type_query = user_input_dict["contract_type"]
+    category_id = user_input_dict.get("category_id")
 
-    # 7.1: Retrieval - lấy mẫu + luật
-    template_hit = retrieval.retrieve_template(contract_type_query)
+    # 7.1: Retrieval - lấy khung phân loại (Clause Playbook) + các điều luật liên quan
+    template_hit = retrieval.retrieve_template(category_id or contract_type_query)
     if template_hit is None:
         logger.warning(
             "Không tìm thấy mẫu hợp đồng cho '%s' - sẽ soạn không dựa trên mẫu cấu trúc.",
@@ -68,7 +51,12 @@ def generate_contract_draft(user_input_dict: Dict[str, Any]) -> Dict[str, Any]:
         )
     template_text = template_hit["content"] if template_hit else ""
 
-    law_context = retrieval.retrieve_relevant_law(contract_type_query)
+    if category_id:
+        law_context = retrieval.retrieve_relevant_law(
+            contract_type_query, category_id=category_id
+        )
+    else:
+        law_context = retrieval.retrieve_relevant_law(contract_type_query)
 
     # 7.2: Ghép prompt
     prompt = prompts.build_drafting_prompt(template_text, law_context, user_input_dict)
@@ -85,10 +73,13 @@ def generate_contract_draft(user_input_dict: Dict[str, Any]) -> Dict[str, Any]:
         threshold=0.0,
     )
     draft_text = draft_result.get("answer", "")
+    citations = draft_result.get("citations", [])
+    debug_trace = draft_result.get("debug_trace")
 
-    # Không tự động phân tích rủi ro nữa theo yêu cầu người dùng (tiết kiệm API quota & tăng tốc 2x)
     return {
         "draft": draft_text,
+        "citations": citations,
+        "debug_trace": debug_trace,
         "risk_report": [],
         "expired_law_alerts": [],
     }

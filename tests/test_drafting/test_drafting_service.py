@@ -136,7 +136,7 @@ class TestRunRiskAssessmentSafely:
             result = svc._run_risk_assessment_safely("text", "session_123")
         assert result is None
 
-    def test_returns_result_on_success(self):
+    def test_Returns_result_on_success(self):
         from modules.drafting import service as svc
 
         mock_risk = MagicMock()
@@ -148,3 +148,57 @@ class TestRunRiskAssessmentSafely:
             result = svc._run_risk_assessment_safely("text hợp đồng", "session_123")
         assert result is not None
         assert "risk_results" in result
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Tests: Taxonomy & Stance-Based Drafting (Lexdraft v2.0)
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+class TestTaxonomyAndStanceDrafting:
+    def test_load_contract_taxonomy_has_5_categories_and_3_stances(self):
+        from modules.drafting import retrieval
+
+        tax = retrieval.load_contract_taxonomy()
+        assert "categories" in tax
+        assert "stances" in tax
+        assert len(tax["categories"]) >= 5
+        assert set(tax["stances"].keys()) == {
+            "protect_party_a",
+            "protect_party_b",
+            "balanced",
+        }
+
+    def test_retrieve_template_returns_clause_playbook_for_known_category(self):
+        from modules.drafting import retrieval
+
+        tpl = retrieval.retrieve_template("Hợp đồng Phát triển Phần mềm")
+        assert tpl is not None
+        assert "CLAUSE PLAYBOOK" in tpl["content"]
+        assert tpl["metadata"]["template_type"] == "software_dev"
+
+    def test_build_drafting_prompt_includes_stance_directives_and_specific_fields(
+        self, sample_law_chunks
+    ):
+        from modules.drafting import prompts
+
+        user_input = {
+            "contract_type": "Hợp đồng Phát triển Phần mềm",
+            "category_id": "software_dev",
+            "stance_id": "protect_party_a",
+            "stance_label": "Bảo vệ Bên A",
+            "ben_a": "Công ty Alpha",
+            "ben_b": "Công ty Beta",
+            "specific_values": {
+                "Thời hạn bảo hành": "12 tháng miễn phí",
+            },
+        }
+        prompt_str = prompts.build_drafting_prompt(
+            template="ĐIỀU 1. PHẠM VI",
+            law_context=sample_law_chunks,
+            user_input=user_input,
+        )
+        assert "CHIẾN LƯỢC VỊ THẾ BẢO VỆ PHÁP LÝ" in prompt_str
+        assert "Bảo vệ Bên A" in prompt_str
+        assert "Thời hạn bảo hành: 12 tháng miễn phí" in prompt_str
+        assert "QUY TẮC TRÍCH DẪN PHÁP LÝ BẮT BUỘC" in prompt_str

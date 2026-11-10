@@ -1,103 +1,72 @@
 """
 modules/drafting/prompts.py
-Định nghĩa các mẫu prompt phục vụ sinh nội dung và hoàn thiện hợp đồng.
+Định nghĩa các mẫu prompt phục vụ sinh nội dung và hoàn thiện hợp đồng theo Phân loại (Taxonomy)
+và Vị thế Bảo vệ Pháp lý (Stance-Based Drafting).
 """
 
 from typing import Any, Dict, List
 
-DRAFTING_SYSTEM_INSTRUCTION = (
-    "Bạn là chuyên gia pháp lý soạn thảo hợp đồng dịch vụ tại Việt Nam. "
-    "Nhiệm vụ của bạn là soạn bản nháp hợp đồng dịch vụ hoàn chỉnh, có giá trị pháp lý, "
-    "dựa trên thông tin người dùng cung cấp và các căn cứ pháp luật được trích xuất bên dưới.\n"
-    "QUY TẮC BẮT BUỘC:\n"
-    "1. CĂN CỨ PHÁP LÝ là nguồn ưu tiên cao nhất. Mọi điều khoản trong hợp đồng phải "
-    "tuân thủ và không được mâu thuẫn với các quy định trong phần CĂN CỨ PHÁP LÝ.\n"
-    "2. MẪU CẤU TRÚC (nếu có) chỉ dùng để tham chiếu bố cục và thứ tự các điều khoản — "
-    "không được sao chép nguyên vẹn nội dung từ mẫu nếu mẫu không phù hợp với thông tin người dùng hoặc luật hiện hành.\n"
-    "3. Điều khoản phạt vi phạm KHÔNG được vượt quá 8% giá trị phần hợp đồng bị vi phạm "
-    "(theo Điều 301 Luật Thương mại). Nếu người dùng nhập mức phạt cao hơn, hãy tự động điều chỉnh về 8% và ghi chú.\n"
-    "4. Nếu thiếu thông tin để hoàn thiện một điều khoản, ghi rõ [CẦN BỔ SUNG: <mô tả>] "
-    "thay vì tự suy diễn hoặc bịa thêm.\n"
-    "5. KHÔNG tự thêm điều khoản không có căn cứ pháp lý hoặc không được người dùng yêu cầu.\n"
-    "6. Phần 'Căn cứ' ở đầu hợp đồng phải liệt kê đúng tên và số hiệu văn bản pháp luật "
-    "từ phần CĂN CỨ PHÁP LÝ bên dưới — không dẫn chiếu văn bản không có trong danh sách được cung cấp.\n"
-    "7. QUY TẮC TRÍCH DẪN PHÁP LÝ BẮT BUỘC:\n"
-    "   a) NGUYÊN TẮC THỨ BẬC: Mọi viện dẫn điều khoản BẮT BUỘC tuân thủ đúng thứ tự từ nhỏ đến lớn: "
-    "Điểm → Khoản → Điều → Tên văn bản (Ví dụ: 'điểm a khoản 1 Điều 301...', 'khoản 2 Điều 292...').\n"
-    "   b) ĐỐI VỚI VĂN BẢN LUẬT THÔNG THƯỜNG (không phải văn bản hợp nhất):\n"
-    "      - Khi viện dẫn lần đầu (tại phần Căn cứ hoặc khi xuất hiện lần đầu): [Điểm/Khoản/Điều nếu có] [Tên Luật] số [số hiệu] ngày [ngày ban hành] của Quốc hội.\n"
-    "        (Ví dụ: 'Căn cứ Bộ luật Dân sự số 91/2015/QH13 ngày 24 tháng 11 năm 2015 của Quốc hội;')\n"
-    "      - Các lần sau: Trích dẫn bình thường, rút gọn: '[Điểm/Khoản nếu có] Điều [X] [Tên Luật] số [số hiệu]' (Ví dụ: 'theo quy định tại Điều 401 Bộ luật Dân sự số 91/2015/QH13'). Tuyệt đối KHÔNG ghi VBHN cho các văn bản này.\n"
-    "   c) NẾU LÀ VĂN BẢN HỢP NHẤT (chỉ áp dụng khi văn bản nguồn được chú thích là VBHN):\n"
-    "      - Khi viện dẫn lần đầu (tại phần Căn cứ hoặc khi xuất hiện lần đầu): BẮT BUỘC ghi đầy đủ thông tin luật gốc và thông tin VBHN: [Điểm/Khoản/Điều nếu có] [Tên Luật] số [số hiệu] ngày [ngày ban hành] của Quốc hội (hợp nhất tại Văn bản hợp nhất số [số VBHN] ngày [ngày ký VBHN] của Văn phòng Quốc hội).\n"
-    "        (Ví dụ: 'Căn cứ Luật Thương mại số 36/2005/QH11 ngày 14 tháng 6 năm 2005 của Quốc hội (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH ngày 27 tháng 8 năm 2025 của Văn phòng Quốc hội);')\n"
-    "      - Các lần sau: Trích dẫn như bình thường (số Điều lấy chuẩn theo VBHN), rút gọn ngày tháng: '[Điểm/Khoản nếu có] Điều [X] [Tên Luật] số [số hiệu] (hợp nhất tại Văn bản hợp nhất số [số VBHN])'.\n"
-    "        (Ví dụ: 'theo quy định tại Điều 292 Luật Thương mại số 36/2005/QH11 (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH)' hoặc 'theo quy định tại điểm a khoản 1 Điều 301 Luật Thương mại số 36/2005/QH11 (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH)').\n"
-    "8. QUY TẮC TRÌNH BÀY VÀ XUỐNG DÒNG (BẮT BUỘC):\n"
-    "   - Mỗi Điều và mỗi khoản con (ví dụ: '1.1.', '1.2.', '11.1.', '11.2.', '11.3.') BẮT BUỘC phải tách ra từng dòng riêng biệt (sử dụng 2 dấu xuống dòng '\\n\\n' giữa các khoản).\n"
-    "   - Tuyệt đối KHÔNG gộp nhiều khoản (ví dụ: KHÔNG viết '11.1. ... 11.2. ... 11.3. ...' chung trên một đoạn văn)."
+from modules.drafting import retrieval
+from modules.shared.legal_rules import (
+    STANDARD_LEGAL_CITATION_RULES,
+    format_law_chunks_block,
 )
+
+DRAFTING_SYSTEM_INSTRUCTION = f"""Bạn là chuyên gia pháp lý cao cấp chuyên soạn thảo hợp đồng dịch vụ tại Việt Nam.
+Nhiệm vụ của bạn là soạn bản nháp hợp đồng dịch vụ hoàn chỉnh, chặt chẽ về mặt pháp lý, dựa trên:
+(1) Phân loại hợp đồng & Vị thế bảo vệ pháp lý được chỉ định,
+(2) Thông tin giao dịch và các thông số nghiệp vụ đặc thù do người dùng cung cấp,
+(3) Các CĂN CỨ PHÁP LÝ được truy xuất từ cơ sở dữ liệu (RAG).
+
+QUY TẮC SOẠN THẢO BẮT BUỘC:
+1. CĂN CỨ PHÁP LÝ là nguồn ưu tiên cao nhất. Mọi điều khoản trong hợp đồng phải tuân thủ và không được mâu thuẫn với các quy định trong phần CĂN CỨ PHÁP LÝ.
+2. BÁM SÁT PHÂN LOẠI & KHUNG ĐIỀU KHOẢN BẮT BUỘC (CLAUSE PLAYBOOK): Phải triển khai đầy đủ các Điều khoản theo đúng cấu trúc đặc thù của loại hợp đồng được chọn.
+3. TUÂN THỦ VỊ THẾ BẢO VỆ PHÁP LÝ (LEGAL STANCE): Soạn thảo câu chữ về Nghiệm thu, Thanh toán, Sở hữu trí tuệ, Chế tài và Chấm dứt hợp đồng theo đúng chiến lược bảo vệ quyền lợi của bên được chọn, nhưng TUYỆT ĐỐI KHÔNG vượt quá giới hạn pháp định (ví dụ: mức phạt vi phạm thương mại không được vượt quá 8% theo Điều 301 Luật Thương mại).
+4. Nếu thiếu thông tin chi tiết của một bên, giữ nguyên ký hiệu điền khuyết `[●]` hoặc `[CẦN BỔ SUNG: <mô tả>]` thay vì tự bịa đặt số liệu.
+5. QUY TẮC TRÌNH BÀY VĂN BẢN HÀNH CHÍNH CHUẨN A4:
+   - Mở đầu bằng Quốc hiệu, Tiêu ngữ, Tên hợp đồng (IN HOA), Số hợp đồng, Phần Căn cứ pháp lý, Thông tin Bên A và Bên B.
+   - Mỗi Điều và mỗi khoản con (ví dụ: `1.1.`, `1.2.`, `2.1.`, `2.2.`) BẮT BUỘC phải tách ra từng dòng riêng biệt (dùng 2 dấu xuống dòng `\\n\\n` giữa các khoản). Tuyệt đối KHÔNG gộp nhiều khoản trên cùng một đoạn văn.
+
+{STANDARD_LEGAL_CITATION_RULES}"""
 
 
 def _format_law_context(law_context: List[Dict[str, Any]]) -> str:
-    if not law_context:
-        return "Không có căn cứ pháp lý bổ sung từ cơ sở tri thức."
-
-    parts = []
-    for chunk in law_context:
-        metadata = chunk.get("metadata", {})
-        article = metadata.get("article") or "N/A"
-
-        # Ưu tiên hiển thị tên luật đầy đủ + số hiệu + ngày ban hành/VBHN
-        law_name = metadata.get("law_name", "")
-        law_number = metadata.get("law_number", "")
-        issued_date = metadata.get("issued_date", "")
-        is_consolidated = metadata.get("is_consolidated", False)
-        consolidated_year = metadata.get("consolidated_year", "")
-        vbhn_number = metadata.get("vbhn_number", "")
-        vbhn_date = metadata.get("vbhn_date", "")
-        latest_amendment = metadata.get("latest_amendment", "")
-
-        if law_name and law_number:
-            source_label = f"{law_name} số {law_number}"
-            if issued_date:
-                source_label += f" ngày {issued_date} của Quốc hội"
-
-            if is_consolidated:
-                if vbhn_number and vbhn_date:
-                    source_label += f" (hợp nhất tại Văn bản hợp nhất số {vbhn_number} ngày {vbhn_date} của Văn phòng Quốc hội)"
-                elif vbhn_number:
-                    source_label += f" (hợp nhất tại Văn bản hợp nhất số {vbhn_number})"
-                elif consolidated_year:
-                    source_label += f" (văn bản hợp nhất năm {consolidated_year})"
-                if latest_amendment:
-                    source_label += f", sửa đổi lần cuối bởi Luật số {latest_amendment}"
-        else:
-            # Fallback về tên file nếu chưa parse được
-            source_label = metadata.get("source", "N/A")
-
-        header = f"[{article} - {source_label}]"
-        parts.append(f"{header}\n{chunk.get('content', '')}")
-    return "\n\n".join(parts)
+    """Wrapper tương thích ngược, gọi thẳng hàm chuẩn hóa dùng chung."""
+    return format_law_chunks_block(law_context)
 
 
 def _format_user_input(user_input: Dict[str, Any]) -> str:
     labels = {
-        "contract_type": "Loại hợp đồng",
+        "contract_type": "Loại hợp đồng dịch vụ",
+        "category_id": "Mã phân loại nghiệp vụ",
+        "stance_label": "Vị thế bảo vệ pháp lý ưu tiên",
+        "so_hop_dong": "Số hợp đồng",
         "ben_a": "Bên A (Bên thuê dịch vụ)",
-        "dia_chi_ben_a": "Địa chỉ Bên A",
+        "dia_chi_ben_a": "Địa chỉ / Mã số thuế Bên A",
         "ben_b": "Bên B (Bên cung cấp dịch vụ)",
-        "dia_chi_ben_b": "Địa chỉ Bên B",
+        "dia_chi_ben_b": "Địa chỉ / Mã số thuế Bên B",
+        "gia_tri_hop_dong": "Giá trị hợp đồng & Thuế GTGT",
+        "thoi_han": "Thời hạn thực hiện hợp đồng",
         "pham_vi_cong_viec": "Phạm vi công việc",
-        "gia_tri_hop_dong": "Giá trị hợp đồng",
-        "thoi_han": "Thời hạn hợp đồng",
+        "pham_vi_cong_viec_va_ghi_chu": "Phạm vi công việc & Yêu cầu đặc thù",
+        "dieu_khoan_bo_sung": "Các chốt chặn pháp lý bắt buộc tích hợp",
     }
+    skip_keys = {"session_id", "stance_id", "specific_values"}
     lines = []
     for key, value in user_input.items():
-        if key == "session_id":
+        if key in skip_keys or value is None or value == "":
             continue
         label = labels.get(key, key)
         lines.append(f"- {label}: {value}")
+
+    # Bổ sung các trường thông số đặc thù theo phân loại hợp đồng (nếu có)
+    specific_values = user_input.get("specific_values")
+    if isinstance(specific_values, dict) and specific_values:
+        lines.append("\nTHÔNG SỐ NGHIỆP VỤ ĐẶC THÙ CỦA LOẠI HỢP ĐỒNG NÀY:")
+        for sp_label, sp_val in specific_values.items():
+            if sp_val:
+                lines.append(f"  + {sp_label}: {sp_val}")
+
     return "\n".join(lines) if lines else "Không có thông tin bổ sung."
 
 
@@ -107,21 +76,14 @@ def build_drafting_prompt(
     user_input: Dict[str, Any],
 ) -> str:
     """
-    Ghép prompt sinh hợp đồng theo thứ tự Query-first:
-      1. Thông tin người dùng (nhiệm vụ) — LLM đọc trước để hiểu rõ cần làm gì
-      2. Căn cứ pháp lý (context chính) — nội dung luật để soạn đúng quy định
-      3. Mẫu cấu trúc (context phụ)    — tham chiếu bố cục, thứ tự điều khoản
-
-    Args:
-        template: text mẫu hợp đồng (lấy từ retrieval.retrieve_template).
-                  Nếu không có, prompt vẫn hoạt động bình thường nhờ law_context.
-        law_context: danh sách chunk luật liên quan (lấy từ retrieval.retrieve_relevant_law).
-        user_input: dict thông tin người dùng nhập trên form.
-
-    Returns:
-        Prompt hoàn chỉnh, sẵn sàng gửi cho llm_client.
+    Ghép prompt sinh hợp đồng theo cấu trúc Tường minh (White-Box):
+      1. System Instruction + Quy tắc trích dẫn chuẩn
+      2. Chiến lược Vị thế Đàm phán Pháp lý (Bảo vệ Bên A / Bảo vệ Bên B / Cân bằng)
+      3. Thông tin giao dịch & Thông số đặc thù theo Phân loại hợp đồng
+      4. Căn cứ pháp lý truy xuất từ FAISS (RAG Context)
+      5. Khung cấu trúc điều khoản bắt buộc (Clause Playbook)
     """
-    law_context_text = _format_law_context(law_context)
+    law_context_text = format_law_chunks_block(law_context)
     user_input_text = _format_user_input(user_input)
     template_text = (
         template.strip()
@@ -129,25 +91,34 @@ def build_drafting_prompt(
         else "Không có mẫu cấu trúc tham khảo (sinh hoàn toàn từ căn cứ pháp lý)."
     )
     contract_type = user_input.get("contract_type", "hợp đồng dịch vụ")
+    stance_id = user_input.get("stance_id", "balanced")
+    stance_cfg = retrieval.get_stance_config(stance_id)
+    stance_directives = "\n".join(
+        f"  * {d}" for d in stance_cfg.get("drafting_directives", [])
+    )
+
+    stance_block = (
+        f"CHIẾN LƯỢC VỊ THẾ BẢO VỆ PHÁP LÝ ({stance_cfg.get('label', 'Cân bằng hai bên')}):\n"
+        f"{stance_directives}"
+        if stance_directives
+        else ""
+    )
 
     prompt = f"""{DRAFTING_SYSTEM_INSTRUCTION}
 
-THÔNG TIN NGƯỜI DÙNG CUNG CẤP (nhiệm vụ cần thực hiện):
+=== 1. THÔNG TIN GIAO DỊCH & THÔNG SỐ ĐẶC THÙ NGƯỜI DÙNG CUNG CẤP ===
 {user_input_text}
 
-CĂN CỨ PHÁP LÝ LIÊN QUAN (ưu tiên cao nhất khi soạn nội dung):
+=== 2. {stance_block} ===
+
+=== 3. CĂN CỨ PHÁP LÝ TRUY XUẤT TỪ VECTOR DB (ƯU TIÊN CAO NHẤT) ===
 {law_context_text}
 
-MẪU CẤU TRÚC THAM KHẢO (chỉ dùng để tham chiếu bố cục, thứ tự điều khoản):
+=== 4. KHUNG PHÂN LOẠI & BỐ CỤC ĐIỀU KHOẢN CHUẨN (CLAUSE PLAYBOOK) ===
 {template_text}
 
-YÊU CẦU ĐẦU RA:
-Soạn thảo bản nháp {contract_type} hoàn chỉnh theo cấu trúc Điều/Khoản chuẩn pháp lý Việt Nam, gồm đầy đủ:
-- Quốc hiệu, tiêu đề hợp đồng
-- Phần Căn cứ pháp lý (chỉ dẫn chiếu các văn bản trong CĂN CỨ PHÁP LÝ bên trên)
-- Thông tin hai bên
-- Các điều khoản nội dung (phạm vi, giá trị, thanh toán, nghiệm thu, bảo mật, phạt vi phạm, chấm dứt)
-- Điều khoản chung và ký kết
-Tuân thủ tuyệt đối các QUY TẮC BẮT BUỘC đã nêu ở trên."""
+=== 5. YÊU CẦU ĐẦU RA ===
+Hãy soạn thảo bản nháp {contract_type} hoàn chỉnh theo chuẩn văn bản pháp lý Việt Nam (bao gồm Quốc hiệu, Tiêu đề, Số hợp đồng, Phần Căn cứ pháp lý dẫn chiếu đúng văn bản năm 2025/2026, Thông tin các bên, đầy đủ các Điều khoản theo Khung phân loại và Bảng chữ ký Đại diện Bên A - Đại diện Bên B).
+Lưu ý: Chỉ xuất nội dung văn bản hợp đồng hoàn chỉnh, không thêm lời bình luận ngoài hợp đồng."""
 
     return prompt
