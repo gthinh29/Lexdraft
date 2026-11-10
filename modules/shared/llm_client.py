@@ -209,29 +209,68 @@ def generate_grounded_response(
     active_refusal = refusal_message or default_refusal
 
     # 6.3: Code logic Threshold
+    scores = [c.get("score") for c in retrieved_chunks if c.get("score") is not None]
+    max_score = max(scores) if scores else None
+
+    chunk_previews = [
+        {
+            "article": c.get("metadata", {}).get("article", "N/A"),
+            "law_name": c.get("metadata", {}).get("law_name")
+            or c.get("metadata", {}).get("source", "N/A"),
+            "law_number": c.get("metadata", {}).get("law_number", ""),
+            "vbhn_number": c.get("metadata", {}).get("vbhn_number", ""),
+            "score": round(float(c["score"]), 4)
+            if c.get("score") is not None
+            else None,
+            "content": c.get("content", ""),
+        }
+        for c in (retrieved_chunks or [])
+    ]
+
     if not retrieved_chunks:
         logger.info("Không có retrieved_chunks nào được cung cấp.")
         return {
             "answer": active_refusal,
             "citations": [],
             "refusal": True,
+            "debug_trace": {
+                "model": DEFAULT_LLM_MODEL,
+                "threshold": active_threshold,
+                "max_similarity_score": None,
+                "gatekeeper_passed": False,
+                "gatekeeper_reason": "Danh sách retrieved_chunks rỗng -> Chặn tại tầng Code Python (0 API call).",
+                "retrieved_chunks_count": 0,
+                "retrieved_chunks": [],
+                "final_prompt_sent_to_llm": query,
+                "raw_llm_response": "[BỊ CHẶN BỞI CODE GATEKEEPER - KHÔNG GỌI GEMINI API]",
+                "filtered_citations": [],
+            },
         }
 
     # Kiểm tra score nếu chunks có chứa trường score
-    scores = [c.get("score") for c in retrieved_chunks if c.get("score") is not None]
-    if scores:
-        max_score = max(scores)
-        if max_score < active_threshold:
-            logger.info(
-                "Điểm tương đồng cao nhất (%.3f) nhỏ hơn ngưỡng (%.3f). Từ chối sinh câu trả lời.",
-                max_score,
-                active_threshold,
-            )
-            return {
-                "answer": active_refusal,
-                "citations": [],
-                "refusal": True,
-            }
+    if max_score is not None and max_score < active_threshold:
+        logger.info(
+            "Điểm tương đồng cao nhất (%.3f) nhỏ hơn ngưỡng (%.3f). Từ chối sinh câu trả lời.",
+            max_score,
+            active_threshold,
+        )
+        return {
+            "answer": active_refusal,
+            "citations": [],
+            "refusal": True,
+            "debug_trace": {
+                "model": DEFAULT_LLM_MODEL,
+                "threshold": active_threshold,
+                "max_similarity_score": round(float(max_score), 4),
+                "gatekeeper_passed": False,
+                "gatekeeper_reason": f"Điểm tương đồng cao nhất ({max_score:.3f}) < Ngưỡng Gatekeeper ({active_threshold:.2f}) -> Chặn tại tầng Code Python (0 API call).",
+                "retrieved_chunks_count": len(retrieved_chunks),
+                "retrieved_chunks": chunk_previews,
+                "final_prompt_sent_to_llm": query,
+                "raw_llm_response": "[BỊ CHẶN BỞI CODE GATEKEEPER - KHÔNG GỌI GEMINI API]",
+                "filtered_citations": [],
+            },
+        }
 
     # 6.5: Trích xuất metadata tạo citations
     raw_citations = extract_citations_from_chunks(retrieved_chunks)
@@ -265,6 +304,24 @@ def generate_grounded_response(
             "answer": answer,
             "citations": final_citations,
             "refusal": False,
+            "debug_trace": {
+                "model": client.model_name,
+                "threshold": active_threshold,
+                "max_similarity_score": round(float(max_score), 4)
+                if max_score is not None
+                else None,
+                "gatekeeper_passed": True,
+                "gatekeeper_reason": (
+                    f"Pass Gatekeeper (max_score={max_score:.3f} >= threshold={active_threshold:.2f})"
+                    if max_score is not None
+                    else f"Pass Gatekeeper (threshold={active_threshold:.2f})"
+                ),
+                "retrieved_chunks_count": len(retrieved_chunks),
+                "retrieved_chunks": chunk_previews,
+                "final_prompt_sent_to_llm": query,
+                "raw_llm_response": answer,
+                "filtered_citations": final_citations,
+            },
         }
     except Exception as e:
         logger.exception("Lỗi khi gọi LLM sinh grounded response: %s", e)
@@ -287,4 +344,18 @@ def generate_grounded_response(
             "answer": f"⚠️ **Lỗi hệ thống:** {clean_err}",
             "citations": [],  # Bắt buộc rỗng khi gặp lỗi, không hiển thị căn cứ khi chưa có phản hồi từ AI
             "refusal": True,
+            "debug_trace": {
+                "model": client.model_name if client else DEFAULT_LLM_MODEL,
+                "threshold": active_threshold,
+                "max_similarity_score": round(float(max_score), 4)
+                if max_score is not None
+                else None,
+                "gatekeeper_passed": False,
+                "gatekeeper_reason": f"Lỗi khi gọi API LLM: {clean_err}",
+                "retrieved_chunks_count": len(retrieved_chunks),
+                "retrieved_chunks": chunk_previews,
+                "final_prompt_sent_to_llm": query,
+                "raw_llm_response": f"ERROR: {err_str}",
+                "filtered_citations": [],
+            },
         }

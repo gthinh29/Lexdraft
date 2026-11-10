@@ -123,14 +123,27 @@ def extract_law_header(text: str, filename: str = "") -> Dict[str, Any]:
     # Lấy tên luật từ tiêu đề (dòng LUẬT / BỘ LUẬT + dòng tiếp theo)
     if not result["law_name"]:
         title_match = re.search(
-            r"[*#_\s]*(?:BỘ\s+)?LUẬT[*#_\s]*\n+[*#_\s]*([^\n*#_]+)",
+            r"[*#_\s]*((?:BỘ\s+)?LUẬT)[*#_\s]*\n+[*#_\s]*([^\n*#_]+)",
             preamble,
             re.IGNORECASE,
         )
         if title_match:
-            clean_name = title_match.group(1).strip()
+            prefix_raw = title_match.group(1).strip().upper()
+            prefix = "Bộ luật" if "BỘ" in prefix_raw else "Luật"
+            clean_name = title_match.group(2).strip()
             clean_name = re.sub(r"[*#_]", "", clean_name).strip()
-            result["law_name"] = "Luật " + clean_name.title()
+            # Chuẩn hóa viết hoa chữ cái đầu cho tên luật tiếng Việt
+            name_map = {
+                "DÂN SỰ": "Dân sự",
+                "THƯƠNG MẠI": "Thương mại",
+                "SỞ HỮU TRÍ TUỆ": "Sở hữu trí tuệ",
+                "GIAO DỊCH ĐIỆN TỬ": "Giao dịch điện tử",
+                "BẢO VỆ DỮ LIỆU CÁ NHÂN": "Bảo vệ dữ liệu cá nhân",
+                "CHUYỂN ĐỔI SỐ": "Chuyển đổi số",
+                "TRÍ TUỆ NHÂN TẠO": "Trí tuệ nhân tạo",
+            }
+            normalized_title = name_map.get(clean_name.upper(), clean_name.title())
+            result["law_name"] = f"{prefix} {normalized_title}"
 
     # Hiệu lực nếu chưa có: tìm Điều hiệu lực thi hành trong toàn bộ văn bản
     if not result["effective_date"]:

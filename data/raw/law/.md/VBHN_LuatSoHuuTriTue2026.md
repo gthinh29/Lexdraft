@@ -1,6 +1,12 @@
+VĂN PHÒNG QUỐC HỘI
+
 CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM
 
 Độc lập - Tự do - Hạnh phúc
+
+Số: 55/VBHN-VPQH
+
+Hà Nội, ngày 15 tháng 01 năm 2026
 
 LUẬT
 

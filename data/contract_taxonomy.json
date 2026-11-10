@@ -1,0 +1,282 @@
+{
+  "_comment": "Taxonomy & Clause Playbook cho 5 Phân loại Hợp đồng Dịch vụ trọng tâm và 3 Vị thế Đàm phán Pháp lý (Lexdraft v2.0).",
+  "stances": {
+    "protect_party_a": {
+      "label": "🛡️ Bảo vệ Bên A (Bên thuê dịch vụ / Khách hàng)",
+      "short_name": "Bảo vệ Bên A (Bên thuê)",
+      "description": "Ưu tiên kiểm soát chất lượng nghiệm thu chặt chẽ, quyền sở hữu trí tuệ thuộc Bên A ngay khi tạo lập, phạt vi phạm tối đa 8% kèm bồi thường 100% thiệt hại thực tế.",
+      "drafting_directives": [
+        "NGHIỆM THU: Sản phẩm/dịch vụ chỉ được coi là hoàn thành khi Bên A ký Biên bản nghiệm thu bằng văn bản. Không áp dụng cơ chế 'mặc nhiên nghiệm thu'. Bên A có quyền yêu cầu Bên B chỉnh sửa, khắc phục không tính thêm chi phí cho đến khi đạt đúng tiêu chuẩn kỹ thuật đã thỏa thuận (Điều 517 Bộ luật Dân sự 2015).",
+        "THANH TOÁN: Chia thành nhiều đợt gắn chặt với kết quả nghiệm thu thực tế; giữ lại tối thiểu 20-30% giá trị hợp đồng cho đợt nghiệm thu cuối cùng hoặc bảo hành.",
+        "SỞ HỮU TRÍ TUỆ & MÃ NGUỒN/TÁC PHẨM: Toàn bộ quyền tài sản, quyền sở hữu trí tuệ, mã nguồn, tài liệu kỹ thuật phát sinh từ hợp đồng thuộc quyền sở hữu độc quyền của Bên A ngay từ thời điểm được tạo ra (Điều 39 Luật Sở hữu trí tuệ 50/2005/QH11 - VBHN 55/VBHN-VPQH năm 2026).",
+        "PHẠT VI PHẠM & BỒI THƯỜNG: Nếu Bên B chậm tiến độ hoặc vi phạm chất lượng, Bên B chịu phạt vi phạm ở mức trần tối đa 8% giá trị phần nghĩa vụ bị vi phạm (Điều 301 Luật Thương mại 36/2005/QH11 - VBHN 113/VBHN-VPQH năm 2025) VÀ phải bồi thường toàn bộ 100% thiệt hại thực tế phát sinh cho Bên A (Điều 302 Luật Thương mại), không áp dụng điều khoản giới hạn trách nhiệm bồi thường có lợi cho Bên B.",
+        "ĐƠN PHƯƠNG CHẤM DỨT: Bên A có quyền đơn phương chấm dứt hợp đồng nếu Bên B thực hiện công việc không bảo đảm chất lượng hoặc chậm tiến độ quá 10 ngày và yêu cầu hoàn trả toàn bộ khoản tạm ứng (khoản 2 Điều 520 Bộ luật Dân sự 2015)."
+      ]
+    },
+    "protect_party_b": {
+      "label": "⚔️ Bảo vệ Bên B (Bên cung cấp dịch vụ / Nhà thầu / Agency)",
+      "short_name": "Bảo vệ Bên B (Nhà thầu)",
+      "description": "Chống khách hàng ngâm nghiệm thu (mặc nhiên nghiệm thu sau 05 ngày), chỉ chuyển giao SHTT sau khi nhận đủ 100% phí, giới hạn trần bồi thường (Cap Liability) và miễn trừ lỗi nền tảng thứ 3.",
+      "drafting_directives": [
+        "CƠ CHẾ MẶC NHIÊN NGHIỆM THU (CHỐNG CHẬM TRỄ THANH TOÁN): Trong vòng 05 ngày làm việc kể từ ngày Bên B gửi bàn giao kết quả dịch vụ mà Bên A không có phản hồi bằng văn bản nêu rõ lỗi kỹ thuật thuộc phạm vi hợp đồng, kết quả dịch vụ mặc nhiên được coi là đã nghiệm thu hoàn thành đạt chất lượng; Bên B có toàn quyền xuất hóa đơn và yêu cầu thanh toán.",
+        "TẠM ỨNG & LÃI CHẬM THANH TOÁN: Bên A phải tạm ứng tối thiểu 40-50% ngay sau khi ký hợp đồng (khoản tiền này không hoàn lại nếu Bên A tự ý hủy hợp đồng). Nếu Bên A chậm thanh toán quá hạn, Bên B có quyền tạm ngừng dịch vụ và tính lãi chậm trả theo Điều 306 Luật Thương mại (VBHN 113/VBHN-VPQH) và Điều 357 Bộ luật Dân sự 2015.",
+        "BẢO LƯU QUYỀN SỞ HỮU TRÍ TUỆ: Mọi quyền sở hữu trí tuệ, mã nguồn gốc, bản thiết kế và quyền quản trị hệ thống vẫn thuộc sở hữu của Bên B cho đến khi Bên A hoàn tất thanh toán đủ 100% tổng giá trị hợp đồng và các chi phí phát sinh.",
+        "GIỚI HẠN TRÁCH NHIỆM BỒI THƯỜNG (CAP LIABILITY) & MIỄN TRỪ BÊN THỨ 3: Tổng mức trách nhiệm bồi thường thiệt hại tối đa của Bên B trong mọi trường hợp không vượt quá số phí thực tế mà Bên B đã nhận của giai đoạn bị vi phạm. Bên B được miễn trách nhiệm đối với các sự cố gián đoạn từ nền tảng bên thứ ba (AWS, Google, Meta, nhà mạng viễn thông) hoặc do Bên A chậm cung cấp dữ liệu đầu vào (Điều 294 Luật Thương mại)."
+      ]
+    },
+    "balanced": {
+      "label": "⚖️ Cân bằng lợi ích hai bên (Chuẩn Thương mại Chung)",
+      "short_name": "Cân bằng hai bên",
+      "description": "Phân bổ đồng đều quyền và nghĩa vụ cho cả Bên thuê và Bên cung ứng theo đúng tinh thần thiện chí, công bằng của Bộ luật Dân sự 2015 và Luật Thương mại 2005.",
+      "drafting_directives": [
+        "NGHIỆM THU HAI CHIỀU: Quy định thời hạn kiểm tra nghiệm thu là 05 ngày làm việc và tối đa 02-03 lần hiệu chỉnh trong phạm vi công việc đã thống nhất.",
+        "SỞ HỮU TRÍ TUỆ: Quyền sở hữu sản phẩm đầu ra được chuyển giao cho Bên A sau khi hoàn thành nghĩa vụ thanh toán; các công cụ, thư viện nền tảng (background IP) có sẵn của Bên B vẫn thuộc về Bên B.",
+        "CHẾ TÀI ĐỐI XỨNG: Phạt vi phạm 8% giá trị phần nghĩa vụ bị vi phạm theo Điều 301 Luật Thương mại áp dụng công bằng cho cả hai bên; lãi chậm thanh toán áp dụng theo Điều 357 và Điều 468 Bộ luật Dân sự 2015 (không quá 20%/năm)."
+      ]
+    }
+  },
+  "categories": {
+    "software_dev": {
+      "id": "software_dev",
+      "name": "Hợp đồng Dịch vụ Phát triển & Triển khai Phần mềm (Software / ERP / AI)",
+      "short_title": "💻 Phát triển Phần mềm & CNTT",
+      "contract_title_upper": "HỢP ĐỒNG DỊCH VỤ PHÁT TRIỂN VÀ TRIỂN KHAI PHẦN MỀM",
+      "default_code_suffix": "HĐPM",
+      "description": "Dành cho dịch vụ lập trình phần mềm theo yêu cầu, triển khai ERP, tích hợp hệ thống và mô hình Trí tuệ nhân tạo (AI).",
+      "governing_laws": [
+        "Bộ luật Dân sự số 91/2015/QH13 ngày 24 tháng 11 năm 2015 của Quốc hội",
+        "Luật Thương mại số 36/2005/QH11 ngày 14 tháng 6 năm 2005 của Quốc hội (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH ngày 27 tháng 8 năm 2025 của Văn phòng Quốc hội)",
+        "Luật Sở hữu trí tuệ số 50/2005/QH11 ngày 29 tháng 11 năm 2005 của Quốc hội (hợp nhất tại Văn bản hợp nhất số 55/VBHN-VPQH ngày 15 tháng 01 năm 2026 của Văn phòng Quốc hội, sửa đổi bổ sung bởi Luật số 131/2025/QH15)",
+        "Luật Chuyển đổi số số 148/2025/QH15 ngày 11 tháng 12 năm 2025 của Quốc hội",
+        "Luật Bảo vệ dữ liệu cá nhân số 91/2025/QH15 ngày 26 tháng 6 năm 2025 của Quốc hội",
+        "Luật Trí tuệ nhân tạo số 134/2025/QH15 ngày 10 tháng 12 năm 2025 của Quốc hội"
+      ],
+      "rag_queries": [
+        "hợp đồng dịch vụ quyền và nghĩa vụ bên cung ứng dịch vụ chất lượng công việc Điều 513 515 517 Bộ luật Dân sự",
+        "quyền sở hữu quyền tác giả đối với chương trình máy tính tác phẩm tạo ra theo nhiệm vụ hợp đồng Điều 39 Luật Sở hữu trí tuệ",
+        "nghĩa vụ bảo vệ dữ liệu cá nhân xử lý dữ liệu cá nhân Luật Bảo vệ dữ liệu cá nhân 91/2025/QH15",
+        "phạt vi phạm hợp đồng mức phạt tối đa 8 phần trăm bồi thường thiệt hại Điều 300 301 302 Luật Thương mại",
+        "trách nhiệm nhà phát triển triển khai hệ thống trí tuệ nhân tạo hạ tầng số Luật Trí tuệ nhân tạo Luật Chuyển đổi số"
+      ],
+      "specific_fields": [
+        {
+          "key": "tech_stack_and_infra",
+          "label": "Kiến trúc kỹ thuật & Môi trường triển khai (Cloud/On-premise)",
+          "default": "Triển khai trên hạ tầng AWS Cloud của Bên A; kiến trúc Web/API kèm cơ sở dữ liệu bảo mật.",
+          "placeholder": "VD: Triển khai trên AWS/On-premise, ngôn ngữ Python/React..."
+        },
+        {
+          "key": "source_code_handover",
+          "label": "Quy định bàn giao Mã nguồn (Source Code) & Tài liệu kỹ thuật",
+          "default": "Bàn giao 100% Source Code sạch, tài liệu kiến trúc hệ thống, kịch bản kiểm thử (UAT) và hướng dẫn vận hành.",
+          "placeholder": "VD: Bàn giao toàn bộ Git repository, tài liệu API, DB schema..."
+        },
+        {
+          "key": "warranty_and_sla",
+          "label": "Thời hạn bảo hành lỗi phần mềm (Bug-fix) & Cam kết SLA",
+          "default": "Bảo hành miễn phí 12 tháng đối với lỗi kỹ thuật sau nghiệm thu; phản hồi sự cố nghiêm trọng (Critical Bug) trong vòng 04 giờ.",
+          "placeholder": "VD: Bảo hành 12 tháng, xử lý lỗi khẩn cấp trong 4h..."
+        }
+      ],
+      "mandatory_clauses": [
+        "ĐIỀU 1. ĐỐI TƯỢNG HỢP ĐỒNG VÀ PHẠM VI PHÁT TRIỂN PHẦN MỀM",
+        "ĐIỀU 2. TIẾN ĐỘ TRIỂN KHAI, KIỂM THỬ CHẤP NHẬN (UAT) VÀ NGHIỆM THU",
+        "ĐIỀU 3. GIÁ TRỊ HỢP ĐỒNG, LỘ TRÌNH VÀ PHƯƠNG THỨC THANH TOÁN",
+        "ĐIỀU 4. QUYỀN VÀ NGHĨA VỤ CỦA CÁC BÊN",
+        "ĐIỀU 5. QUYỀN SỞ HỮU TRÍ TUỆ ĐỐI VỚI MÃ NGUỒN VÀ SẢN PHẨM ĐẦU RA",
+        "ĐIỀU 6. BẢO MẬT THÔNG TIN VÀ BẢO VỆ DỮ LIỆU CÁ NHÂN (TUÂN THỦ LUẬT 91/2025/QH15)",
+        "ĐIỀU 7. BẢO HÀNH KỸ THUẬT, HỖ TRỢ VẬN HÀNH VÀ CAM KẾT SLA",
+        "ĐIỀU 8. CHẾ TÀI PHẠT VI PHẠM, BỒI THƯỜNG THIỆT HẠI VÀ CHẤM DỨT HỢP ĐỒNG",
+        "ĐIỀU 9. BẤT KHẢ KHÁNG VÀ GIẢI QUYẾT TRANH CHẤP",
+        "ĐIỀU 10. ĐIỀU KHOẢN THI HÀNH"
+      ]
+    },
+    "web_design": {
+      "id": "web_design",
+      "name": "Hợp đồng Dịch vụ Thiết kế Website & Hạ tầng Tên miền/Hosting",
+      "short_title": "🌐 Thiết kế Website & Hosting",
+      "contract_title_upper": "HỢP ĐỒNG DỊCH VỤ THIẾT KẾ WEBSITE VÀ LƯU TRỮ HẠ TẦNG",
+      "default_code_suffix": "HĐWEB",
+      "description": "Dành cho dịch vụ thiết kế giao diện UI/UX, lập trình các module website, đăng ký tên miền (Domain), lưu trữ Hosting và bàn giao quản trị.",
+      "governing_laws": [
+        "Bộ luật Dân sự số 91/2015/QH13 ngày 24 tháng 11 năm 2015 của Quốc hội",
+        "Luật Thương mại số 36/2005/QH11 ngày 14 tháng 6 năm 2005 của Quốc hội (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH ngày 27 tháng 8 năm 2025 của Văn phòng Quốc hội)",
+        "Luật Giao dịch điện tử số 20/2023/QH15 ngày 22 tháng 6 năm 2023 của Quốc hội",
+        "Luật Sở hữu trí tuệ số 50/2005/QH11 ngày 29 tháng 11 năm 2005 của Quốc hội (hợp nhất tại Văn bản hợp nhất số 55/VBHN-VPQH ngày 15 tháng 01 năm 2026 của Văn phòng Quốc hội)",
+        "Luật Bảo vệ dữ liệu cá nhân số 91/2025/QH15 ngày 26 tháng 6 năm 2025 của Quốc hội"
+      ],
+      "rag_queries": [
+        "hợp đồng dịch vụ nghĩa vụ bên sử dụng dịch vụ và bên cung ứng dịch vụ Điều 513 515 516 517 Bộ luật Dân sự",
+        "quyền sở hữu tác phẩm mỹ thuật ứng dụng chương trình máy tính giao diện website Điều 39 Luật Sở hữu trí tuệ",
+        "giao kết và thực hiện hợp đồng điện tử thông điệp dữ liệu Luật Giao dịch điện tử 2023",
+        "phạt vi phạm 8 phần trăm bồi thường thiệt hại chậm thanh toán Điều 301 302 306 Luật Thương mại"
+      ],
+      "specific_fields": [
+        {
+          "key": "web_modules_and_ui",
+          "label": "Danh mục Module chức năng & Số lần chỉnh sửa giao diện (UI/UX Revisions)",
+          "default": "Thiết kế chuẩn Responsive (Desktop/Mobile), tích hợp CMS quản trị, SEO cơ bản; tối đa 03 vòng chỉnh sửa giao diện Demo.",
+          "placeholder": "VD: Trang chủ, Giỏ hàng, Thanh toán online, tối đa 3 lần sửa..."
+        },
+        {
+          "key": "domain_and_hosting",
+          "label": "Quy định về Tên miền (Domain), Hosting & Sao lưu dữ liệu (Backup)",
+          "default": "Tên miền đăng ký chính chủ tên Bên A; gói Hosting SSD duy trì 12 tháng kèm cơ chế tự động Backup định kỳ hàng tuần.",
+          "placeholder": "VD: Domain .vn đứng tên Bên A, Hosting 20GB, backup hàng tuần..."
+        },
+        {
+          "key": "handover_and_warranty",
+          "label": "Bàn giao tài khoản Quản trị (Admin) & Bảo hành kỹ thuật",
+          "default": "Bàn giao toàn quyền Super Admin, tài khoản FTP/Hosting, bộ mã nguồn đóng gói và bảo hành kỹ thuật 12 tháng.",
+          "placeholder": "VD: Bàn giao tài khoản Admin, cPanel, bảo hành 12 tháng..."
+        }
+      ],
+      "mandatory_clauses": [
+        "ĐIỀU 1. GIẢI THÍCH TỪ NGỮ VÀ PHẠM VI DỊCH VỤ THIẾT KẾ WEBSITE",
+        "ĐIỀU 2. QUY TRÌNH THIẾT KẾ GIAO DIỆN, CHỈNH SỬA DEMO VÀ NGHIỆM THU",
+        "ĐIỀU 3. PHÍ DỊCH VỤ THIẾT KẾ, CHI PHÍ TÊN MIỀN/HOSTING VÀ THANH TOÁN",
+        "ĐIỀU 4. QUYỀN VÀ NGHĨA VỤ CỦA CÁC BÊN",
+        "ĐIỀU 5. BẢN QUYỀN GIAO DIỆN, NỘI DUNG SỐ VÀ QUYỀN SỞ HỮU TRÍ TUỆ",
+        "ĐIỀU 6. BẢO HÀNH WEBSITE, SAO LƯU DỮ LIỆU (BACKUP) VÀ BẢO MẬT",
+        "ĐIỀU 7. PHẠT VI PHẠM, BỒI THƯỜNG THIỆT HẠI VÀ ĐƠN PHƯƠNG CHẤM DỨT",
+        "ĐIỀU 8. GIẢI QUYẾT TRANH CHẤP VÀ ĐIỀU KHOẢN CHUNG"
+      ]
+    },
+    "digital_marketing": {
+      "id": "digital_marketing",
+      "name": "Hợp đồng Dịch vụ Tiếp thị Số & Quảng cáo (Digital Marketing / Agency)",
+      "short_title": "📣 Digital Marketing & Quảng cáo",
+      "contract_title_upper": "HỢP ĐỒNG DỊCH VỤ TIẾP THỊ SỐ VÀ QUẢNG CÁO TRỰC TUYẾN",
+      "default_code_suffix": "HĐMKT",
+      "description": "Dành cho dịch vụ triển khai chiến dịch quảng cáo đa kênh (Meta, Google, TikTok), SEO, sáng tạo nội dung số và quản trị fanpage.",
+      "governing_laws": [
+        "Bộ luật Dân sự số 91/2015/QH13 ngày 24 tháng 11 năm 2015 của Quốc hội",
+        "Luật Thương mại số 36/2005/QH11 ngày 14 tháng 6 năm 2005 của Quốc hội (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH ngày 27 tháng 8 năm 2025 của Văn phòng Quốc hội, đã cập nhật Luật sửa đổi Luật Quảng cáo số 75/2025/QH15)",
+        "Luật Sở hữu trí tuệ số 50/2005/QH11 ngày 29 tháng 11 năm 2005 của Quốc hội (hợp nhất tại Văn bản hợp nhất số 55/VBHN-VPQH ngày 15 tháng 01 năm 2026 của Văn phòng Quốc hội)",
+        "Luật Bảo vệ dữ liệu cá nhân số 91/2025/QH15 ngày 26 tháng 6 năm 2025 của Quốc hội"
+      ],
+      "rag_queries": [
+        "cung ứng dịch vụ thương mại quảng cáo thương mại xúc tiến thương mại Luật Thương mại VBHN 113/VBHN-VPQH",
+        "nghĩa vụ thực hiện công việc theo kết quả hoặc theo nỗ lực hợp đồng dịch vụ Điều 515 517 519 Bộ luật Dân sự",
+        "xử lý dữ liệu cá nhân trong hoạt động tiếp thị quảng cáo sự đồng ý của chủ thể dữ liệu Luật Bảo vệ dữ liệu cá nhân 91/2025/QH15",
+        "chế tài thương mại phạt vi phạm 8 phần trăm miễn trách nhiệm Điều 294 301 302 Luật Thương mại"
+      ],
+      "specific_fields": [
+        {
+          "key": "marketing_channels_and_kpi",
+          "label": "Kênh triển khai & Chỉ số đo lường hiệu quả cam kết (KPIs)",
+          "default": "Triển khai trên Facebook Ads, Google Ads và TikTok; cam kết đạt tối thiểu 90% KPI về lượt tiếp cận (Reach), Traffic và số lượng Lead hợp lệ theo tháng.",
+          "placeholder": "VD: Meta Ads, Google Search, cam kết 500 Leads/tháng..."
+        },
+        {
+          "key": "ad_budget_structure",
+          "label": "Cơ cấu Ngân sách Quảng cáo (Ad Spend) & Phí Quản trị dịch vụ (Management Fee)",
+          "default": "Tách bạch rõ Ngân sách trả trực tiếp cho nền tảng (80%) và Phí dịch vụ quản trị sáng tạo của Agency (20%), quyết toán minh bạch theo báo cáo trình quản lý quảng cáo gốc.",
+          "placeholder": "VD: Phí quản lý Agency 15%, ngân sách chạy Ads 85%..."
+        },
+        {
+          "key": "third_party_platform_policy",
+          "label": "Quy định về Chính sách Nền tảng bên thứ 3 & Dữ liệu Khách hàng (Leads)",
+          "default": "Bên A chịu trách nhiệm về tính hợp pháp của giấy phép sản phẩm quảng cáo; toàn bộ dữ liệu khách hàng (Customer Leads) thu thập được thuộc sở hữu độc quyền của Bên A theo Luật 91/2025/QH15.",
+          "placeholder": "VD: Xử lý khi nền tảng đổi thuật toán, quyền sở hữu tệp khách hàng..."
+        }
+      ],
+      "mandatory_clauses": [
+        "ĐIỀU 1. PHẠM VI DỊCH VỤ TIẾP THỊ SỐ VÀ CHỈ SỐ KPI CAM KẾT",
+        "ĐIỀU 2. THỜI HẠN CHIẾN DỊCH, BÁO CÁO ĐỐI SOÁT VÀ NGHIỆM THU KẾT QUẢ",
+        "ĐIỀU 3. NGÂN SÁCH QUẢNG CÁO, PHÍ QUẢN TRỊ AGENCY VÀ THANH TOÁN",
+        "ĐIỀU 4. TRÁCH NHIỆM PHÁP LÝ VỀ NỘI DUNG QUẢNG CÁO VÀ CHÍNH SÁCH NỀN TẢNG",
+        "ĐIỀU 5. BẢN QUYỀN ẤN PHẨM TRUYỀN THÔNG VÀ BẢO VỆ DỮ LIỆU KHÁCH HÀNG",
+        "ĐIỀU 6. CHẾ TÀI VI PHẠM KPI, PHẠT VI PHẠM 8% VÀ CHẤM DỨT HỢP ĐỒNG",
+        "ĐIỀU 7. GIẢI QUYẾT TRANH CHẤP VÀ ĐIỀU KHOẢN THI HÀNH"
+      ]
+    },
+    "cloud_saas": {
+      "id": "cloud_saas",
+      "name": "Hợp đồng Thuê Dịch vụ Hạ tầng Đám mây & Phần mềm SaaS / AI",
+      "short_title": "☁️ Hạ tầng Cloud & SaaS/AI",
+      "contract_title_upper": "HỢP ĐỒNG CUNG CẤP DỊCH VỤ HẠ TẦNG ĐÁM MÂY VÀ PHẦN MỀM DẠNG DỊCH VỤ (SAAS)",
+      "default_code_suffix": "HĐCLOUD",
+      "description": "Dành cho dịch vụ cho thuê máy chủ đám mây, lưu trữ dữ liệu, phần mềm SaaS thuê bao định kỳ và tích hợp API Trí tuệ nhân tạo.",
+      "governing_laws": [
+        "Bộ luật Dân sự số 91/2015/QH13 ngày 24 tháng 11 năm 2015 của Quốc hội",
+        "Luật Thương mại số 36/2005/QH11 ngày 14 tháng 6 năm 2005 của Quốc hội (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH ngày 27 tháng 8 năm 2025 của Văn phòng Quốc hội)",
+        "Luật Chuyển đổi số số 148/2025/QH15 ngày 11 tháng 12 năm 2025 của Quốc hội",
+        "Luật Bảo vệ dữ liệu cá nhân số 91/2025/QH15 ngày 26 tháng 6 năm 2025 của Quốc hội",
+        "Luật Trí tuệ nhân tạo số 134/2025/QH15 ngày 10 tháng 12 năm 2025 của Quốc hội",
+        "Luật Giao dịch điện tử số 20/2023/QH15 ngày 22 tháng 6 năm 2023 của Quốc hội"
+      ],
+      "rag_queries": [
+        "hạ tầng số dịch vụ đám mây an toàn thông tin chuyển đổi số Luật Chuyển đổi số 148/2025/QH15",
+        "bảo vệ dữ liệu cá nhân lưu trữ xử lý dữ liệu trên đám mây Luật Bảo vệ dữ liệu cá nhân 91/2025/QH15",
+        "cung cấp và sử dụng hệ thống trí tuệ nhân tạo quyền và nghĩa vụ Luật Trí tuệ nhân tạo 134/2025/QH15",
+        "phạt vi phạm hợp đồng bồi thường thiệt hại miễn trách nhiệm Điều 294 301 302 Luật Thương mại"
+      ],
+      "specific_fields": [
+        {
+          "key": "sla_uptime_and_credit",
+          "label": "Cam kết chất lượng dịch vụ (SLA Uptime) & Cơ chế khấu trừ cước (Service Credit)",
+          "default": "Cam kết độ sẵn sàng hệ thống (Uptime) tối thiểu 99.9%/tháng; nếu thấp hơn mức cam kết, Bên B khấu trừ 10-30% phí thuê bao tháng tiếp theo.",
+          "placeholder": "VD: Cam kết Uptime 99.9%, khấu trừ cước nếu downtime..."
+        },
+        {
+          "key": "data_sovereignty_and_security",
+          "label": "Chủ quyền Dữ liệu, An toàn thông tin & Hoàn trả dữ liệu khi kết thúc hợp đồng",
+          "default": "Toàn bộ dữ liệu lưu trữ trên hệ thống thuộc quyền sở hữu của Bên A; khi chấm dứt hợp đồng, Bên B phải hỗ trợ trích xuất hoàn trả toàn bộ dữ liệu trong 15 ngày và xóa vĩnh viễn bản sao theo Luật 91/2025/QH15.",
+          "placeholder": "VD: Mã hóa AES-256, hoàn trả dữ liệu và xóa sạch khi kết thúc HĐ..."
+        }
+      ],
+      "mandatory_clauses": [
+        "ĐIỀU 1. GÓI DỊCH VỤ ĐÁM MÂY/SAAS VÀ THÔNG SỐ KỸ THUẬT",
+        "ĐIỀU 2. CAM KẾT CHẤT LƯỢNG DỊCH VỤ (SLA UPTIME) VÀ BẢO TRÌ ĐỊNH KỲ",
+        "ĐIỀU 3. CƯỚC PHÍ THUÊ BAO, CHU KỲ ĐỐI SOÁT VÀ THANH TOÁN",
+        "ĐIỀU 4. QUYỀN SỞ HỮU DỮ LIỆU, AN NINH MẠNG VÀ BẢO VỆ DỮ LIỆU CÁ NHÂN",
+        "ĐIỀU 5. TRÁCH NHIỆM VẬN HÀNH HỆ THỐNG SỐ VÀ TRÍ TUỆ NHÂN TẠO (NẾU CÓ)",
+        "ĐIỀU 6. HOÀN TRẢ, DI CHUYỂN VÀ HỦY DỮ LIỆU KHI KẾT THÚC HỢP ĐỒNG",
+        "ĐIỀU 7. CHẾ TÀI VI PHẠM, GIỚI HẠN TRÁCH NHIỆM VÀ GIẢI QUYẾT TRANH CHẤP"
+      ]
+    },
+    "consulting_freelance": {
+      "id": "consulting_freelance",
+      "name": "Hợp đồng Dịch vụ Tư vấn Chuyên môn / Thuê ngoài Cá nhân (Consulting / Freelancer)",
+      "short_title": "🤝 Tư vấn & Thuê ngoài Cá nhân",
+      "contract_title_upper": "HỢP ĐỒNG CUNG ỨNG DỊCH VỤ TƯ VẤN CHUYÊN MÔN",
+      "default_code_suffix": "HĐTV",
+      "description": "Dành cho giao dịch thuê chuyên gia tư vấn độc lập, cố vấn chuyển đổi số/ERP, hoặc thuê cá nhân (Freelancer) thực hiện công việc chuyên môn theo Bộ luật Dân sự.",
+      "governing_laws": [
+        "Bộ luật Dân sự số 91/2015/QH13 ngày 24 tháng 11 năm 2015 của Quốc hội (từ Điều 513 đến Điều 521 về Hợp đồng dịch vụ)",
+        "Luật Sở hữu trí tuệ số 50/2005/QH11 ngày 29 tháng 11 năm 2005 của Quốc hội (hợp nhất tại Văn bản hợp nhất số 55/VBHN-VPQH ngày 15 tháng 01 năm 2026 của Văn phòng Quốc hội)",
+        "Luật Bảo vệ dữ liệu cá nhân số 91/2025/QH15 ngày 26 tháng 6 năm 2025 của Quốc hội"
+      ],
+      "rag_queries": [
+        "hợp đồng dịch vụ quyền và nghĩa vụ của bên cung ứng dịch vụ và bên sử dụng dịch vụ Điều 513 514 515 516 517 518 Bộ luật Dân sự",
+        "trả tiền dịch vụ đơn phương chấm dứt thực hiện hợp đồng dịch vụ Điều 519 520 521 Bộ luật Dân sự",
+        "thỏa thuận phạt vi phạm và bồi thường thiệt hại dân sự Điều 418 419 Bộ luật Dân sự",
+        "bảo mật thông tin và dữ liệu cá nhân Luật Bảo vệ dữ liệu cá nhân 91/2025/QH15"
+      ],
+      "specific_fields": [
+        {
+          "key": "deliverables_and_independency",
+          "label": "Sản phẩm bàn giao cụ thể & Nguyên tắc Độc lập (Không phải Hợp đồng Lao động)",
+          "default": "Các bên xác lập quan hệ cung ứng dịch vụ dân sự độc lập theo Điều 513 Bộ luật Dân sự 2015 (không chịu sự quản lý hành chính như quan hệ lao động); đánh giá dựa trên báo cáo kết quả đầu ra.",
+          "placeholder": "VD: Bàn giao hồ sơ tư vấn, tự chủ thời gian làm việc..."
+        },
+        {
+          "key": "tax_withholding_and_nda",
+          "label": "Khấu trừ Thuế TNCN (nếu cá nhân) & Cam kết Bảo mật (NDA), Không chuyển giao việc",
+          "default": "Bên B phải trực tiếp thực hiện chuyên môn, không được giao cho người khác thực hiện thay nếu chưa có sự đồng ý của Bên A (khoản 1 Điều 517 BLDS 2015); khấu trừ thuế TNCN 10% tại nguồn theo quy định (nếu Bên B là cá nhân không kinh doanh).",
+          "placeholder": "VD: Khấu trừ 10% thuế TNCN tại nguồn, bảo mật NDA 24 tháng..."
+        }
+      ],
+      "mandatory_clauses": [
+        "ĐIỀU 1. NỘI DUNG CÔNG VIỆC TƯ VẤN, KẾT QUẢ ĐẦU RA VÀ BẢN CHẤT QUAN HỆ DỊCH VỤ",
+        "ĐIỀU 2. THỜI HẠN THỰC HIỆN VÀ TIÊU CHÍ NGHIỆM THU BÁO CÁO/SẢN PHẨM",
+        "ĐIỀU 3. THÙ LAO DỊCH VỤ, NGHĨA VỤ KHẤU TRỪ THUẾ VÀ PHƯƠNG THỨC THANH TOÁN",
+        "ĐIỀU 4. QUYỀN VÀ NGHĨA VỤ CỦA BÊN SỬ DỤNG DỊCH VỤ (BÊN A) VÀ BÊN TƯ VẤN (BÊN B)",
+        "ĐIỀU 5. CAM KẾT BẢO MẬT THÔNG TIN (NDA), DỮ LIỆU CÁ NHÂN VÀ QUYỀN SỞ HỮU TRÍ TUỆ",
+        "ĐIỀU 6. PHẠT VI PHẠM, BỒI THƯỜNG THIỆT HẠI VÀ ĐƠN PHƯƠNG CHẤM DỨT (ĐIỀU 520 BLDS)",
+        "ĐIỀU 7. GIẢI QUYẾT TRANH CHẤP VÀ ĐIỀU KHOẢN CHUNG"
+      ]
+    }
+  }
+}

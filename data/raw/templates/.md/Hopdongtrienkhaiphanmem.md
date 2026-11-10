@@ -8,9 +8,13 @@
 
 **Căn cứ:**
 
-- Bộ luật Dân sự năm 2015;
+- Bộ luật Dân sự số 91/2015/QH13 ngày 24 tháng 11 năm 2015;
 
-- Luật Công nghệ thông tin;
+- Luật Thương mại số 36/2005/QH11 (Văn bản hợp nhất số 113/VBHN-VPQH năm 2025);
+
+- Luật Chuyển đổi số số 148/2025/QH15 ngày 11 tháng 12 năm 2025;
+
+- Luật Bảo vệ dữ liệu cá nhân số 91/2025/QH15 ngày 26 tháng 6 năm 2025;
 
 - Các quy định pháp luật có liên quan;
 

@@ -1,12 +1,10 @@
-Người ký: Cổng Thông tin điện tử Chính phủ Email: thongtinchinhphu@chinhphu.vn Cơ quan: Văn phòng Chính phủ Thời gian ký: 03.08.2023 09:03:59 +07:00
-
-CÔNG BÁO/Số 867 + 868/Ngày 30-7-2023
-
 QUỐC HỘI
+
+CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM Độc lập - Tự do - Hạnh phúc
 
 Luật số: 20/2023/QH15
 
-CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM Độc lập - Tự do - Hạnh phúc
+Hà Nội, ngày 22 tháng 6 năm 2023
 
 LUẬT
 
