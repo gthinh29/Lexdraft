@@ -1,10 +1,8 @@
-"""
-modules/shared/llm_client.py
-Client tương tác với Google Gemini API phục vụ sinh văn bản và kiểm soát căn cứ.
-"""
+"""Client kết nối Google Gemini API kèm kiểm soát căn cứ pháp lý (Code Gatekeeper)."""
 
 import logging
 import os
+import re
 import time
 from typing import Any, Dict, List, Optional
 
@@ -12,7 +10,6 @@ from config import Config
 
 logger = logging.getLogger(__name__)
 
-# Default model name & similarity threshold
 DEFAULT_LLM_MODEL = getattr(Config, "LLM_MODEL_NAME", "gemini-3.5-flash")
 DEFAULT_SIMILARITY_THRESHOLD = getattr(Config, "SIMILARITY_THRESHOLD", 0.75)
 
@@ -29,9 +26,7 @@ def _get_api_key() -> str:
 
 
 class GeminiClient:
-    """
-    Wrapper quanh Google Gemini với retry, exponential backoff và kiểm soát hallucination.
-    """
+    """Wrapper gọi Google Gemini API với cơ chế tự động thử lại khi gặp lỗi 429."""
 
     def __init__(
         self,
@@ -46,7 +41,6 @@ class GeminiClient:
         self._init_client()
 
     def _init_client(self):
-        """Khởi tạo client, ưu tiên google.genai hiện đại."""
         try:
             from google import genai
             from google.genai import types
@@ -54,7 +48,6 @@ class GeminiClient:
             self._client = genai.Client(api_key=self.api_key)
             self._is_new_sdk = True
 
-            # Config cho google.genai
             config_args = {"temperature": self.temperature, "top_p": 0.95}
             if self.thinking_budget and self.thinking_budget > 0:
                 try:
@@ -81,9 +74,7 @@ class GeminiClient:
         max_retries: int = 3,
         base_delay: float = 2.0,
     ) -> str:
-        """
-        Gọi Gemini sinh text với cơ chế exponential backoff chống lỗi Rate Limit (429).
-        """
+        """Gọi Gemini sinh văn bản với exponential backoff khi quá giới hạn tần suất."""
         last_exception = None
         for attempt in range(max_retries):
             try:
@@ -107,8 +98,6 @@ class GeminiClient:
                     or "quota" in error_str
                     or "resource_exhausted" in error_str
                 ):
-                    import re
-
                     retry_match = re.search(
                         r"retry in (\d+(?:\.\d+)?)s", str(e), re.IGNORECASE
                     )
@@ -118,7 +107,7 @@ class GeminiClient:
                         sleep_time = base_delay * (2**attempt)
 
                     logger.warning(
-                        "Gemini API rate limit (429/quota). Đang chờ %.1fs trước khi thử lại (lần %d/%d)...",
+                        "Gemini API rate limit (429/quota). Chờ %.1fs trước khi thử lại (lần %d/%d)...",
                         sleep_time,
                         attempt + 1,
                         max_retries,
@@ -142,9 +131,7 @@ class GeminiClient:
 def extract_citations_from_chunks(
     retrieved_chunks: List[Dict[str, Any]],
 ) -> List[Dict[str, Any]]:
-    """
-    Trích xuất metadata chuẩn hóa từ danh sách chunks để tạo danh sách căn cứ trích dẫn.
-    """
+    """Trích xuất metadata chuẩn hóa từ danh sách chunks để tạo danh sách căn cứ trích dẫn."""
     citations = []
     seen = set()
 
@@ -185,17 +172,7 @@ def generate_grounded_response(
     client: Optional[GeminiClient] = None,
     refusal_message: Optional[str] = None,
 ) -> Dict[str, Any]:
-    """
-    Sinh phản hồi được ràng buộc căn cứ pháp lý (Grounded Generation) và chống hallucination.
-
-    Quy trình xử lý (SRS 6.1 & TODO 6.2 -> 6.5):
-        1. Kiểm tra điểm tương đồng (Similarity Threshold):
-           - Nếu danh sách chunks rỗng hoặc điểm score cao nhất < threshold:
-             Lập tức từ chối trả lời để tránh bịa đặt căn cứ.
-        2. Ghép prompt Grounded: Ràng buộc LLM chỉ trả lời bằng căn cứ được cung cấp.
-        3. Gọi Gemini sinh câu trả lời.
-        4. Trả về format: {"answer": str, "citations": list, "refusal": bool}
-    """
+    """Sinh phản hồi được ràng buộc căn cứ pháp lý kèm kiểm tra ngưỡng Cosine (Gatekeeper)."""
     active_threshold = (
         threshold
         if threshold is not None
@@ -208,7 +185,6 @@ def generate_grounded_response(
     )
     active_refusal = refusal_message or default_refusal
 
-    # 6.3: Code logic Threshold
     scores = [c.get("score") for c in retrieved_chunks if c.get("score") is not None]
     max_score = max(scores) if scores else None
 
@@ -228,7 +204,6 @@ def generate_grounded_response(
     ]
 
     if not retrieved_chunks:
-        logger.info("Không có retrieved_chunks nào được cung cấp.")
         return {
             "answer": active_refusal,
             "citations": [],
@@ -247,13 +222,7 @@ def generate_grounded_response(
             },
         }
 
-    # Kiểm tra score nếu chunks có chứa trường score
     if max_score is not None and max_score < active_threshold:
-        logger.info(
-            "Điểm tương đồng cao nhất (%.3f) nhỏ hơn ngưỡng (%.3f). Từ chối sinh câu trả lời.",
-            max_score,
-            active_threshold,
-        )
         return {
             "answer": active_refusal,
             "citations": [],
@@ -272,20 +241,14 @@ def generate_grounded_response(
             },
         }
 
-    # 6.5: Trích xuất metadata tạo citations
     raw_citations = extract_citations_from_chunks(retrieved_chunks)
-
-    # 6.4: Gọi client sinh phản hồi
     if client is None:
         client = GeminiClient()
 
     try:
         answer = client.generate_text(query)
 
-        # Lọc thông minh: Chỉ giữ lại những căn cứ pháp lý THỰC SỰ được LLM trích dẫn trong câu trả lời
         used_citations = []
-        import re
-
         for c in raw_citations:
             article = c.get("article", "")
             art_match = re.search(r"\d+", article)
@@ -297,12 +260,9 @@ def generate_grounded_response(
             if article and article.lower() in answer.lower():
                 used_citations.append(c)
 
-        # Chỉ giữ lại các căn cứ thực sự được LLM trích dẫn trong câu trả lời (nếu không dùng điều nào thì để rỗng)
-        final_citations = used_citations
-
         return {
             "answer": answer,
-            "citations": final_citations,
+            "citations": used_citations,
             "refusal": False,
             "debug_trace": {
                 "model": client.model_name,
@@ -320,7 +280,7 @@ def generate_grounded_response(
                 "retrieved_chunks": chunk_previews,
                 "final_prompt_sent_to_llm": query,
                 "raw_llm_response": answer,
-                "filtered_citations": final_citations,
+                "filtered_citations": used_citations,
             },
         }
     except Exception as e:
@@ -342,7 +302,7 @@ def generate_grounded_response(
 
         return {
             "answer": f"⚠️ **Lỗi hệ thống:** {clean_err}",
-            "citations": [],  # Bắt buộc rỗng khi gặp lỗi, không hiển thị căn cứ khi chưa có phản hồi từ AI
+            "citations": [],
             "refusal": True,
             "debug_trace": {
                 "model": client.model_name if client else DEFAULT_LLM_MODEL,

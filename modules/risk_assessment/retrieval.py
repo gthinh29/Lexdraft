@@ -1,24 +1,26 @@
-"""
-modules/risk_assessment/retrieval.py
-Truy vấn căn cứ pháp luật và mẫu hợp đồng tham chiếu phục vụ đánh giá rủi ro.
-"""
+"""Truy vấn các điều luật liên quan từ law_index phục vụ đánh giá rủi ro hợp đồng."""
 
 import logging
 from pathlib import Path
 from typing import Any, Dict, List
 
 import config
-from modules.shared.embedding import VectorDB
+
+try:
+    from modules.shared.embedding import VectorDB
+except ImportError:
+    VectorDB = None
 
 logger = logging.getLogger(__name__)
 
-# Cache law_index ở module-level (chỉ load 1 lần cho toàn bộ tiến trình)
-_law_db: VectorDB | None = None
+_law_db: Any = None
 
 
-def _get_law_db() -> VectorDB:
+def _get_law_db() -> Any:
     global _law_db
     if _law_db is None:
+        if VectorDB is None:
+            raise RuntimeError("modules.shared.embedding.VectorDB chưa sẵn sàng.")
         index_dir = Path(getattr(config, "FAISS_INDEX_DIR", "data/faiss_index"))
         law_index_path = index_dir / "law_index"
 
@@ -34,17 +36,7 @@ def _get_law_db() -> VectorDB:
 
 
 def find_related_laws(dieu_khoan_text: str, top_k: int = 3) -> List[Dict[str, Any]]:
-    """
-    Truy xuất các điều luật liên quan đến nội dung của 1 Điều khoản hợp đồng.
-
-    Args:
-        dieu_khoan_text: Text của Điều khoản.
-        top_k: Số chunk luật lấy về (SRS 6.1 khuyến nghị top_k=3 để tránh phình token
-               khi phân tích hợp đồng có nhiều điều khoản).
-
-    Returns:
-        Danh sách chunk luật liên quan kèm metadata và score.
-    """
+    """Truy xuất các điều luật liên quan đến nội dung của một điều khoản hợp đồng."""
     db = _get_law_db()
     if db.index is None or db.index.ntotal == 0:
         return []

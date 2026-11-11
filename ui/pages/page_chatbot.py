@@ -8,6 +8,8 @@ from pathlib import Path
 
 import streamlit as st
 
+from ui.components.rag_inspector import render_rag_inspector
+
 try:
     from modules.chatbot_qa import service as chatbot_service
 except ImportError:
@@ -20,24 +22,23 @@ def render():
     """Render giao diện chính của trang Chatbot Hỏi – Đáp (Q&A)."""
     st.subheader("💬 Chatbot Trợ lý Tra cứu Pháp lý (Q&A)")
 
-    # Thẻ trạng thái chế độ Chatbot
+    # Thẻ trạng thái chế độ Chatbot (1 dòng gọn)
     if st.session_state.last_risk_report or st.session_state.upload_file_name:
         src = (
             st.session_state.upload_file_name
             or st.session_state.risk_source_name
             or "Hợp đồng hiện tại"
         )
-        st.info(
-            f"🟢 **Chế độ A — Trợ lý đang theo dõi ngữ cảnh:** **{src}**\n\n"
-            f"Chatbot sẽ ưu tiên đối chiếu đúng file hợp đồng này kết hợp với quy định pháp luật."
+        st.caption(
+            f"🟢 **Chế độ A — Theo ngữ cảnh hợp đồng:** `{src}` (đối chiếu điều khoản + luật hiện hành)."
         )
     else:
         st.caption(
-            "🔵 **Chế độ B — Tra cứu Pháp luật Chung:** Chatbot sẵn sàng giải đáp các quy định pháp luật Thương mại & Dân sự."
+            "🔵 **Chế độ B — Tra cứu Pháp luật Chung:** Dân sự, Thương mại, SHTT, Chuyển đổi số, BVDLCN."
         )
 
     # KHUNG CHAT HISTORY
-    for turn in st.session_state.chat_history_ui:
+    for idx, turn in enumerate(st.session_state.chat_history_ui):
         with st.chat_message(turn["role"]):
             st.markdown(turn["text"])
             if turn.get("citations"):
@@ -51,6 +52,12 @@ def render():
                 )
                 with st.expander("📚 Căn cứ pháp lý trích xuất", expanded=False):
                     st.markdown(cit_md)
+            if turn["role"] == "assistant" and turn.get("debug_trace"):
+                render_rag_inspector(
+                    turn.get("debug_trace"),
+                    title=f"🔍 Minh bạch hóa AI: Xem Prompt & RAG Context (Lượt #{idx // 2 + 1})",
+                    key_prefix=f"chat_inspector_{idx}",
+                )
 
     user_message = st.chat_input(
         "Nhập câu hỏi của bạn về hợp đồng hoặc quy định pháp luật..."
@@ -132,11 +139,20 @@ def render():
                         ):
                             st.markdown(cit_md)
 
+                    debug_trace = result.get("debug_trace")
+                    if debug_trace:
+                        render_rag_inspector(
+                            debug_trace,
+                            title="🔍 Minh bạch hóa AI: Xem Prompt & RAG Context (Lượt hiện tại)",
+                            key_prefix=f"chat_inspector_live_{len(st.session_state.chat_history_ui)}",
+                        )
+
                     st.session_state.chat_history_ui.append(
                         {
                             "role": "assistant",
                             "text": answer,
                             "citations": citations,
+                            "debug_trace": debug_trace,
                         }
                     )
                 except Exception:

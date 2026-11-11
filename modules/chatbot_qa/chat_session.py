@@ -1,19 +1,11 @@
-"""
-modules/chatbot_qa/chat_session.py
-Quản lý phiên hội thoại, lịch sử chat và ngữ cảnh truy vấn của người dùng.
-"""
+"""Quản lý trạng thái phiên hội thoại, lịch sử tin nhắn và chỉ mục hợp đồng tạm thời."""
 
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 
 class ChatSession:
-    """
-    Đại diện cho 1 phiên chat, có thể ở:
-      - Chế độ B (has_contract_context=False): tra cứu luật chung, không có hợp đồng.
-      - Chế độ A (has_contract_context=True): có ngữ cảnh hợp đồng + báo cáo rủi ro,
-        tiếp nối từ Module 1 (Drafting) hoặc Module 2 (Risk Assessment).
-    """
+    """Lưu trữ lịch sử hội thoại và ngữ cảnh hợp đồng của một phiên làm việc."""
 
     def __init__(
         self,
@@ -24,28 +16,13 @@ class ChatSession:
     ):
         self.session_id = session_id
         self.has_contract_context = has_contract_context
-
-        # Các chunk Điều/Khoản của hợp đồng (dùng để build contract_index ephemeral).
         self.contract_chunks: List[Dict[str, Any]] = contract_chunks or []
-
-        # Báo cáo rủi ro từ Module 2 (Phần 8): [{"dieu_khoan":..., "rui_ro":..., "can_cu":[...]}]
         self.risk_report: Optional[List[Dict[str, Any]]] = risk_report
-
-        # VectorDB ephemeral build từ contract_chunks, cache tại đây để không build lại
-        # mỗi lượt hỏi trong cùng 1 phiên (contract_index là "Động - Mỗi phiên" theo SRS 5.1).
-        # Được gán/đọc bởi modules/chatbot_qa/retrieval.py.
         self.contract_vector_db: Optional[Any] = None
-
         self._messages: List[Dict[str, str]] = []
 
     def add_message(self, role: str, text: str) -> None:
-        """
-        Thêm 1 lượt tin nhắn vào lịch sử.
-
-        Args:
-            role: "user" hoặc "model".
-            text: nội dung tin nhắn (không kèm context RAG).
-        """
+        """Thêm một lượt tin nhắn ('user' hoặc 'model') vào lịch sử."""
         if role not in ("user", "model"):
             raise ValueError(
                 f"role không hợp lệ: '{role}' (chỉ nhận 'user' hoặc 'model')."
@@ -60,10 +37,7 @@ class ChatSession:
         )
 
     def get_text_history(self) -> List[Dict[str, str]]:
-        """
-        Trả về lịch sử hội thoại dạng text ngắn gọn (role + text),
-        KHÔNG bao gồm context RAG cũ - đúng theo SRS 6.1.
-        """
+        """Trả về lịch sử hội thoại rút gọn gồm role và text."""
         return [{"role": m["role"], "text": m["text"]} for m in self._messages]
 
     def set_contract_context(
@@ -71,11 +45,7 @@ class ChatSession:
         contract_chunks: List[Dict[str, Any]],
         risk_report: Optional[List[Dict[str, Any]]] = None,
     ) -> None:
-        """
-        Nạp/refresh ngữ cảnh hợp đồng cho phiên (chuyển sang Chế độ A).
-        Reset contract_vector_db cũ (nếu có) để buộc build lại với dữ liệu mới nhất.
-        Nếu truyền dữ liệu rỗng -> Chuyển về Chế độ B (tra cứu luật chung).
-        """
+        """Cập nhật hoặc xóa ngữ cảnh hợp đồng của phiên."""
         if not contract_chunks and not risk_report:
             self.has_contract_context = False
             self.contract_chunks = []

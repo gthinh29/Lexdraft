@@ -1,60 +1,151 @@
-"""
-modules/risk_assessment/service.py
-Service điều phối phân tích rủi ro pháp lý và đối soát điều khoản hợp đồng.
-"""
+"""Điều phối pipeline phân tích rủi ro pháp lý và soạn thảo vá lỗi điều khoản (2-Stage RAG Pipeline)."""
 
 import logging
+import re
 import time
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
 from modules.risk_assessment import law_validity_checker, prompts, retrieval
+from modules.risk_assessment.redraft_builder import (
+    build_redrafted_contract_text,
+    clean_redraft_text,
+    extract_redrafted_clause,
+)
 from modules.shared import chunking, document_reader, llm_client
 
 logger = logging.getLogger(__name__)
+
+__all__ = [
+    "analyze_contract",
+    "stream_analyze_contract",
+    "extract_redrafted_clause",
+    "build_redrafted_contract_text",
+]
+
+
+def _is_risky_text(risk_text: str) -> bool:
+    """Kiểm tra đánh giá của LLM có xác định điều khoản bị rủi ro hay không."""
+    if not risk_text:
+        return False
+    lower = risk_text.lower()
+    if "không trích xuất được" in lower:
+        return False
+    safe_phrases = (
+        "không phát hiện rủi ro",
+        "không có rủi ro",
+        "phù hợp quy định",
+        "phù hợp với quy định",
+        "không vi phạm",
+        "không phát hiện vi phạm",
+    )
+    return not any(p in lower for p in safe_phrases)
+
+
+def _parse_batch_markers(raw_answer: str, marker_prefix: str) -> Dict[int, str]:
+    """Tách các khối `===<marker_prefix>_<N>_KET_QUA===` từ phản hồi batch của LLM."""
+    if not raw_answer:
+        return {}
+    pattern = rf"==={re.escape(marker_prefix)}_(\d+)_KET_QUA==="
+    parts = re.split(pattern, raw_answer, flags=re.IGNORECASE)
+    parsed: Dict[int, str] = {}
+    i = 1
+    while i + 1 < len(parts):
+        try:
+            idx_num = int(parts[i])
+            parsed[idx_num] = parts[i + 1].strip()
+        except ValueError:
+            pass
+        i += 2
+
+    fallback_matches = re.findall(
+        rf"==={re.escape(marker_prefix)}_(\d+)_KET_QUA===(.*?)(?===={re.escape(marker_prefix)}_\d+_KET_QUA===|$)",
+        raw_answer,
+        flags=re.IGNORECASE | re.DOTALL,
+    )
+    for num_str, content in fallback_matches:
+        try:
+            num = int(num_str)
+            if num not in parsed:
+                parsed[num] = content.strip()
+        except ValueError:
+            pass
+    return parsed
+
+
+def _invoke_batch_llm_with_retry(
+    prompt_text: str,
+    retrieved_chunks: List[Dict[str, Any]],
+    total: int,
+    stage_label: str,
+):
+    """Gọi LLM theo lô kèm cơ chế tự động thử lại khi gặp giới hạn hạn mức (429)."""
+    retry_waits = [10, 15, 20, 30, 45, 60]
+    raw_answer = ""
+    debug_trace = None
+    for attempt in range(len(retry_waits) + 1):
+        try:
+            llm_result = llm_client.generate_grounded_response(
+                query=prompt_text,
+                retrieved_chunks=retrieved_chunks,
+                threshold=0.0,
+            )
+            ans = llm_result.get("answer", "")
+            debug_trace = llm_result.get("debug_trace")
+            is_rate = llm_result.get("refusal") and any(
+                k in ans.lower()
+                for k in ("rate", "quota", "429", "quá tải", "hết hạn mức")
+            )
+            if not is_rate:
+                raw_answer = ans
+                break
+            raise RuntimeError(f"Rate limit: {ans}")
+        except Exception as e:
+            if attempt < len(retry_waits):
+                wait = retry_waits[attempt]
+                logger.warning(
+                    "[%s] Lỗi lần %d, chờ %ds: %s", stage_label, attempt + 1, wait, e
+                )
+                yield (
+                    "progress",
+                    {
+                        "message": f"⏳ Rate limit ({stage_label}), thử lại sau {wait}s...",
+                        "index": 0,
+                        "total": total,
+                    },
+                )
+                time.sleep(wait)
+            else:
+                logger.error("[%s] Hết retry: %s", stage_label, e)
+                raw_answer = ""
+    yield ("_llm_done", (raw_answer, debug_trace))
+
+
+def _sync_chatbot_context(
+    session_id: Optional[str],
+    contract_chunks: List[Dict[str, Any]],
+    risk_results: List[Dict[str, Any]],
+) -> None:
+    """Đồng bộ ngữ cảnh hợp đồng và báo cáo rủi ro sang phiên Chatbot Q&A."""
+    if not session_id:
+        return
+    try:
+        from modules.chatbot_qa import service as chatbot_service
+
+        chatbot_service.attach_contract_context(
+            session_id=session_id,
+            contract_chunks=contract_chunks,
+            risk_report=risk_results,
+        )
+    except Exception:
+        logger.exception("Không thể đồng bộ sang Chatbot session %s", session_id)
 
 
 def analyze_contract(
     file_path_or_text: Union[str, Path],
     session_id: Optional[str] = None,
-) -> List[Dict[str, Any]]:
-    """
-    Phân tích rủi ro pháp lý của một hợp đồng (dạng file upload hoặc text thô).
-
-    Quy trình xử lý (SRS 4.2 & Implementation Plan 8C + Tiered Validation):
-        0. [PRE-CHECK] Kiểm tra hiệu lực văn bản 3 tầng (Tiered Validation):
-           - Cấp 1: Đối chiếu danh mục kiểm duyệt (expired_laws.json) — tin cậy 100%.
-           - Cấp 2: Trích xuất từ Điều khoản thi hành của luật mới trong law_index — ~95%.
-           - Cấp 3: LLM Fallback — ~80%, kết quả gắn nhãn "Cần xác minh".
-        1. Đọc nội dung văn bản (hỗ trợ .pdf, .docx hoặc chuỗi text trực tiếp).
-        2. Phân tách hợp đồng thành các Điều/Khoản bằng chunk_by_article().
-        3. Duyệt tuần tự từng Điều:
-           - Truy xuất các điều luật liên quan từ law_index qua retrieval.find_related_laws().
-           - Ghép prompt phân tích rủi ro qua prompts.build_risk_prompt().
-           - Gọi LLM sinh đánh giá có kiểm chứng (Grounded Generation) qua llm_client.
-           - Nghỉ ngắn (1 giây) giữa các điều khoản để phòng ngừa Rate Limit (429).
-        4. Tự động liên kết hợp đồng và báo cáo rủi ro vào Chatbot session (nếu có session_id).
-        5. Trả về dict bao gồm:
-           {
-               "expired_law_alerts": [...],  # Cảnh báo hiệu lực từ Tiered Validation
-               "risk_results": [             # Phân tích rủi ro từng Điều khoản
-                   {
-                       "dieu_khoan": "Điều 1...",
-                       "rui_ro": "Nhận xét rủi ro...",
-                       "can_cu": [{"article": "...", "source": "..."}, ...],
-                   },
-                   ...
-               ]
-           }
-
-    Args:
-        file_path_or_text: Đường dẫn file (str/Path) hoặc toàn bộ chuỗi text hợp đồng.
-        session_id: (Tùy chọn) Mã phiên làm việc để đồng bộ sang module Chatbot.
-
-    Returns:
-        Dict gồm 'expired_law_alerts' (Tiered Validation) và 'risk_results' (phân tích từng Điều).
-    """
-    # 1. Trích xuất text
+) -> Dict[str, Any]:
+    """Phân tích rủi ro pháp lý tuần tự cho một hợp đồng (file hoặc chuỗi văn bản)."""
     path_obj = Path(str(file_path_or_text))
     if path_obj.exists() and path_obj.is_file():
         source_name = path_obj.name
@@ -67,73 +158,47 @@ def analyze_contract(
         logger.warning("Nội dung hợp đồng rỗng, không thể phân tích rủi ro.")
         return {"expired_law_alerts": [], "risk_results": []}
 
-    # 0. [PRE-CHECK] Tiered Validation — Kiểm tra hiệu lực văn bản trước khi phân tích
-    # Lấy sẵn các chunk "điều khoản thi hành" từ law_index để phục vụ Cấp 2
-    hiệu_luc_chunks = retrieval.find_related_laws(
+    hieu_luc_chunks = retrieval.find_related_laws(
         "hiệu lực thi hành bãi bỏ thay thế hết hiệu lực", top_k=10
     )
     expired_law_alerts = law_validity_checker.check_expired_laws(
         contract_text=text,
-        law_index_chunks=hiệu_luc_chunks,
+        law_index_chunks=hieu_luc_chunks,
         enable_llm_fallback=True,
     )
-    if expired_law_alerts:
-        logger.warning(
-            "[Tiered Validation] Phát hiện %d cảnh báo hiệu lực văn bản trong hợp đồng '%s'.",
-            len(expired_law_alerts),
-            source_name,
-        )
-    else:
-        logger.info(
-            "[Tiered Validation] Không phát hiện văn bản hết hiệu lực trong hợp đồng '%s'.",
-            source_name,
-        )
 
-    # 2. Chia chunk theo cấu trúc Điều/Khoản
     contract_chunks = chunking.chunk_by_article(
         text=text,
         source_metadata={"source": source_name},
     )
-
     if not contract_chunks:
-        logger.warning("Không trích xuất được chunk nào từ hợp đồng.")
         return {"expired_law_alerts": expired_law_alerts, "risk_results": []}
 
-    logger.info(
-        "Bắt đầu phân tích rủi ro cho hợp đồng '%s' (%d điều khoản)...",
-        source_name,
-        len(contract_chunks),
-    )
-
     risk_results: List[Dict[str, Any]] = []
-
-    # 3. Phân tích từng Điều
     for idx, chunk in enumerate(contract_chunks, 1):
         content = chunk.get("content", "").strip()
         metadata = chunk.get("metadata", {})
         article_label = metadata.get("article") or f"Điều khoản {idx}"
-
         if not content:
             continue
 
-        # 3.1: Tìm luật liên quan (top_k=3 để tiết kiệm token)
         law_chunks = retrieval.find_related_laws(content, top_k=3)
-
-        # 3.2: Ghép prompt
         prompt = prompts.build_risk_prompt(
             dieu_khoan_text=content,
             law_context=law_chunks,
+            expired_law_alerts=expired_law_alerts,
         )
 
-        # 3.3: Gọi LLM sinh đánh giá có căn cứ
+        debug_trace = None
         try:
             llm_result = llm_client.generate_grounded_response(
                 query=prompt,
                 retrieved_chunks=law_chunks,
-                threshold=0.35,  # Ngưỡng mềm cho phân tích rủi ro để không bỏ sót cảnh báo
+                threshold=0.35,
             )
             risk_text = llm_result.get("answer", "")
             citations = llm_result.get("citations", [])
+            debug_trace = llm_result.get("debug_trace")
         except Exception as e:
             logger.exception("Lỗi khi phân tích rủi ro cho %s: %s", article_label, e)
             risk_text = f"Không thể phân tích điều khoản này do lỗi hệ thống: {str(e)}"
@@ -145,36 +210,15 @@ def analyze_contract(
                 "noi_dung": content,
                 "rui_ro": risk_text,
                 "can_cu": citations,
+                "redrafted_clause": extract_redrafted_clause(risk_text),
+                "local_law_chunks": law_chunks,
+                "debug_trace": debug_trace,
             }
         )
-
-        # Nghỉ 1s phòng thủ rate limit khi hợp đồng có nhiều điều khoản
         if idx < len(contract_chunks):
             time.sleep(1.0)
 
-    # 4. Tự động đồng bộ context sang Chatbot (nếu có session_id)
-    if session_id:
-        try:
-            from modules.chatbot_qa import service as chatbot_service
-
-            chatbot_service.attach_contract_context(
-                session_id=session_id,
-                contract_chunks=contract_chunks,
-                risk_report=risk_results,
-            )
-            logger.info(
-                "Đã đồng bộ context hợp đồng sang Chatbot session: %s", session_id
-            )
-        except Exception:
-            logger.exception(
-                "Không thể tự động đồng bộ sang Chatbot session %s", session_id
-            )
-
-    logger.info(
-        "Hoàn tất phân tích: %d cảnh báo hiệu lực, %d điều khoản được phân tích.",
-        len(expired_law_alerts),
-        len(risk_results),
-    )
+    _sync_chatbot_context(session_id, contract_chunks, risk_results)
     return {
         "expired_law_alerts": expired_law_alerts,
         "risk_results": risk_results,
@@ -186,30 +230,9 @@ def stream_analyze_contract(
     session_id: Optional[str] = None,
     original_name: Optional[str] = None,
 ):
-    """
-    Generator version của analyze_contract — yield kết quả ngay khi từng Điều hoàn tất.
-
-    Mỗi lần yield là một tuple (event_type, payload):
-        - ("meta",   {"total": N, "source": "...", "expired_law_alerts": [...]})
-          → Phát ngay sau khi Tiered Validation và chunking xong.
-        - ("result", {"index": i, "total": N, <risk dict>})
-          → Phát sau mỗi điều khoản được phân tích xong.
-        - ("done",   {"risk_results": [...], "expired_law_alerts": [...]})
-          → Phát cuối cùng kèm đồng bộ Chatbot context.
-
-    Cách dùng trong Streamlit:
-        for event, data in stream_analyze_contract(path):
-            if event == "meta":
-                ...hiện banner expired_alerts...
-            elif event == "result":
-                ...append và re-render...
-            elif event == "done":
-                ...lưu session state...
-    """
-    # 1. Trích xuất text
+    """Phân tích rủi ro hợp đồng 2 pha theo luồng sự kiện (Stage 1: Rà soát -> Stage 2: Vá lỗi Redline)."""
     path_obj = Path(str(file_path_or_text))
     if path_obj.exists() and path_obj.is_file():
-        # Dùng tên gốc nếu được truyền vào, không hiện tên tmp
         source_name = original_name or path_obj.name
         text = document_reader.read_document(path_obj)
     else:
@@ -217,7 +240,6 @@ def stream_analyze_contract(
         text = str(file_path_or_text)
 
     if not text.strip():
-        logger.warning("[stream] Nội dung hợp đồng rỗng.")
         yield (
             "error",
             {
@@ -228,22 +250,19 @@ def stream_analyze_contract(
         )
         return
 
-    # 0. Tiered Validation
     hieu_luc_chunks = retrieval.find_related_laws(
         "hiệu lực thi hành bãi bỏ thay thế hết hiệu lực", top_k=10
     )
     expired_law_alerts = law_validity_checker.check_expired_laws(
         contract_text=text,
         law_index_chunks=hieu_luc_chunks,
-        enable_llm_fallback=False,  # Tắt LLM fallback để tiết kiệm quota (Cấp 1+2 đủ)
+        enable_llm_fallback=False,
     )
 
-    # 2. Chunking
     contract_chunks = chunking.chunk_by_article(
         text=text,
         source_metadata={"source": source_name},
     )
-
     total = len(contract_chunks)
     yield (
         "meta",
@@ -258,9 +277,6 @@ def stream_analyze_contract(
         yield ("done", {"expired_law_alerts": expired_law_alerts, "risk_results": []})
         return
 
-    risk_results: List[Dict[str, Any]] = []
-
-    # 3. Thu thập law_chunks cho TẤT CẢ điều khoản
     yield (
         "progress",
         {"message": "🔍 Đang truy xuất căn cứ pháp lý...", "index": 0, "total": total},
@@ -288,19 +304,19 @@ def stream_analyze_contract(
         yield ("done", {"expired_law_alerts": expired_law_alerts, "risk_results": []})
         return
 
-    # 4. Gọi LLM cho toàn bộ hợp đồng (Batch mode)
     yield (
         "progress",
         {
-            "message": f"🤖 Đang phân tích {len(articles_data)} điều khoản...",
+            "message": f"🤖 Bước 1/2: Đang rà soát rủi ro {len(articles_data)} điều khoản...",
             "index": 0,
             "total": total,
         },
     )
 
-    batch_prompt = prompts.build_batch_risk_prompt(articles_data, expired_law_alerts)
+    batch_risk_prompt = prompts.build_batch_risk_prompt(
+        articles_data, expired_law_alerts
+    )
 
-    # Gộp tất cả law_chunks để trích xuất citations
     all_law_chunks: List[Dict] = []
     seen = set()
     for art in articles_data:
@@ -310,114 +326,106 @@ def stream_analyze_contract(
                 seen.add(key)
                 all_law_chunks.append(lc)
 
-    RETRY_WAITS = [10, 15, 20, 30, 45, 60]
     raw_answer = ""
-    for attempt in range(len(RETRY_WAITS) + 1):
-        try:
-            llm_result = llm_client.generate_grounded_response(
-                query=batch_prompt,
-                retrieved_chunks=all_law_chunks,
-                threshold=0.0,  # Batch mode: không dùng threshold lọc, LLM đã có đủ context
-            )
-            # Kiểm tra rate limit
-            ans = llm_result.get("answer", "")
-            is_rate = llm_result.get("refusal") and any(
-                k in ans.lower()
-                for k in ("rate", "quota", "429", "quá tải", "hết hạn mức")
-            )
-            if not is_rate:
-                raw_answer = ans
-                break
-            raise RuntimeError(f"Rate limit: {ans}")
-        except Exception as e:
-            if attempt < len(RETRY_WAITS):
-                wait = RETRY_WAITS[attempt]
-                logger.warning("[batch] Lỗi lần %d, chờ %ds: %s", attempt + 1, wait, e)
-                yield (
-                    "progress",
-                    {
-                        "message": f"⏳ Rate limit, thử lại sau {wait}s (lần {attempt + 1}/{len(RETRY_WAITS)})...",
-                        "index": 0,
-                        "total": total,
-                    },
-                )
-                time.sleep(wait)
-            else:
-                logger.error("[batch] Hết retry: %s", e)
-                raw_answer = ""
+    batch_debug_trace = None
+    for ev_type, payload in _invoke_batch_llm_with_retry(
+        batch_risk_prompt, all_law_chunks, total, "batch_risk"
+    ):
+        if ev_type == "_llm_done":
+            raw_answer, batch_debug_trace = payload
+        else:
+            yield (ev_type, payload)
 
-    # 5. Parse kết quả — tách theo ===DIEU_N_KET_QUA===
-    import re
+    parsed = _parse_batch_markers(raw_answer, "DIEU")
 
-    # Primary parse: split produces ["preamble","1","text1","2","text2",...]
-    parts = re.split(r"===DIEU_(\d+)_KET_QUA===", raw_answer, flags=re.IGNORECASE)
-    parsed: Dict[int, str] = {}
-    i = 1
-    while i + 1 < len(parts):
-        try:
-            idx_num = int(parts[i])
-            parsed[idx_num] = parts[i + 1].strip()
-        except ValueError:
-            pass
-        i += 2
-
-    # Fallback: dùng findall để bắt tất cả block kể cả khi LLM không xuống dòng
-    # Tìm mọi cặp (số, nội dung) trong raw_answer
-    if len(parsed) < len(articles_data):
-        fallback_matches = re.findall(
-            r"===DIEU_(\d+)_KET_QUA===(.*?)(?====DIEU_\d+_KET_QUA===|$)",
-            raw_answer,
-            flags=re.IGNORECASE | re.DOTALL,
-        )
-        for num_str, content in fallback_matches:
-            try:
-                num = int(num_str)
-                if num not in parsed:
-                    parsed[num] = content.strip()
-            except ValueError:
-                pass
-
-    # 6. Yield kết quả từng Điều (parse xong là yield ngay)
-    all_citations = llm_client.extract_citations_from_chunks(all_law_chunks)
+    risky_for_redraft: List[Dict[str, Any]] = []
+    per_article_eval: List[Dict[str, Any]] = []
     for seq, art in enumerate(articles_data, 1):
         risk_text = parsed.get(
             seq, "Không phát hiện rủi ro. Điều khoản phù hợp với quy định pháp luật."
         )
-        # Lọc citations thực sự được LLM đề cập trong đoạn đánh giá này
-        used = [
-            c
-            for c in all_citations
-            if c.get("article", "") and c["article"].lower() in risk_text.lower()
-        ]
+        local_citations = llm_client.extract_citations_from_chunks(
+            art.get("law_chunks", [])
+        )
+        used = []
+        for c in local_citations:
+            article_lbl = c.get("article", "")
+            art_match = re.search(r"\d+", article_lbl)
+            if art_match:
+                art_num = art_match.group()
+                if re.search(rf"\b[Đđ]iều\s+{art_num}\b", risk_text):
+                    used.append(c)
+                    continue
+            if article_lbl and article_lbl.lower() in risk_text.lower():
+                used.append(c)
+
+        per_article_eval.append(
+            {"seq": seq, "art": art, "risk_text": risk_text, "used": used}
+        )
+        if _is_risky_text(risk_text):
+            risky_for_redraft.append(
+                {
+                    "seq": seq,
+                    "label": art["label"],
+                    "content": art["content"],
+                    "risk_summary": risk_text,
+                    "law_chunks": art.get("law_chunks", []),
+                }
+            )
+
+    redrafted_map: Dict[int, str] = {}
+    redraft_debug_trace = None
+    if risky_for_redraft:
+        yield (
+            "progress",
+            {
+                "message": f"✍️ Bước 2/2: Đang soạn thảo vá lỗi cho {len(risky_for_redraft)} điều khoản rủi ro...",
+                "index": 0,
+                "total": total,
+            },
+        )
+        batch_redraft_prompt = prompts.build_batch_redraft_prompt(
+            risky_for_redraft, expired_law_alerts
+        )
+        redraft_raw = ""
+        for ev_type, payload in _invoke_batch_llm_with_retry(
+            batch_redraft_prompt, all_law_chunks, total, "batch_redraft"
+        ):
+            if ev_type == "_llm_done":
+                redraft_raw, redraft_debug_trace = payload
+            else:
+                yield (ev_type, payload)
+        redrafted_map = {
+            k: clean_redraft_text(v)
+            for k, v in _parse_batch_markers(redraft_raw, "REDRAFT").items()
+        }
+
+    risk_results: List[Dict[str, Any]] = []
+    for entry in per_article_eval:
+        seq = entry["seq"]
+        art = entry["art"]
+        risk_text = entry["risk_text"]
+        redrafted_clause = redrafted_map.get(seq) or extract_redrafted_clause(risk_text)
+
         item = {
             "dieu_khoan": art["label"],
             "noi_dung": art["content"],
             "rui_ro": risk_text,
-            "can_cu": used,
+            "can_cu": entry["used"],
+            "redrafted_clause": redrafted_clause,
+            "local_law_chunks": art.get("law_chunks", []),
         }
         risk_results.append(item)
         yield ("result", {"index": seq, "total": len(articles_data), **item})
 
-    # 7. Đồng bộ Chatbot context
-    if session_id:
-        try:
-            from modules.chatbot_qa import service as chatbot_service
-
-            chatbot_service.attach_contract_context(
-                session_id=session_id,
-                contract_chunks=contract_chunks,
-                risk_report=risk_results,
-            )
-        except Exception:
-            logger.exception(
-                "[stream] Không thể đồng bộ Chatbot session %s", session_id
-            )
-
+    _sync_chatbot_context(session_id, contract_chunks, risk_results)
     yield (
         "done",
         {
             "expired_law_alerts": expired_law_alerts,
             "risk_results": risk_results,
             "contract_chunks": contract_chunks,
+            "debug_trace": batch_debug_trace,
+            "redraft_debug_trace": redraft_debug_trace,
         },
     )

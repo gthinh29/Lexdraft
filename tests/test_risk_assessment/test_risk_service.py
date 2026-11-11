@@ -32,6 +32,7 @@ def patched_risk_deps(sample_law_chunks, sample_contract_text):
 
     with (
         patch("modules.risk_assessment.service.llm_client", mock_llm),
+        patch("modules.risk_assessment.service.time.sleep", return_value=None),
         patch(
             "modules.risk_assessment.retrieval.find_related_laws", mock_retrieval_find
         ),
@@ -195,3 +196,72 @@ class TestStreamAnalyzeContract:
         )
         meta_data = [e for e in events if e[0] == "meta"][0][1]
         assert meta_data["source"] == "my_contract.docx"
+
+
+class TestRiskToRedraft:
+    def test_extract_redrafted_clause_parses_redline(self):
+        from modules.risk_assessment.service import extract_redrafted_clause
+
+        sample = (
+            "- **Mức độ & Nhận diện rủi ro**: [RỦI RO CAO]\n"
+            "- **Đề xuất soạn lại điều khoản (Redline)**: Điều 3. Phạt vi phạm 8% giá trị phần nghĩa vụ bị vi phạm."
+        )
+        res = extract_redrafted_clause(sample)
+        assert "8% giá trị phần nghĩa vụ bị vi phạm" in res
+
+    def test_build_redrafted_contract_text_replaces_risky_clause(self):
+        from modules.risk_assessment.service import build_redrafted_contract_text
+
+        risk_results = [
+            {
+                "dieu_khoan": "Điều 1",
+                "noi_dung": "ĐIỀU 1. ĐỐI TƯỢNG\nThiết kế phần mềm.",
+                "rui_ro": "Không phát hiện rủi ro pháp lý rõ ràng.",
+                "redrafted_clause": "",
+            },
+            {
+                "dieu_khoan": "Điều 2",
+                "noi_dung": "ĐIỀU 2. PHẠT VI PHẠM\nPhạt 20% tổng giá trị hợp đồng.",
+                "rui_ro": "- **Đề xuất soạn lại điều khoản (Redline)**: ĐIỀU 2. PHẠT VI PHẠM\nPhạt 8% giá trị phần nghĩa vụ bị vi phạm theo Điều 301 Luật Thương mại.",
+                "redrafted_clause": "ĐIỀU 2. PHẠT VI PHẠM\nPhạt 8% giá trị phần nghĩa vụ bị vi phạm theo Điều 301 Luật Thương mại.",
+            },
+        ]
+        expired = [
+            {
+                "law_ref": "Luật Công nghệ thông tin 67/2006/QH11",
+                "status": "Hết hiệu lực",
+                "replaced_by": "Luật Chuyển đổi số số 148/2025/QH15",
+            }
+        ]
+        full_text = build_redrafted_contract_text(risk_results, expired)
+        assert "Luật Chuyển đổi số số 148/2025/QH15" in full_text
+        assert "Phạt 8% giá trị phần nghĩa vụ bị vi phạm" in full_text
+        assert "Phạt 20% tổng giá trị hợp đồng" not in full_text
+
+    def test_separated_risk_and_redraft_prompts(self):
+        from modules.risk_assessment import prompts
+
+        risk_prompt = prompts.build_batch_risk_prompt(
+            [
+                {
+                    "label": "Điều 3",
+                    "content": "Điều 3. Phạt 20%.",
+                    "law_chunks": [],
+                }
+            ]
+        )
+        redraft_prompt = prompts.build_batch_redraft_prompt(
+            [
+                {
+                    "seq": 1,
+                    "label": "Điều 3",
+                    "content": "Điều 3. Phạt 20%.",
+                    "risk_summary": "Vượt trần 8% Điều 301 LTM.",
+                    "law_chunks": [],
+                }
+            ]
+        )
+        assert "===DIEU_1_KET_QUA===" in risk_prompt
+        assert "===REDRAFT_" not in risk_prompt
+        assert "===REDRAFT_1_KET_QUA===" in redraft_prompt
+        assert "===DIEU_1_KET_QUA===" not in redraft_prompt

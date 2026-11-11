@@ -11,8 +11,62 @@ CSS_STYLES = """
 
 html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 
-/* Main App background */
+/* Compact SaaS Typography Scale (Tránh chữ quá to mặc định của Streamlit) */
+[data-testid="stMarkdownContainer"] p,
+[data-testid="stMarkdownContainer"] li,
+[data-testid="stMarkdownContainer"] td,
+[data-testid="stMarkdownContainer"] th {
+    font-size: 0.85rem !important;
+    line-height: 1.5 !important;
+}
+[data-testid="stMarkdownContainer"] h1 { font-size: 1.3rem !important; margin: 4px 0 !important; }
+[data-testid="stMarkdownContainer"] h2 { font-size: 1.1rem !important; margin: 4px 0 !important; }
+[data-testid="stMarkdownContainer"] h4 { font-size: 0.92rem !important; margin: 4px 0 !important; }
+[data-testid="stMarkdownContainer"] h5 { font-size: 0.86rem !important; margin: 4px 0 !important; }
+[data-testid="stCaptionContainer"] p { font-size: 0.76rem !important; line-height: 1.4 !important; }
+[data-testid="stWidgetLabel"] p,
+.stCheckbox label p {
+    font-size: 0.8rem !important;
+    margin-bottom: 2px !important;
+}
+.stTextInput input,
+.stTextArea textarea,
+[data-baseweb="select"] div {
+    font-size: 0.82rem !important;
+}
+[data-testid="stExpander"] summary p {
+    font-size: 0.82rem !important;
+    font-weight: 600 !important;
+}
+[data-testid="stMetricValue"] {
+    font-size: 1.2rem !important;
+}
+[data-testid="stMetricLabel"] p {
+    font-size: 0.74rem !important;
+}
+[data-testid="stCode"] pre,
+[data-testid="stCode"] code {
+    font-size: 0.76rem !important;
+    line-height: 1.45 !important;
+}
+
+/* Main App background & compact viewport spacing */
 .stApp { background-color: #0b1329; }
+header[data-testid="stHeader"] {
+    background: transparent !important;
+    height: 2.8rem !important;
+}
+.block-container,
+[data-testid="stMainBlockContainer"] {
+    padding-top: 3.3rem !important;
+    padding-bottom: 0.75rem !important;
+    padding-left: 1.6rem !important;
+    padding-right: 1.6rem !important;
+    max-width: 100% !important;
+}
+[data-testid="stVerticalBlock"] {
+    gap: 0.5rem !important;
+}
 
 /* Sidebar */
 section[data-testid="stSidebar"] {
@@ -21,8 +75,8 @@ section[data-testid="stSidebar"] {
 }
 section[data-testid="stSidebar"] * { color: #e2e8f0 !important; }
 section[data-testid="stSidebar"] .stRadio label {
-    padding: 10px 14px; border-radius: 8px; cursor: pointer; transition: all 0.2s ease;
-    font-weight: 500; font-size: 0.9rem; margin-bottom: 2px;
+    padding: 7px 11px !important; border-radius: 7px; cursor: pointer; transition: all 0.2s ease;
+    font-weight: 500; font-size: 0.82rem !important; margin-bottom: 1px;
 }
 section[data-testid="stSidebar"] .stRadio label:hover {
     background: #1e293b;
@@ -30,8 +84,8 @@ section[data-testid="stSidebar"] .stRadio label:hover {
 
 /* Page Subheaders */
 h3 {
-    font-size: 1.25rem !important; font-weight: 700 !important; color: #f8fafc !important;
-    margin-bottom: 16px !important; letter-spacing: -0.01em !important;
+    font-size: 1.02rem !important; font-weight: 700 !important; color: #f8fafc !important;
+    margin-top: 0 !important; margin-bottom: 4px !important; letter-spacing: -0.01em !important;
 }
 
 /* System Header Banner */
@@ -105,34 +159,34 @@ h3 {
     background-color: #ffffff !important;
     color: #1e293b !important;
     font-family: 'Times New Roman', Times, serif !important;
-    padding: 55px 75px !important;
-    margin: 15px auto !important;
+    padding: 26px 36px !important;
+    margin: 2px auto !important;
     max-width: 920px !important;
     border-radius: 4px !important;
-    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.45), 0 0 1px rgba(0, 0, 0, 0.2) !important;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45), 0 0 1px rgba(0, 0, 0, 0.2) !important;
     border: 1px solid #cbd5e1 !important;
-    line-height: 1.65 !important;
-    max-height: 750px !important;
+    line-height: 1.5 !important;
+    max-height: 500px !important;
     overflow-y: auto !important;
 }
 .a4-paper-container p, .a4-paper-container div, .a4-paper-container td, .a4-paper-container li {
     color: #1e293b !important;
     font-family: 'Times New Roman', Times, serif !important;
-    font-size: 1.05rem !important;
-    line-height: 1.65 !important;
+    font-size: 0.86rem !important;
+    line-height: 1.5 !important;
 }
 .a4-paper-container p {
     text-align: justify !important;
-    text-indent: 2em !important;
-    margin-bottom: 8px !important;
+    text-indent: 1.6em !important;
+    margin-bottom: 6px !important;
 }
 .a4-paper-container h1, .a4-paper-container .contract-title {
     text-align: center !important;
-    font-size: 1.4rem !important;
+    font-size: 1.1rem !important;
     font-weight: bold !important;
     color: #0f172a !important;
     text-transform: uppercase !important;
-    margin: 24px 0 6px 0 !important;
+    margin: 14px 0 4px 0 !important;
     display: block !important;
     width: 100% !important;
     text-indent: 0 !important;
@@ -142,9 +196,9 @@ h3 {
 .a4-paper-container .contract-number {
     text-align: center !important;
     font-style: italic !important;
-    font-size: 1.02rem !important;
+    font-size: 0.85rem !important;
     color: #334155 !important;
-    margin: 0 0 20px 0 !important;
+    margin: 0 0 12px 0 !important;
     display: block !important;
     width: 100% !important;
     text-indent: 0 !important;
@@ -153,11 +207,11 @@ h3 {
 }
 .a4-paper-container h2, .a4-paper-container h3, .a4-paper-container h4, .a4-paper-container h5, .a4-paper-container h6 {
     text-align: left !important;
-    font-size: 1.1rem !important;
+    font-size: 0.92rem !important;
     font-weight: bold !important;
     color: #0f172a !important;
     text-transform: uppercase !important;
-    margin: 18px 0 6px 0 !important;
+    margin: 12px 0 4px 0 !important;
     font-family: 'Times New Roman', Times, serif !important;
 }
 .a4-paper-container ul, .a4-paper-container ol {
@@ -246,16 +300,16 @@ h3 {
 
 /* Custom Tabs Styling */
 .stTabs [data-baseweb="tab-list"] {
-    gap: 6px;
+    gap: 4px;
     background-color: #0f172a;
-    padding: 6px;
-    border-radius: 10px;
+    padding: 4px;
+    border-radius: 8px;
     border: 1px solid #1e293b;
 }
 .stTabs [data-baseweb="tab"] {
-    height: 38px;
+    height: 32px;
     border-radius: 6px;
-    font-size: 0.82rem;
+    font-size: 0.78rem !important;
     font-weight: 600;
     color: #94a3b8;
     background-color: transparent;
@@ -379,17 +433,20 @@ h3 {
     border-radius: 10px !important;
 }
 /* Uniform Streamlit Buttons */
-div[data-testid="stButton"] > button {
-    height: 44px !important;
-    min-height: 44px !important;
-    max-height: 44px !important;
+div[data-testid="stButton"] > button,
+div[data-testid="stDownloadButton"] > button,
+div[data-testid="stFormSubmitButton"] > button,
+div[data-testid="stPopover"] > button {
+    height: 34px !important;
+    min-height: 34px !important;
+    max-height: 34px !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    font-size: 0.88rem !important;
+    font-size: 0.79rem !important;
     font-weight: 600 !important;
-    border-radius: 8px !important;
-    padding: 0 16px !important;
+    border-radius: 7px !important;
+    padding: 0 10px !important;
     margin: 0 !important;
     transition: all 0.2s ease !important;
 }

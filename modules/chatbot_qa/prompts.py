@@ -1,175 +1,44 @@
-"""
-modules/chatbot_qa/prompts.py
-Định nghĩa các mẫu prompt cho chatbot tư vấn pháp lý và giải đáp điều khoản.
-"""
+"""Mẫu Prompt cho Chatbot tư vấn pháp lý: Chế độ A (Có ngữ cảnh Hợp đồng) & Chế độ B (Tra cứu Luật chung)."""
 
 from typing import Any, Dict, List, Optional
 
-CHATBOT_BASE_INSTRUCTION = (
-    "Bạn là chuyên gia tư vấn pháp lý về hợp đồng dịch vụ tại Việt Nam.\n\n"
-    "QUY TẮC BẮT BUỘC VỀ CĂN CỨ PHÁP LÝ (CHỐNG HALLUCINATION):\n"
-    "1. CHỈ sử dụng thông tin và quy định có trong phần CĂN CỨ PHÁP LÝ dưới đây để trả lời câu hỏi. TUYỆT ĐỐI KHÔNG tự bịa đặt điều luật không có trong CĂN CỨ.\n"
-    "2. VỚI CÂU HỎI KHÁI NIỆM HOẶC TỔNG QUAN VỀ MỘT ĐẠO LUẬT (Ví dụ: 'Luật Thương mại là gì?', 'Bộ luật Dân sự là gì?'):\n"
-    "   - Trong kỹ thuật lập pháp, các đạo luật không có điều khoản định nghĩa danh từ riêng, mà bản chất của luật được xác định qua thông tin định danh (Tên luật, số hiệu, ngày ban hành trong tiêu đề/metadata của CĂN CỨ) kết hợp với Điều 1 (Phạm vi điều chỉnh), Điều 2 (Đối tượng áp dụng), Điều 3 (Giải thích từ ngữ) nếu có trong CĂN CỨ.\n"
-    "   - Khi CĂN CỨ đã có thông tin về đạo luật đó, BẮT BUỘC phải sử dụng thông tin định danh cùng Điều 1, Điều 2 và các điều khoản có trong CĂN CỨ để giải thích rõ ràng bản chất đạo luật cho người dùng. Tuyệt đối KHÔNG từ chối máy móc.\n"
-    "3. KHI THỰC SỰ KHÔNG CÓ HOẶC KHÔNG ĐỦ CĂN CỨ PHÁP LÝ ĐỂ TRẢ LỜI CÂU HỎI:\n"
-    "   - BẮT BUỘC phải từ chối trả lời một cách lịch sự, nhã nhặn, chuyên nghiệp:\n"
-    "     'Hiện tại trong cơ sở dữ liệu pháp luật về hợp đồng dịch vụ của hệ thống chưa có quy định về vấn đề này. Bạn vui lòng tra cứu thêm các văn bản pháp luật chuyên ngành liên quan hoặc tham vấn chuyên gia pháp lý.'\n"
-    "   - TUYỆT ĐỐI KHÔNG dùng các câu máy móc cộc lốc như 'Thông tin trong CĂN CỨ không có...'.\n\n"
-    "QUY TẮC TRÍCH DẪN PHÁP LÝ BẮT BUỘC:\n"
-    "1. TUYỆT ĐỐI KHÔNG trích dẫn tên file kỹ thuật (ví dụ: cấm dùng các từ như .md, .docx, VBHN_Luatthuongmai2025.md) trong câu trả lời.\n"
-    "2. NGUYÊN TẮC THỨ BẬC: Mọi viện dẫn điều khoản BẮT BUỘC tuân thủ đúng thứ bậc: Điểm → Khoản → Điều → Tên văn bản (Ví dụ: 'theo quy định tại khoản 1 Điều 301...').\n"
-    "3. ĐỐI VỚI VĂN BẢN LUẬT THÔNG THƯỜNG (không phải văn bản hợp nhất):\n"
-    "   - Lần đầu: [Điểm/Khoản/Điều nếu có] [Tên Luật] số [số hiệu] ngày [ngày ban hành] của Quốc hội (Ví dụ: 'Điều 418 Bộ luật Dân sự số 91/2015/QH13 ngày 24 tháng 11 năm 2015 của Quốc hội').\n"
-    "   - Các lần sau: Trích dẫn bình thường, rút gọn: '[Điểm/Khoản nếu có] Điều [X] [Tên Luật] số [số hiệu]' (Ví dụ: 'Điều 418 Bộ luật Dân sự số 91/2015/QH13'). Tuyệt đối KHÔNG ghi VBHN cho các văn bản này.\n"
-    "4. NẾU LÀ VĂN BẢN HỢP NHẤT (chỉ áp dụng khi văn bản nguồn được chú thích là VBHN):\n"
-    "   - Lần đầu: BẮT BUỘC ghi đầy đủ thông tin luật gốc và thông tin VBHN: [Điểm/Khoản/Điều nếu có] [Tên Luật] số [số hiệu] ngày [ngày ban hành] của Quốc hội (hợp nhất tại Văn bản hợp nhất số [số VBHN] ngày [ngày ký VBHN] của Văn phòng Quốc hội).\n"
-    "     (Ví dụ: 'Điều 301 Luật Thương mại số 36/2005/QH11 ngày 14 tháng 6 năm 2005 của Quốc hội (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH ngày 27 tháng 8 năm 2025 của Văn phòng Quốc hội)').\n"
-    "   - Các lần sau: Trích dẫn như bình thường (số Điều lấy chuẩn theo VBHN), rút gọn ngày tháng: '[Điểm/Khoản nếu có] Điều [X] [Tên Luật] số [số hiệu] (hợp nhất tại Văn bản hợp nhất số [số VBHN])' (Ví dụ: 'Điều 301 Luật Thương mại số 36/2005/QH11 (hợp nhất tại Văn bản hợp nhất số 113/VBHN-VPQH)')."
+from modules.shared.legal_rules import (
+    STANDARD_LEGAL_CITATION_RULES,
+    format_chat_context_chunks,
+    format_chat_history,
+    format_chat_risk_report,
 )
 
-# Chỉ lấy vài lượt gần nhất khi ghép vào prompt, tránh phình token (SRS 6.1).
 MAX_HISTORY_TURNS_IN_PROMPT = 6
 
+CHATBOT_BASE_INSTRUCTION = f"""Bạn là chuyên gia tư vấn pháp lý về hợp đồng dịch vụ tại Việt Nam.
 
-def _format_context_chunks(chunks: List[Dict[str, Any]]) -> str:
-    if not chunks:
-        return "Không có căn cứ nào được tìm thấy."
+QUY TẮC BẮT BUỘC VỀ CĂN CỨ PHÁP LÝ (CHỐNG HALLUCINATION):
+1. CHỈ sử dụng thông tin và quy định có trong phần CĂN CỨ PHÁP LÝ dưới đây để trả lời câu hỏi. TUYỆT ĐỐI KHÔNG tự bịa đặt điều luật không có trong CĂN CỨ.
+2. VỚI CÂU HỎI KHÁI NIỆM HOẶC TỔNG QUAN VỀ MỘT ĐẠO LUẬT (Ví dụ: 'Luật Thương mại là gì?', 'Bộ luật Dân sự là gì?'):
+   - Trong kỹ thuật lập pháp, các đạo luật không có điều khoản định nghĩa danh từ riêng, mà bản chất của luật được xác định qua thông tin định danh (Tên luật, số hiệu, ngày ban hành trong tiêu đề/metadata của CĂN CỨ) kết hợp với Điều 1 (Phạm vi điều chỉnh), Điều 2 (Đối tượng áp dụng), Điều 3 (Giải thích từ ngữ) nếu có trong CĂN CỨ.
+   - Khi CĂN CỨ đã có thông tin về đạo luật đó, BẮT BUỘC phải sử dụng thông tin định danh cùng Điều 1, Điều 2 và các điều khoản có trong CĂN CỨ để giải thích rõ ràng bản chất đạo luật cho người dùng. Tuyệt đối KHÔNG từ chối máy móc.
+3. KHI THỰC SỰ KHÔNG CÓ HOẶC KHÔNG ĐỦ CĂN CỨ PHÁP LÝ ĐỂ TRẢ LỜI CÂU HỎI:
+   - BẮT BUỘC phải từ chối trả lời một cách lịch sự, nhã nhặn, chuyên nghiệp:
+     'Hiện tại trong cơ sở dữ liệu pháp luật về hợp đồng dịch vụ của hệ thống chưa có quy định về vấn đề này. Bạn vui lòng tra cứu thêm các văn bản pháp luật chuyên ngành liên quan hoặc tham vấn chuyên gia pháp lý.'
+   - TUYỆT ĐỐI KHÔNG dùng các câu máy móc cộc lốc như 'Thông tin trong CĂN CỨ không có...'.
 
-    contract_parts = []
-    law_parts = []
+QUY TẮC TRÌNH BÀY SÚC TÍCH (UX TỐI ƯU):
+- Đi thẳng vào kết luận và gạch đầu dòng ngắn gọn (**tối đa 100–160 từ**, trừ khi người dùng yêu cầu phân tích chi tiết).
+- KHÔNG lặp lại nguyên văn câu hỏi, KHÔNG viết mở bài hay kết luận xã giao dài dòng.
 
-    for chunk in chunks:
-        metadata = chunk.get("metadata", {})
-        is_contract = metadata.get("index") == "contract_index" or any(
-            str(metadata.get("source", "")).endswith(ext)
-            for ext in (".pdf", ".docx", ".txt", ".md")
-        )
-        article = metadata.get("article") or metadata.get("article_number") or "N/A"
-        law_name = metadata.get("law_name", "")
-        law_number = metadata.get("law_number", "")
-        issued_date = metadata.get("issued_date", "")
-        is_consolidated = metadata.get("is_consolidated", False)
-        vbhn_number = metadata.get("vbhn_number", "")
-        vbhn_date = metadata.get("vbhn_date", "")
+{STANDARD_LEGAL_CITATION_RULES}"""
 
-        if is_contract:
-            source_label = metadata.get("source") or "Văn bản Hợp đồng"
-            contract_parts.append(
-                f"[{article} - {source_label}]\n{chunk.get('content', '')}"
-            )
-        else:
-            if law_name and law_number:
-                source_label = f"{law_name} số {law_number}"
-                if issued_date:
-                    source_label += f" ngày {issued_date} của Quốc hội"
-                if is_consolidated and vbhn_number:
-                    if vbhn_date:
-                        source_label += f" (hợp nhất tại Văn bản hợp nhất số {vbhn_number} ngày {vbhn_date} của Văn phòng Quốc hội)"
-                    else:
-                        source_label += (
-                            f" (hợp nhất tại Văn bản hợp nhất số {vbhn_number})"
-                        )
-            else:
-                source_label = metadata.get("source") or metadata.get(
-                    "index", "Căn cứ pháp lý"
-                )
-            law_parts.append(
-                f"[{article} - {source_label}]\n{chunk.get('content', '')}"
-            )
+MODE_A_CONTRACT_INSTRUCTION = """BẠN ĐANG Ở CHẾ ĐỘ TƯ VẤN CÓ NGỮ CẢNH HỢP ĐỒNG (CHẾ ĐỘ A):
+Người dùng đã upload/soạn một hợp đồng cụ thể và hệ thống đã trích xuất các điều khoản cùng báo cáo rủi ro sơ bộ bên dưới.
+HƯỚNG DẪN TRẢ LỜI CHO CHẾ ĐỘ NÀY:
+1. Với câu hỏi về nội dung hợp đồng (các bên tham gia, phạm vi công việc, thời hạn, phí dịch vụ, thanh toán, phạt vi phạm, đánh giá rủi ro hay cách chỉnh sửa điều khoản): BẮT BUỘC sử dụng nội dung hợp đồng và báo cáo rủi ro được cung cấp để trả lời rõ ràng, chính xác và giải thích cặn kẽ cho người dùng.
+2. Nếu một thông tin cụ thể người dùng hỏi thực sự không xuất hiện trong các điều khoản hợp đồng được cung cấp, hãy nói rõ: 'Trong nội dung hợp đồng hiện tại không đề cập đến thông tin này...'.
+3. CHỈ sử dụng câu từ chối chuẩn ('Hiện tại trong cơ sở dữ liệu pháp luật về hợp đồng dịch vụ của hệ thống chưa có quy định về vấn đề này. Bạn vui lòng tra cứu thêm các văn bản pháp luật chuyên ngành liên quan hoặc tham vấn chuyên gia pháp lý.') khi người dùng đặt câu hỏi tra cứu pháp luật chuyên ngành ngoài phạm vi CSDL pháp luật của hệ thống và câu hỏi không liên quan đến hợp đồng."""
 
-    output_sections = []
-    if contract_parts:
-        output_sections.append(
-            "=== NỘI DUNG ĐIỀU KHOẢN HỢP ĐỒNG ĐƯỢC CUNG CẤP ===\n"
-            + "\n\n".join(contract_parts)
-        )
-    if law_parts:
-        output_sections.append(
-            "=== CĂN CỨ PHÁP LUẬT THAM CHIẾU ===\n" + "\n\n".join(law_parts)
-        )
+MODE_B_LAW_ONLY_INSTRUCTION = """Bạn đang ở CHẾ ĐỘ TRA CỨU PHÁP LUẬT CHUNG (không có hợp đồng cụ thể nào được đính kèm). KHÔNG phân tích hay suy đoán về một hợp đồng cụ thể nào."""
 
-    return (
-        "\n\n".join(output_sections)
-        if output_sections
-        else "Không có căn cứ nào được tìm thấy."
-    )
-
-
-def _format_risk_report(risk_report: Optional[List[Dict[str, Any]]]) -> str:
-    if not risk_report:
-        return ""
-
-    parts = [
-        f"- Điều khoản: {item.get('dieu_khoan', 'N/A')}\n"
-        f"  Rủi ro: {item.get('rui_ro', 'N/A')}"
-        for item in risk_report
-    ]
-    return "\n".join(parts)
-
-
-def _format_history(history: List[Dict[str, str]]) -> str:
-    if not history:
-        return "Chưa có lịch sử hội thoại."
-
-    recent = history[-MAX_HISTORY_TURNS_IN_PROMPT:]
-    lines = [
-        f"{'Người dùng' if turn['role'] == 'user' else 'Trợ lý'}: {turn['text']}"
-        for turn in recent
-    ]
-    return "\n".join(lines)
-
-
-def build_chat_prompt(
-    query: str,
-    context_chunks: List[Dict[str, Any]],
-    history: List[Dict[str, str]],
-    has_contract_context: bool,
-    risk_report: Optional[List[Dict[str, Any]]] = None,
-) -> str:
-    """
-    Ghép prompt cho 1 lượt hỏi trong chatbot.
-
-    Args:
-        query: câu hỏi hiện tại.
-        context_chunks: chunk truy xuất được (từ retrieval.search_context).
-        history: lịch sử hội thoại dạng text (từ chat_session.get_text_history()),
-            KHÔNG bao gồm lượt hỏi hiện tại.
-        has_contract_context: True = Chế độ A, False = Chế độ B.
-        risk_report: báo cáo rủi ro từ Module 2 (chỉ dùng ở Chế độ A).
-
-    Returns:
-        Prompt hoàn chỉnh, sẵn sàng gửi cho llm_client.
-    """
-    context_text = _format_context_chunks(context_chunks)
-    history_text = _format_history(history)
-
-    if has_contract_context:
-        mode_instruction = (
-            "BẠN ĐANG Ở CHẾ ĐỘ TƯ VẤN CÓ NGỮ CẢNH HỢP ĐỒNG (CHẾ ĐỘ A):\n"
-            "Người dùng đã upload/soạn một hợp đồng cụ thể và hệ thống đã trích xuất các điều khoản cùng báo cáo rủi ro sơ bộ bên dưới.\n"
-            "HƯỚNG DẪN TRẢ LỜI CHO CHẾ ĐỘ NÀY:\n"
-            "1. Với câu hỏi về nội dung hợp đồng (các bên tham gia, phạm vi công việc, thời hạn, phí dịch vụ, thanh toán, phạt vi phạm, đánh giá rủi ro hay cách chỉnh sửa điều khoản): "
-            "BẮT BUỘC sử dụng nội dung hợp đồng và báo cáo rủi ro được cung cấp để trả lời rõ ràng, chính xác và giải thích cặn kẽ cho người dùng.\n"
-            "2. Nếu một thông tin cụ thể người dùng hỏi thực sự không xuất hiện trong các điều khoản hợp đồng được cung cấp, hãy nói rõ: "
-            "'Trong nội dung hợp đồng hiện tại không đề cập đến thông tin này...'.\n"
-            "3. CHỈ sử dụng câu từ chối chuẩn ('Hiện tại trong cơ sở dữ liệu pháp luật về hợp đồng dịch vụ của hệ thống chưa có quy định về vấn đề này. Bạn vui lòng tra cứu thêm các văn bản pháp luật chuyên ngành liên quan hoặc tham vấn chuyên gia pháp lý.') "
-            "khi người dùng đặt câu hỏi tra cứu pháp luật chuyên ngành ngoài phạm vi CSDL pháp luật của hệ thống và câu hỏi không liên quan đến hợp đồng."
-        )
-        risk_report_text = _format_risk_report(risk_report)
-        risk_section = (
-            f"\n\nBÁO CÁO RỦI RO SƠ BỘ CỦA HỢP ĐỒNG:\n{risk_report_text}"
-            if risk_report_text
-            else ""
-        )
-    else:
-        mode_instruction = (
-            "Bạn đang ở CHẾ ĐỘ TRA CỨU PHÁP LUẬT CHUNG (không có hợp đồng cụ thể nào "
-            "được đính kèm). KHÔNG phân tích hay suy đoán về một hợp đồng cụ thể nào."
-        )
-        risk_section = ""
-
-    prompt = f"""{CHATBOT_BASE_INSTRUCTION}
+CHATBOT_PROMPT_TEMPLATE = """{base_instruction}
 
 {mode_instruction}
 
@@ -181,4 +50,32 @@ THÔNG TIN VÀ CĂN CỨ ĐƯỢC CUNG CẤP:
 
 CÂU HỎI HIỆN TẠI: {query}"""
 
-    return prompt
+
+def build_chat_prompt(
+    query: str,
+    context_chunks: List[Dict[str, Any]],
+    history: List[Dict[str, str]],
+    has_contract_context: bool,
+    risk_report: Optional[List[Dict[str, Any]]] = None,
+) -> str:
+    """Ghép câu hỏi, ngữ cảnh RAG và lịch sử hội thoại vào mẫu Prompt Chatbot."""
+    if has_contract_context:
+        mode_instruction = MODE_A_CONTRACT_INSTRUCTION
+        risk_report_text = format_chat_risk_report(risk_report)
+        risk_section = (
+            f"\n\nBÁO CÁO RỦI RO SƠ BỘ CỦA HỢP ĐỒNG:\n{risk_report_text}"
+            if risk_report_text
+            else ""
+        )
+    else:
+        mode_instruction = MODE_B_LAW_ONLY_INSTRUCTION
+        risk_section = ""
+
+    return CHATBOT_PROMPT_TEMPLATE.format(
+        base_instruction=CHATBOT_BASE_INSTRUCTION,
+        mode_instruction=mode_instruction,
+        history_text=format_chat_history(history, MAX_HISTORY_TURNS_IN_PROMPT),
+        context_text=format_chat_context_chunks(context_chunks),
+        risk_section=risk_section,
+        query=query,
+    )

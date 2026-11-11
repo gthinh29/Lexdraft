@@ -51,13 +51,12 @@ def format_draft_as_a4_html(draft_text: str) -> str:
         clean_upper = clean.upper()
 
         special_html = None
-        if "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM" in clean_upper:
+        if re.match(r"^[-_\*]*o0o[-_\*]*$", clean, re.IGNORECASE):
+            special_html = "<div class='contract-number' style='font-style:normal;letter-spacing:2px;margin:2px auto 10px auto;'>---o0o---</div>"
+        elif "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM" in clean_upper:
             special_html = "<div class='contract-title' style='font-size:1.15rem;'>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</div>"
         elif "ĐỘC LẬP" in clean_upper and "HẠNH PHÚC" in clean_upper:
-            special_html = (
-                "<div class='contract-title' style='font-size:1.1rem;margin-top:2px;'>Độc lập – Tự do – Hạnh phúc</div>"
-                "<div class='contract-number' style='font-size:0.85rem;margin:4px auto 18px auto;letter-spacing:2px;font-style:normal;'>---o0o---</div>"
-            )
+            special_html = "<div class='contract-title' style='font-size:1.1rem;margin-top:2px;'>Độc lập – Tự do – Hạnh phúc</div>"
         elif (
             ("HỢP ĐỒNG" in clean_upper or "BẢN NHÁP" in clean_upper)
             and len(clean) < 120
@@ -214,8 +213,17 @@ def build_docx_bytes(draft_text: str) -> bytes:
             _flush_table(table_rows)
             table_rows = []
 
+        clean_upper = clean_text_str.upper()
+
+        # 0. Dòng ngăn cách tiêu ngữ ---o0o---
+        if re.match(r"^[-_\*]*o0o[-_\*]*$", clean_text_str, re.IGNORECASE):
+            p = doc.add_paragraph()
+            p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            p.paragraph_format.space_after = Pt(8)
+            run = p.add_run("---o0o---")
+            run.font.size = Pt(12)
         # 1. Quốc hiệu
-        if "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM" in clean_text_str:
+        elif "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM" in clean_upper:
             p = doc.add_paragraph()
             p.alignment = WD_ALIGN_PARAGRAPH.CENTER
             p.paragraph_format.space_after = Pt(2)
@@ -223,54 +231,62 @@ def build_docx_bytes(draft_text: str) -> bytes:
             run.bold = True
             run.font.size = Pt(13)
         # 2. Tiêu ngữ
-        elif (
-            "Độc lập – Tự do – Hạnh phúc" in clean_text_str
-            or "Độc lập - Tự do - Hạnh phúc" in clean_text_str
-        ):
+        elif "ĐỘC LẬP" in clean_upper and "HẠNH PHÚC" in clean_upper:
             p = doc.add_paragraph()
             p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-            p.paragraph_format.space_after = Pt(12)
+            p.paragraph_format.space_after = Pt(6)
             run = p.add_run("Độc lập – Tự do – Hạnh phúc")
             run.bold = True
             run.font.size = Pt(13)
         # 3. Tên Hợp đồng
-        elif clean_text_str.startswith(("HỢP ĐỒNG", "BẢN NHÁP HỢP ĐỒNG")):
+        elif (
+            clean_upper.startswith(("HỢP ĐỒNG", "BẢN NHÁP HỢP ĐỒNG"))
+            and len(clean_text_str) < 120
+        ):
             p = doc.add_paragraph()
             p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-            p.paragraph_format.space_before = Pt(12)
+            p.paragraph_format.space_before = Pt(10)
             p.paragraph_format.space_after = Pt(4)
             run = p.add_run(clean_text_str)
             run.bold = True
             run.font.size = Pt(16)
         # 4. Số Hợp đồng
-        elif clean_text_str.startswith(("Số:", "Số :")):
+        elif clean_upper.startswith(("SỐ:", "SỐ :")):
             p = doc.add_paragraph()
             p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-            p.paragraph_format.space_after = Pt(14)
+            p.paragraph_format.space_after = Pt(10)
             run = p.add_run(clean_text_str)
             run.italic = True
-        # 5. ĐIỀU khoản hoặc Tiêu đề mục chính
+        # 5. ĐIỀU khoản hoặc Tiêu đề mục chính (KHÔNG biến câu văn 'Bên A/Bên B làm gì...' thành IN HOA!)
         elif (
-            clean_text_str.upper().startswith("ĐIỀU ")
-            or clean_text_str.upper().startswith("THÔNG TIN CÁC BÊN")
-            or clean_text_str.upper().startswith("BÊN A")
-            or clean_text_str.upper().startswith("BÊN B")
+            (
+                re.match(r"^ĐIỀU\s+\d+(?:[\.\:\s]|$)", clean_upper)
+                and len(clean_text_str) <= 140
+            )
+            or clean_upper.startswith("THÔNG TIN CÁC BÊN")
             or line_str.startswith("#")
+            or (
+                len(clean_text_str) <= 65
+                and re.match(
+                    r"^BÊN\s+[AB]\s*(?:\([^)]+\))?\s*:?\s*$",
+                    clean_upper,
+                )
+            )
         ):
             p = doc.add_paragraph()
             p.alignment = WD_ALIGN_PARAGRAPH.LEFT
-            p.paragraph_format.space_before = Pt(12)
+            p.paragraph_format.space_before = Pt(10)
             p.paragraph_format.space_after = Pt(4)
             run = p.add_run(clean_text_str.upper())
             run.bold = True
             run.font.size = Pt(13)
-        # 6. Căn cứ pháp lý
-        elif "Căn cứ" in clean_text_str or "căn cứ" in clean_text_str:
+        # 6. Căn cứ pháp lý (chỉ áp dụng cho dòng BẮT ĐẦU bằng 'Căn cứ')
+        elif re.match(r"^[-•*\s]*Căn\s+cứ\b", clean_text_str, re.IGNORECASE):
             p = doc.add_paragraph()
             p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
             p.paragraph_format.first_line_indent = Inches(0.3)
             p.paragraph_format.space_after = Pt(3)
-            formatted_cancu = re.sub(r"^[\*\-\#\s]+", "", line_str)
+            formatted_cancu = re.sub(r"^[\*\-\•\#\s]+", "", line_str)
             formatted_cancu = (
                 formatted_cancu.replace("**", "")
                 .replace("*", "")

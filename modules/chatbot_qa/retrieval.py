@@ -1,14 +1,11 @@
-"""
-modules/chatbot_qa/retrieval.py
-Truy vấn văn bản luật và dữ liệu hợp đồng liên quan phục vụ chatbot.
-"""
+"""Truy xuất ngữ cảnh kép từ chỉ mục hợp đồng (contract_index) và chỉ mục luật (law_index)."""
 
 import logging
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 try:
-    from modules.shared.embedding import VectorDB  # Phần 4 - Dev B
+    from modules.shared.embedding import VectorDB
 except ImportError:
     VectorDB = None
 
@@ -17,7 +14,6 @@ from modules.chatbot_qa.chat_session import ChatSession
 
 logger = logging.getLogger(__name__)
 
-# law_index tĩnh (offline), chỉ cần load 1 lần cho toàn bộ module.
 _law_db = None
 
 
@@ -25,9 +21,7 @@ def _get_law_db():
     global _law_db
     if _law_db is None:
         if VectorDB is None:
-            raise RuntimeError(
-                "modules.shared.embedding.VectorDB chưa sẵn sàng (Phần 4 chưa build)."
-            )
+            raise RuntimeError("modules.shared.embedding.VectorDB chưa sẵn sàng.")
         index_dir = Path(getattr(config, "FAISS_INDEX_DIR", "data/faiss_index"))
         _law_db = VectorDB()
         _law_db.load_index(str(index_dir / "law_index"))
@@ -35,28 +29,23 @@ def _get_law_db():
 
 
 def _get_or_build_contract_db(session: ChatSession):
-    """
-    Build (hoặc lấy từ cache) contract_index ephemeral cho 1 phiên cụ thể.
-    """
+    """Khởi tạo hoặc lấy từ bộ nhớ đệm chỉ mục FAISS cho hợp đồng trong phiên."""
     if VectorDB is None:
-        raise RuntimeError(
-            "modules.shared.embedding.VectorDB chưa sẵn sàng (Phần 4 chưa build)."
-        )
+        raise RuntimeError("modules.shared.embedding.VectorDB chưa sẵn sàng.")
 
     if session.contract_vector_db is not None:
         return session.contract_vector_db
 
     if not session.contract_chunks:
         logger.warning(
-            "Session '%s' đang ở Chế độ A nhưng không có contract_chunks nào "
-            "để build contract_index - bỏ qua bước search hợp đồng.",
+            "Session '%s' đang ở Chế độ A nhưng không có contract_chunks.",
             session.session_id,
         )
         return None
 
     contract_db = VectorDB()
     contract_db.create_index(session.contract_chunks)
-    session.contract_vector_db = contract_db  # cache lại cho các lượt hỏi sau
+    session.contract_vector_db = contract_db
     return contract_db
 
 
@@ -66,19 +55,7 @@ def search_context(
     session: Optional[ChatSession] = None,
     top_k: Optional[int] = None,
 ) -> List[Dict[str, Any]]:
-    """
-    Truy xuất ngữ cảnh liên quan cho 1 câu hỏi của người dùng.
-    Linh hoạt lấy tối đa RETRIEVAL_TOP_K điều luật có độ tương đồng cao (>= RELEVANCE_SCORE_THRESHOLD).
-
-    Args:
-        query: câu hỏi hiện tại.
-        has_session: True nếu phiên đang ở Chế độ A (có ngữ cảnh hợp đồng).
-        session: đối tượng ChatSession hiện tại - BẮT BUỘC nếu has_session=True.
-        top_k: số chunk lấy về tối đa (mặc định lấy từ config.RETRIEVAL_TOP_K, thường là 10).
-
-    Returns:
-        Danh sách chunk (content + metadata), gộp từ contract_index và law_index.
-    """
+    """Truy xuất các đoạn điều khoản hợp đồng và điều luật liên quan đến câu hỏi."""
     config_top_k = getattr(getattr(config, "Config", config), "RETRIEVAL_TOP_K", 10)
     limit = top_k or config_top_k
     min_score = getattr(
@@ -94,13 +71,11 @@ def search_context(
         contract_db = _get_or_build_contract_db(session)
         if contract_db is not None:
             contract_hits = contract_db.hybrid_search(query, top_k=limit)
-            # Lấy các điều khoản có độ tương đồng tốt (>= 0.35) hoặc top 5 điều khoản liên quan nhất
             good_contract_hits = [h for h in contract_hits if h.get("score", 0) >= 0.35]
             chosen_contract = (
                 good_contract_hits if good_contract_hits else contract_hits[:5]
             )
 
-            # Đảm bảo nếu câu hỏi về các bên mà chunk Lời mở đầu chưa có trong top thì đính kèm theo điểm tìm kiếm tự nhiên
             party_keywords = (
                 "bên a",
                 "bên b",
@@ -143,9 +118,7 @@ def search_context(
 
     law_db = _get_law_db()
     law_hits = law_db.hybrid_search(query, top_k=limit)
-    # Lọc các điều luật có điểm tương đồng cao >= min_score
     good_law_hits = [h for h in law_hits if h.get("score", 0) >= min_score]
-    # Nếu không có điều nào đạt min_score, giữ lại 2 điều cao nhất để downstream llm_client kiểm tra ngưỡng từ chối
     chosen_law = good_law_hits if good_law_hits else law_hits[:2]
     for hit in chosen_law:
         hit.setdefault("metadata", {})["index"] = "law_index"

@@ -1,8 +1,4 @@
-"""
-modules/drafting/retrieval.py
-Truy vấn danh mục phân loại hợp đồng (Contract Taxonomy) và điều khoản pháp luật tham chiếu
-cho phân hệ hỗ trợ soạn thảo hợp đồng.
-"""
+"""Truy vấn danh mục Phân loại Hợp đồng (Contract Taxonomy) và điều khoản pháp luật tham chiếu."""
 
 import json
 import logging
@@ -18,7 +14,6 @@ import config
 
 logger = logging.getLogger(__name__)
 
-# Cache module-level: cả index và taxonomy đều tĩnh, chỉ cần load 1 lần.
 _template_db = None
 _law_db = None
 _taxonomy_cache: Optional[Dict[str, Any]] = None
@@ -29,9 +24,7 @@ _TAXONOMY_PATH = (
 
 
 def load_contract_taxonomy() -> Dict[str, Any]:
-    """
-    Đọc và cache cấu hình Phân loại Hợp đồng Dịch vụ & Vị thế Đàm phán từ contract_taxonomy.json.
-    """
+    """Đọc và lưu bộ nhớ đệm cấu hình Phân loại Hợp đồng & Vị thế Pháp lý."""
     global _taxonomy_cache
     if _taxonomy_cache is not None:
         return _taxonomy_cache
@@ -54,19 +47,15 @@ def load_contract_taxonomy() -> Dict[str, Any]:
 
 
 def get_category_config(category_id_or_query: str) -> Optional[Dict[str, Any]]:
-    """
-    Tìm cấu hình phân loại hợp đồng theo ID (vd: 'software_dev') hoặc theo tên/từ khóa.
-    """
+    """Tìm cấu hình phân loại hợp đồng theo ID hoặc theo từ khóa trong tiêu đề."""
     taxonomy = load_contract_taxonomy()
     categories = taxonomy.get("categories", {})
     if not categories:
         return None
 
-    # 1. Khớp chính xác theo ID
     if category_id_or_query in categories:
         return categories[category_id_or_query]
 
-    # 2. Khớp mềm theo từ khóa trong tên hợp đồng
     q_lower = (category_id_or_query or "").lower()
     keyword_map = [
         (
@@ -110,14 +99,11 @@ def get_category_config(category_id_or_query: str) -> Optional[Dict[str, Any]]:
         if cat_id in categories and any(kw in q_lower for kw in kws):
             return categories[cat_id]
 
-    # Fallback về loại đầu tiên nếu không khớp từ khóa đặc thù
     return None
 
 
 def get_stance_config(stance_id: str) -> Dict[str, Any]:
-    """
-    Lấy cấu hình Vị thế Bảo vệ Pháp lý ('protect_party_a', 'protect_party_b', 'balanced').
-    """
+    """Lấy cấu hình Vị thế Bảo vệ Pháp lý ('protect_party_a', 'protect_party_b', 'balanced')."""
     taxonomy = load_contract_taxonomy()
     stances = taxonomy.get("stances", {})
     if stance_id in stances:
@@ -136,9 +122,7 @@ def _get_template_db():
     global _template_db
     if _template_db is None:
         if VectorDB is None:
-            raise RuntimeError(
-                "modules.shared.embedding.VectorDB chưa sẵn sàng (Phần 4 chưa build)."
-            )
+            raise RuntimeError("modules.shared.embedding.VectorDB chưa sẵn sàng.")
         index_dir = Path(getattr(config, "FAISS_INDEX_DIR", "data/faiss_index"))
         _template_db = VectorDB()
         _template_db.load_index(str(index_dir / "template_index"))
@@ -149,9 +133,7 @@ def _get_law_db():
     global _law_db
     if _law_db is None:
         if VectorDB is None:
-            raise RuntimeError(
-                "modules.shared.embedding.VectorDB chưa sẵn sàng (Phần 4 chưa build)."
-            )
+            raise RuntimeError("modules.shared.embedding.VectorDB chưa sẵn sàng.")
         index_dir = Path(getattr(config, "FAISS_INDEX_DIR", "data/faiss_index"))
         _law_db = VectorDB()
         _law_db.load_index(str(index_dir / "law_index"))
@@ -161,9 +143,7 @@ def _get_law_db():
 def retrieve_template(
     contract_type_query: str, top_k: int = 1
 ) -> Optional[Dict[str, Any]]:
-    """
-    Lấy cấu trúc mẫu hợp đồng chuẩn theo Phân loại (Taxonomy) hoặc fallback về template_index.
-    """
+    """Lấy khung điều khoản chuẩn theo Phân loại (Taxonomy) hoặc fallback về template_index."""
     cat_cfg = get_category_config(contract_type_query)
     if cat_cfg:
         clauses_str = "\n".join(
@@ -203,11 +183,7 @@ def retrieve_relevant_law(
     top_k: Optional[int] = None,
     category_id: Optional[str] = None,
 ) -> List[Dict[str, Any]]:
-    """
-    Lấy các điều luật liên quan từ law_index để làm căn cứ soạn thảo.
-    Hỗ trợ Multi-query RAG theo Phân loại hợp đồng (Taxonomy) để bao phủ toàn diện
-    các điều luật về quyền/nghĩa vụ, sở hữu trí tuệ, dữ liệu cá nhân và chế tài phạt 8%.
-    """
+    """Truy xuất đa truy vấn (Multi-query RAG) các điều luật liên quan từ law_index."""
     limit = top_k or getattr(getattr(config, "Config", config), "RETRIEVAL_TOP_K", 10)
     db = _get_law_db()
 
@@ -219,11 +195,54 @@ def retrieve_relevant_law(
 
     merged_hits: List[Dict[str, Any]] = []
     seen_keys = set()
-
-    # 1. Truy xuất theo từng nhóm chủ đề pháp lý trọng tâm của loại hợp đồng đó
     per_query_k = max(2, limit // max(len(rag_queries), 1))
-    for sub_q in rag_queries:
-        hits = db.hybrid_search(sub_q, top_k=per_query_k)
+    all_queries = list(rag_queries) + [query]
+    top_k_per_q = [per_query_k] * len(rag_queries) + [4]
+
+    can_batch = (
+        getattr(db, "index", None) is not None
+        and getattr(db, "chunks", None)
+        and callable(getattr(db, "_embed_texts", None))
+        and type(db).__name__ == "VectorDB"
+    )
+    if can_batch:
+        try:
+            q_vecs = db._embed_texts(all_queries, task_type="retrieval_query")
+            search_k = min(db.index.ntotal, max(max(top_k_per_q) * 2, 12))
+            distances, indices = db.index.search(q_vecs, search_k)
+            for row_idx, k_want in enumerate(top_k_per_q):
+                added = 0
+                for score, chunk_idx in zip(distances[row_idx], indices[row_idx]):
+                    if chunk_idx < 0 or chunk_idx >= len(db.chunks):
+                        continue
+                    chunk = db.chunks[chunk_idx]
+                    meta = chunk.get("metadata", {})
+                    key = (
+                        meta.get("source", ""),
+                        meta.get("article", ""),
+                        chunk.get("content", "")[:60],
+                    )
+                    if key not in seen_keys:
+                        seen_keys.add(key)
+                        merged_hits.append(
+                            {
+                                "content": chunk.get("content", ""),
+                                "metadata": dict(meta),
+                                "score": float(score),
+                            }
+                        )
+                    added += 1
+                    if added >= k_want:
+                        break
+            merged_hits.sort(key=lambda x: x.get("score", 0.0), reverse=True)
+            return merged_hits[: max(limit, 10)]
+        except Exception as e:
+            logger.warning(
+                "Batch embedding fallback sang hybrid_search từng câu: %s", e
+            )
+
+    for sub_q, k_want in zip(all_queries, top_k_per_q):
+        hits = db.hybrid_search(sub_q, top_k=k_want)
         for h in hits:
             meta = h.get("metadata", {})
             key = (
@@ -235,19 +254,5 @@ def retrieve_relevant_law(
                 seen_keys.add(key)
                 merged_hits.append(h)
 
-    # 2. Bổ sung truy xuất trực tiếp từ query/yêu cầu riêng của người dùng
-    direct_hits = db.hybrid_search(query, top_k=4)
-    for h in direct_hits:
-        meta = h.get("metadata", {})
-        key = (
-            meta.get("source", ""),
-            meta.get("article", ""),
-            h.get("content", "")[:60],
-        )
-        if key not in seen_keys:
-            seen_keys.add(key)
-            merged_hits.append(h)
-
-    # Sắp xếp giảm dần theo điểm tương đồng Cosine
     merged_hits.sort(key=lambda x: x.get("score", 0.0), reverse=True)
     return merged_hits[: max(limit, 10)]

@@ -1,13 +1,16 @@
-"""
-ui/pages/page_risk.py
-Giao diện phân hệ phân tích rủi ro hợp đồng.
-"""
+"""Giao diện phân hệ Rà soát Rủi ro Pháp lý và Tự động Vá lỗi (Redline)."""
 
+import html
 import logging
+import re
 import tempfile
 from pathlib import Path
 
 import streamlit as st
+
+from modules.drafting.document_utils import build_docx_bytes
+from ui.components.rag_inspector import render_rag_inspector
+from ui.state import clear_active_risk_contract, persist_drafting_keys
 
 try:
     from modules.risk_assessment import service as risk_assessment_service
@@ -22,31 +25,54 @@ except ImportError:
 logger = logging.getLogger(__name__)
 
 
+def _format_risk_body_html(rui_ro: str) -> str:
+    """Chuyển đổi markdown đánh giá của LLM sang HTML hiển thị trong thẻ rủi ro."""
+    if not rui_ro:
+        return ""
+    escaped = html.escape(rui_ro.strip())
+    escaped = re.sub(r"\*\*(.+?)\*\*", r"<b style='color:#f8fafc;'>\1</b>", escaped)
+    escaped = re.sub(
+        r"`([^`]+)`",
+        r"<span style='background:#1e293b;color:#38bdf8;padding:1px 6px;border-radius:4px;font-size:0.78rem;'>\1</span>",
+        escaped,
+    )
+    lines = []
+    for line in escaped.splitlines():
+        s = line.strip()
+        if not s:
+            continue
+        if s.startswith("- ") or s.startswith("* "):
+            lines.append(
+                f"<div style='margin-bottom:6px;line-height:1.55;'>• {s[2:]}</div>"
+            )
+        else:
+            lines.append(f"<div style='margin-bottom:6px;line-height:1.55;'>{s}</div>")
+    return "".join(lines)
+
+
 def _is_risky(rui_ro_text: str) -> bool:
-    """True nếu đây là đánh giá CÓ rủi ro."""
+    """Kiểm tra điều khoản có bị đánh dấu rủi ro hay không."""
     if not rui_ro_text:
         return False
-    if "không trích xuất được" in rui_ro_text.lower():
+    lower = rui_ro_text.lower()
+    if "không trích xuất được" in lower:
         return False
-    no_risk_phrases = [
+    no_risk_phrases = (
         "không phát hiện rủi ro",
         "không có rủi ro",
         "phù hợp quy định",
         "không vi phạm",
         "không phát hiện vi phạm",
-    ]
-    lower = rui_ro_text.lower()
+    )
     return not any(phrase in lower for phrase in no_risk_phrases)
 
 
 def render_risk_panel(target=None):
-    """Render panel rủi ro cố định trong cột phải với UX Dashboard chuyên nghiệp."""
+    """Render bảng tổng hợp báo cáo rủi ro pháp lý bên cột phải."""
     ctx = target if target is not None else st.container()
     with ctx:
         st.markdown(
-            "<div class='risk-panel-header'>"
-            "<span>📊 Báo cáo Rủi ro Pháp lý</span>"
-            "</div>",
+            "<div class='risk-panel-header'><span>📊 Báo cáo Rủi ro Pháp lý</span></div>",
             unsafe_allow_html=True,
         )
 
@@ -74,7 +100,6 @@ def render_risk_panel(target=None):
             if not _is_risky(item.get("rui_ro", ""))
         ]
 
-        # TÍNH TOÁN MỨC ĐỘ RỦI RO TỔNG QUAN (RISK HEALTH METER)
         if len(expired) > 0 or len(risky_items) >= 2:
             health_badge = (
                 "<span class='risk-level-badge risk-badge-high'>🔴 Rủi ro Cao</span>"
@@ -93,22 +118,17 @@ def render_risk_panel(target=None):
         st.markdown(
             f"<div class='risk-meter-card'>"
             f"<div style='display:flex;justify-content:space-between;align-items:center;'>"
-            f"<div>"
-            f"<div class='risk-meter-title'>Đánh giá tổng quan</div>"
-            f"{health_badge}"
-            f"</div>"
+            f"<div><div class='risk-meter-title'>Đánh giá tổng quan</div>{health_badge}</div>"
             f"</div>"
             f"{source_info}"
             f"<div class='risk-summary-metrics'>"
             f"<div class='metric-pill metric-pill-red'>🔴 {len(risky_items)} Rủi ro</div>"
             f"<div class='metric-pill metric-pill-yellow'>🚨 {len(expired)} Luật cũ</div>"
             f"<div class='metric-pill metric-pill-green'>✅ {len(safe_items)} An toàn</div>"
-            f"</div>"
-            f"</div>",
+            f"</div></div>",
             unsafe_allow_html=True,
         )
 
-        # TABS TƯƠNG TÁC HIỆN ĐẠI CHO PANEL RỦI RO
         tab_risk, tab_expired, tab_safe = st.tabs(
             [
                 f"🔴 Rủi ro ({len(risky_items)})",
@@ -118,94 +138,264 @@ def render_risk_panel(target=None):
         )
 
         with tab_risk:
-            if risk_report is None and not risky_items:
-                st.info("Chưa thực hiện phân tích rủi ro chi tiết.")
-            elif not risky_items:
-                st.markdown(
-                    "<div class='safe-card'>"
-                    "<div class='safe-card-title'>🎉 Không phát hiện rủi ro pháp lý</div>"
-                    "<div class='safe-card-body'>Tất cả các điều khoản được phân tích đều phù hợp với quy định pháp luật hiện hành.</div>"
-                    "</div>",
-                    unsafe_allow_html=True,
-                )
-            else:
-                for idx, item in enumerate(risky_items, 1):
-                    label = item.get("dieu_khoan", f"Điều khoản {idx}")
-                    rui_ro = item.get("rui_ro", "")
-                    can_cu = item.get("can_cu", [])
-
-                    citations_html = ""
-                    if can_cu:
-                        cit_lines = []
-                        for cc in can_cu:
-                            if isinstance(cc, dict):
-                                art = cc.get("article", "")
-                                src = cc.get("source", "")
-                                cit_lines.append(
-                                    f"📌 <b>{art}</b> — {src}" if art else f"📌 {src}"
-                                )
-                            else:
-                                cit_lines.append(f"📌 {cc}")
-                        citations_html = (
-                            "<div class='risk-card-citations'>"
-                            + "<br>".join(cit_lines)
-                            + "</div>"
-                        )
-
+            with st.container(height=430, border=False):
+                if risk_report is None and not risky_items:
+                    st.info("Chưa thực hiện phân tích rủi ro chi tiết.")
+                elif not risky_items:
                     st.markdown(
-                        f"<div class='risk-card'>"
-                        f"<div class='risk-card-header'>"
-                        f"<div class='risk-card-title'>🔴 {label}</div>"
-                        f"<span class='risk-tag'>CẦN ĐIỀU CHỈNH</span>"
-                        f"</div>"
-                        f"<div class='risk-card-body'>{rui_ro}</div>"
-                        f"{citations_html}"
-                        f"</div>",
+                        "<div class='safe-card'>"
+                        "<div class='safe-card-title'>🎉 Không phát hiện rủi ro pháp lý</div>"
+                        "<div class='safe-card-body'>Tất cả các điều khoản đều phù hợp quy định hiện hành.</div>"
+                        "</div>",
                         unsafe_allow_html=True,
                     )
+                else:
+                    for idx, item in enumerate(risky_items, 1):
+                        label = item.get("dieu_khoan", f"Điều khoản {idx}")
+                        rui_ro = item.get("rui_ro", "")
+                        can_cu = item.get("can_cu", [])
+
+                        first_line = next(
+                            (
+                                ln.strip("-* ")
+                                for ln in rui_ro.splitlines()
+                                if ln.strip()
+                            ),
+                            "Cần điều chỉnh",
+                        )
+                        short_hint = re.sub(r"\*\*(.+?)\*\*", r"\1", first_line)
+                        if len(short_hint) > 55:
+                            short_hint = short_hint[:52] + "..."
+
+                        with st.expander(
+                            f"🔴 {label} — {short_hint}", expanded=(idx == 1)
+                        ):
+                            formatted_rui_ro = _format_risk_body_html(rui_ro)
+                            st.markdown(
+                                f"<div class='risk-card-body'>{formatted_rui_ro}</div>",
+                                unsafe_allow_html=True,
+                            )
+                            if can_cu:
+                                st.caption(
+                                    "📚 **Căn cứ:** "
+                                    + " • ".join(
+                                        f"{cc.get('article', '')} ({cc.get('source', '')})"
+                                        if isinstance(cc, dict)
+                                        else str(cc)
+                                        for cc in can_cu
+                                    )
+                                )
 
         with tab_expired:
-            if not expired:
-                st.markdown(
-                    "<div class='safe-card'>"
-                    "<div class='safe-card-title'>✅ Dẫn chiếu pháp lý an toàn</div>"
-                    "<div class='safe-card-body'>Không phát hiện văn bản pháp luật bãi bỏ/hết hiệu lực nào được dẫn chiếu trong hợp đồng.</div>"
-                    "</div>",
-                    unsafe_allow_html=True,
-                )
-            else:
-                for a in expired:
-                    law_ref = a.get("law_ref", "Văn bản")
-                    replaced_by = a.get("replaced_by", "")
-                    note = a.get("note", "")
-
+            with st.container(height=430, border=False):
+                if not expired:
                     st.markdown(
-                        f"<div class='expired-banner'>"
-                        f"<div class='expired-banner-title'>🚨 VĂN BẢN HẾT HIỆU LỰC</div>"
-                        f"<div class='expired-banner-item'><b>Văn bản viện dẫn:</b> {law_ref}</div>"
-                        f"<div class='expired-banner-item'><b>Trạng thái:</b> Đã hết hiệu lực thi hành</div>"
-                        f"{f'<div class="expired-banner-item"><b>Văn bản thay thế:</b> {replaced_by}</div>' if replaced_by else ''}"
-                        f"{f'<div class="expired-banner-item" style="font-size:0.75rem;color:#fca5a5;margin-top:6px;">ℹ️ {note}</div>' if note else ''}"
-                        f"</div>",
+                        "<div class='safe-card'>"
+                        "<div class='safe-card-title'>✅ Dẫn chiếu pháp lý an toàn</div>"
+                        "<div class='safe-card-body'>Không phát hiện văn bản hết hiệu lực.</div>"
+                        "</div>",
                         unsafe_allow_html=True,
                     )
+                else:
+                    for a in expired:
+                        law_ref = a.get("law_ref", "Văn bản")
+                        replaced_by = a.get("replaced_by", "")
+                        note = a.get("note", "")
+
+                        st.markdown(
+                            f"<div class='expired-banner'>"
+                            f"<div class='expired-banner-title'>🚨 VĂN BẢN HẾT HIỆU LỰC</div>"
+                            f"<div class='expired-banner-item'><b>Văn bản viện dẫn:</b> {law_ref}</div>"
+                            f"<div class='expired-banner-item'><b>Trạng thái:</b> Đã hết hiệu lực thi hành</div>"
+                            f"{f'<div class=\"expired-banner-item\"><b>Văn bản thay thế:</b> {replaced_by}</div>' if replaced_by else ''}"
+                            f"{f'<div class=\"expired-banner-item\" style=\"font-size:0.75rem;color:#fca5a5;margin-top:6px;\">ℹ️ {note}</div>' if note else ''}"
+                            f"</div>",
+                            unsafe_allow_html=True,
+                        )
 
         with tab_safe:
-            if not risk_report:
-                st.caption("Chưa có dữ liệu.")
-            elif not safe_items:
-                st.caption("Tất cả các điều khoản được quét đều có điểm cần lưu ý.")
-            else:
-                for item in safe_items:
-                    label = item.get("dieu_khoan", "Điều khoản")
-                    rui_ro = item.get("rui_ro", "Phù hợp quy định pháp luật.")
-                    st.markdown(
-                        f"<div class='safe-card'>"
-                        f"<div class='safe-card-title'>✅ {label}</div>"
-                        f"<div class='safe-card-body'>{rui_ro}</div>"
-                        f"</div>",
-                        unsafe_allow_html=True,
+            with st.container(height=430, border=False):
+                if not risk_report:
+                    st.caption("Chưa có dữ liệu.")
+                elif not safe_items:
+                    st.caption("Tất cả các điều khoản được quét đều có điểm cần lưu ý.")
+                else:
+                    for item in safe_items:
+                        label = item.get("dieu_khoan", "Điều khoản")
+                        rui_ro = item.get("rui_ro", "Phù hợp quy định pháp luật.")
+                        st.markdown(
+                            f"<div class='safe-card'>"
+                            f"<div class='safe-card-title'>✅ {label}</div>"
+                            f"<div class='safe-card-body'>{rui_ro}</div>"
+                            f"</div>",
+                            unsafe_allow_html=True,
+                        )
+
+
+def _render_redraft_section(risk_report: list | None, expired_alerts: list | None):
+    """Hiển thị khu vực đối chiếu Redline Before/After, toàn văn hợp đồng đã vá lỗi và RAG Inspector."""
+    if not risk_report:
+        return
+
+    risky_items = [item for item in risk_report if _is_risky(item.get("rui_ro", ""))]
+    patched_text = ""
+    if (
+        (risky_items or expired_alerts)
+        and risk_assessment_service
+        and hasattr(risk_assessment_service, "build_redrafted_contract_text")
+    ):
+        patched_text = risk_assessment_service.build_redrafted_contract_text(
+            risk_results=risk_report,
+            expired_law_alerts=expired_alerts,
+        )
+
+    tab_redline, tab_full, tab_rag = st.tabs(
+        [
+            f"🔀 Vá lỗi Redline ({len(risky_items)})",
+            "📄 Toàn văn đã Vá lỗi",
+            "🔍 RAG Inspector",
+        ]
+    )
+
+    with tab_redline:
+        if not risky_items and not expired_alerts:
+            st.success("🎉 Hợp đồng an toàn, không có điều khoản cần vá lỗi.")
+        else:
+            if patched_text:
+                c_dl, c_open = st.columns([1, 1], gap="small")
+                with c_dl:
+                    try:
+                        docx_bytes = build_docx_bytes(patched_text)
+                        st.download_button(
+                            label="📥 Tải HĐ đã Vá lỗi (.docx)",
+                            data=docx_bytes,
+                            file_name="hop_dong_da_va_loi_chuan_2026.docx",
+                            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                            use_container_width=True,
+                            type="primary",
+                            key="dl_redrafted_contract_docx",
+                        )
+                    except Exception as e:
+                        logger.warning("Không thể tạo file docx vá lỗi: %s", e)
+
+                with c_open:
+                    if st.button(
+                        "📝 Mở trên Trang giấy A4",
+                        use_container_width=True,
+                        key="open_redrafted_in_drafting",
+                    ):
+                        all_cits = []
+                        seen_c = set()
+                        for item in risk_report:
+                            for cc in item.get("can_cu", []):
+                                ck = (
+                                    (cc.get("article", ""), cc.get("source", ""))
+                                    if isinstance(cc, dict)
+                                    else str(cc)
+                                )
+                                if ck not in seen_c:
+                                    seen_c.add(ck)
+                                    all_cits.append(cc)
+                        st.session_state.last_draft = patched_text
+                        st.session_state.last_draft_citations = all_cits
+                        st.session_state.last_draft_debug_trace = st.session_state.get(
+                            "last_risk_debug_trace"
+                        )
+                        st.session_state.last_draft_meta = {
+                            "category_name": st.session_state.get("risk_source_name")
+                            or "Hợp đồng đã Rà soát & Vá lỗi Pháp lý",
+                            "stance_label": "Bản Redline chuẩn Pháp lý 2026",
+                        }
+                        st.session_state["preview_zoom"] = 100
+                        persist_drafting_keys({"preview_zoom": 100})
+                        st.session_state["nav_page"] = "📝 Hỗ trợ Soạn thảo Hợp đồng"
+                        st.rerun()
+
+            if risky_items:
+                clause_labels = [
+                    f"{i}. {it.get('dieu_khoan', f'Điều {i}')}"
+                    for i, it in enumerate(risky_items, 1)
+                ]
+                prev_idx = st.session_state.get("redline_clause_selector", 0)
+                if not isinstance(prev_idx, int) or prev_idx >= len(risky_items):
+                    st.session_state["redline_clause_selector"] = 0
+                chosen_idx = st.selectbox(
+                    "Chọn điều khoản đối chiếu Before / After:",
+                    options=range(len(risky_items)),
+                    format_func=lambda i: clause_labels[i],
+                    key="redline_clause_selector",
+                )
+                chosen_idx = min(max(int(chosen_idx or 0), 0), len(risky_items) - 1)
+                item = risky_items[chosen_idx]
+                orig_clause = item.get("noi_dung", "").strip()
+                redrafted = item.get("redrafted_clause", "").strip()
+                if (
+                    not redrafted
+                    and risk_assessment_service
+                    and hasattr(risk_assessment_service, "extract_redrafted_clause")
+                ):
+                    redrafted = risk_assessment_service.extract_redrafted_clause(
+                        item.get("rui_ro", "")
                     )
+
+                with st.container(height=280, border=False):
+                    col_before, col_after = st.columns(2, gap="small")
+                    with col_before:
+                        st.markdown(
+                            "<div style='background:#450a0a;border:1px solid #991b1b;border-radius:8px;padding:10px;'>"
+                            "<div style='font-weight:700;color:#fca5a5;font-size:0.78rem;margin-bottom:4px;'>❌ BẢN GỐC</div>"
+                            f"<div style='font-size:0.82rem;color:#fecaca;line-height:1.5;white-space:pre-wrap;'>"
+                            f"{html.escape(orig_clause or 'Không có nội dung gốc.')}</div></div>",
+                            unsafe_allow_html=True,
+                        )
+                    with col_after:
+                        display_after = (
+                            redrafted
+                            if redrafted
+                            else "Xem chi tiết hướng dẫn điều chỉnh ở Panel bên phải."
+                        )
+                        st.markdown(
+                            "<div style='background:#064e3b;border:1px solid #059669;border-radius:8px;padding:10px;'>"
+                            "<div style='font-weight:700;color:#6ee7b7;font-size:0.78rem;margin-bottom:4px;'>✅ ĐỀ XUẤT SỬA ĐỔI (REDLINE)</div>"
+                            f"<div style='font-size:0.82rem;color:#d1fae5;line-height:1.5;white-space:pre-wrap;'>"
+                            f"{html.escape(display_after)}</div></div>",
+                            unsafe_allow_html=True,
+                        )
+
+    with tab_full:
+        if patched_text:
+            st.text_area(
+                "patched_contract_text",
+                value=patched_text,
+                height=360,
+                label_visibility="collapsed",
+            )
+        else:
+            st.caption("Không có nội dung cần sửa đổi.")
+
+    with tab_rag:
+        sub_p1, sub_p2 = st.tabs(
+            [
+                "🔍 Prompt 1: Gợi ý Rủi ro",
+                "✍️ Prompt 2: Soạn thảo Vá lỗi",
+            ]
+        )
+        with sub_p1:
+            render_rag_inspector(
+                st.session_state.get("last_risk_debug_trace"),
+                key_prefix="risk_inspector",
+                use_expander=False,
+            )
+        with sub_p2:
+            redraft_trace = st.session_state.get("last_redraft_debug_trace")
+            if redraft_trace:
+                render_rag_inspector(
+                    redraft_trace,
+                    key_prefix="redraft_inspector",
+                    use_expander=False,
+                )
+            else:
+                st.caption("Không có điều khoản cần chạy Prompt Soạn thảo vá lỗi.")
 
 
 def render():
@@ -216,33 +406,14 @@ def render():
         st.subheader("📤 Rà soát & Gợi ý Rủi ro Pháp lý Hợp đồng")
 
         if st.session_state.upload_file_name:
-            st.markdown(
-                f"<div class='feature-card' style='border-left: 4px solid #38bdf8; margin-bottom: 16px;'>"
-                f"<div class='feature-card-title'>📄 Hồ sơ Hợp đồng đang làm việc: <b>{st.session_state.upload_file_name}</b></div>"
-                f"<div class='feature-card-desc'>Hệ thống đã nạp và trích xuất cấu trúc văn bản. Bạn có thể xem báo cáo rủi ro ở Panel bên phải hoặc chuyển sang Chatbot để trao đổi chuyên sâu.</div>"
-                f"</div>",
-                unsafe_allow_html=True,
-            )
-            # Hiển thị thông báo trạng thái kết quả rà soát
-            if st.session_state.last_risk_report:
-                risk_report = st.session_state.last_risk_report
-                risky = [r for r in risk_report if _is_risky(r.get("rui_ro", ""))]
-                safe_count = len(risk_report) - len(risky)
+            if not st.session_state.last_risk_report:
                 st.markdown(
-                    f"<div style='display:flex;align-items:center;justify-content:space-between;"
-                    f"background:#0f172a;border:1px solid #1e293b;border-radius:10px;padding:10px 16px;margin-bottom:14px;'>"
-                    f"<div style='display:flex;align-items:center;gap:12px;font-size:0.86rem;'>"
-                    f"<span>✅ <b>Đã hoàn tất rà soát:</b></span>"
-                    f"<span style='background:#450a0a;color:#fca5a5;padding:3px 10px;border-radius:20px;border:1px solid #991b1b;font-weight:600;'>🔴 {len(risky)} rủi ro</span>"
-                    f"<span style='background:#064e3b;color:#6ee7b7;padding:3px 10px;border-radius:20px;border:1px solid #047857;font-weight:600;'>✅ {safe_count} an toàn</span>"
-                    f"</div>"
-                    f"<span style='font-size:0.8rem;color:#94a3b8;'>👉 Xem chi tiết ở Panel bên phải</span>"
+                    f"<div style='background:#0f172a;border:1px solid #1e293b;border-left:4px solid #38bdf8;"
+                    f"border-radius:8px;padding:8px 12px;margin-bottom:8px;font-size:0.84rem;'>"
+                    f"📄 File đang chọn: <b>{html.escape(st.session_state.upload_file_name)}</b>"
                     f"</div>",
                     unsafe_allow_html=True,
                 )
-
-            # Hàng nút thao tác: Cân đối, bằng chiều cao, chuẩn UI
-            if not st.session_state.last_risk_report:
                 c_run, c_chat, c_btn = st.columns([1, 1, 1], gap="small")
                 with c_run:
                     run_clicked = st.button(
@@ -265,21 +436,9 @@ def render():
                         use_container_width=True,
                         key="remove_active_contract",
                     ):
-                        st.session_state.upload_file_name = None
-                        st.session_state.upload_tmp_path = None
-                        st.session_state.last_risk_report = None
-                        st.session_state.last_expired_alerts = []
-                        st.session_state.risk_source_name = None
-                        st.session_state.pending_risk_upload = False
-                        if chatbot_service:
-                            chatbot_service.attach_contract_context(
-                                session_id=st.session_state.session_id,
-                                contract_chunks=[],
-                                risk_report=[],
-                            )
+                        clear_active_risk_contract(chatbot_service)
                         st.rerun()
 
-                # Chạy phân tích trực tiếp từ tmp_path đã lưu (không phụ thuộc widget uploader)
                 if run_clicked:
                     tmp_path = st.session_state.upload_tmp_path
                     orig_name = st.session_state.upload_file_name
@@ -309,18 +468,14 @@ def render():
                                     ]
                                     st.session_state.risk_source_name = data["source"]
                                     progress_placeholder.markdown(
-                                        "📄 **{}** — Trích xuất **{}** điều khoản".format(
-                                            data["source"], total_chunks
-                                        )
+                                        f"📄 **{data['source']}** — Trích xuất **{total_chunks}** điều khoản"
                                     )
                                 elif event == "result":
                                     idx = data["index"]
                                     pct = int(idx / max(data["total"], 1) * 100)
                                     progress_bar.progress(
                                         pct,
-                                        text="Đang rà soát {}... ({}/{})".format(
-                                            data["dieu_khoan"], idx, data["total"]
-                                        ),
+                                        text=f"Đang rà soát {data['dieu_khoan']}... ({idx}/{data['total']})",
                                     )
                                     accumulated.append(
                                         {
@@ -328,6 +483,12 @@ def render():
                                             "noi_dung": data.get("noi_dung", ""),
                                             "rui_ro": data.get("rui_ro", ""),
                                             "can_cu": data.get("can_cu", []),
+                                            "redrafted_clause": data.get(
+                                                "redrafted_clause", ""
+                                            ),
+                                            "local_law_chunks": data.get(
+                                                "local_law_chunks", []
+                                            ),
                                         }
                                     )
                                     st.session_state.last_risk_report = list(
@@ -343,6 +504,11 @@ def render():
                                 elif event == "error":
                                     progress_bar.empty()
                                     progress_placeholder.empty()
+                                    st.session_state.upload_file_name = None
+                                    st.session_state.upload_tmp_path = None
+                                    st.session_state["_uploader_key"] = (
+                                        st.session_state.get("_uploader_key", 0) + 1
+                                    )
                                     st.session_state["_upload_error"] = data.get(
                                         "message",
                                         "File không chứa nội dung hợp đồng hợp lệ.",
@@ -359,6 +525,12 @@ def render():
                                     st.session_state.last_expired_alerts = data[
                                         "expired_law_alerts"
                                     ]
+                                    st.session_state.last_risk_debug_trace = data.get(
+                                        "debug_trace"
+                                    )
+                                    st.session_state.last_redraft_debug_trace = (
+                                        data.get("redraft_debug_trace")
+                                    )
                                     chunks = (
                                         data.get("contract_chunks")
                                         or st.session_state.get("contract_chunks")
@@ -384,10 +556,23 @@ def render():
                                 "Đã có lỗi trong quá trình rà soát. Vui lòng thử lại."
                             )
             else:
-                c_chat, c_btn = st.columns([1, 1], gap="medium")
+                risk_report = st.session_state.last_risk_report
+                risky = [r for r in risk_report if _is_risky(r.get("rui_ro", ""))]
+                safe_count = len(risk_report) - len(risky)
+                c_stat, c_chat, c_btn = st.columns([2.1, 1, 0.8], gap="small")
+                with c_stat:
+                    st.markdown(
+                        f"<div style='background:#0f172a;border:1px solid #1e293b;border-left:3px solid #38bdf8;"
+                        f"border-radius:8px;padding:7px 12px;font-size:0.82rem;display:flex;align-items:center;gap:10px;'>"
+                        f"<span style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;'>📄 <b>{html.escape(st.session_state.upload_file_name)}</b></span>"
+                        f"<span style='color:#fca5a5;font-weight:600;white-space:nowrap;'>🔴 {len(risky)}</span>"
+                        f"<span style='color:#6ee7b7;font-weight:600;white-space:nowrap;'>✅ {safe_count}</span>"
+                        f"</div>",
+                        unsafe_allow_html=True,
+                    )
                 with c_chat:
                     if st.button(
-                        "💬 Chuyển sang Chatbot Q&A",
+                        "💬 Hỏi AI",
                         use_container_width=True,
                         type="primary",
                         key="goto_chatbot_from_risk",
@@ -396,44 +581,20 @@ def render():
                         st.rerun()
                 with c_btn:
                     if st.button(
-                        "🗑️ Gỡ file hợp đồng",
+                        "🗑️ Gỡ",
                         use_container_width=True,
                         key="remove_active_contract",
                     ):
-                        st.session_state.upload_file_name = None
-                        st.session_state.upload_tmp_path = None
-                        st.session_state.last_risk_report = None
-                        st.session_state.last_expired_alerts = []
-                        st.session_state.risk_source_name = None
-                        st.session_state.pending_risk_upload = False
-                        if chatbot_service:
-                            chatbot_service.attach_contract_context(
-                                session_id=st.session_state.session_id,
-                                contract_chunks=[],
-                                risk_report=[],
-                            )
+                        clear_active_risk_contract(chatbot_service)
                         st.rerun()
+
+                _render_redraft_section(
+                    st.session_state.last_risk_report,
+                    st.session_state.last_expired_alerts,
+                )
         else:
-            # FEATURE OVERVIEW CARDS
-            st.markdown(
-                "<div class='feature-grid'>"
-                "<div class='feature-card'>"
-                "<div class='feature-card-icon'>🔍</div>"
-                "<div class='feature-card-title'>Rà soát Tự động 100%</div>"
-                "<div class='feature-card-desc'>Phân tách hợp đồng thành từng Điều/Khoản và rà soát rủi ro pháp lý theo pipeline One-shot.</div>"
-                "</div>"
-                "<div class='feature-card'>"
-                "<div class='feature-card-icon'>🚨</div>"
-                "<div class='feature-card-title'>Tiered Law Checker</div>"
-                "<div class='feature-card-desc'>Phát hiện sớm các văn bản pháp luật đã hết hiệu lực thi hành dựa trên 3 tầng kiểm duyệt.</div>"
-                "</div>"
-                "<div class='feature-card'>"
-                "<div class='feature-card-icon'>📚</div>"
-                "<div class='feature-card-title'>Grounded Citations</div>"
-                "<div class='feature-card-desc'>Truy xuất điều khoản luật chính xác từ Bộ luật Dân sự 2015 & Luật Thương mại 2005.</div>"
-                "</div>"
-                "</div>",
-                unsafe_allow_html=True,
+            st.caption(
+                "Tải lên hợp đồng `.pdf` / `.docx` để kiểm tra hiệu lực văn bản 3 tầng, rà soát rủi ro và tự động đề xuất Redline sửa đổi."
             )
 
             if "_uploader_key" not in st.session_state:
@@ -464,16 +625,16 @@ def render():
                         tmp.write(uploaded_file.getvalue())
                         st.session_state.upload_tmp_path = tmp.name
                     st.session_state.upload_file_name = uploaded_file.name
-                    st.session_state.pending_risk_upload = True
+                    st.session_state.pending_risk_upload = False
                     st.session_state.last_risk_report = None
                     st.session_state.last_expired_alerts = []
+                    st.session_state.last_risk_debug_trace = None
+                    st.session_state.last_redraft_debug_trace = None
                     st.session_state.risk_source_name = None
 
-                    # Tự động parse và nạp ngay context Điều/Khoản vào Chatbot
-                    # để người dùng có thể chuyển sang tab Chatbot hỏi đáp tức thì mà không cần đợi bấm phân tích
                     try:
-                        from modules.shared.document_reader import read_document
                         from modules.shared.chunking import chunk_by_article
+                        from modules.shared.document_reader import read_document
 
                         parsed_text = read_document(st.session_state.upload_tmp_path)
                         if parsed_text and parsed_text.strip():
@@ -494,178 +655,6 @@ def render():
                             "Không thể parse và nạp sớm ngữ cảnh hợp đồng: %s", e
                         )
 
-                st.markdown(
-                    f"<div class='feature-card' style='border-left:4px solid #10b981;margin-bottom:12px;'>"
-                    f"<div class='feature-card-title'>📄 File hợp đồng đã tải lên: <b>{uploaded_file.name}</b></div>"
-                    f"<div class='stepper-container'>"
-                    f"<span class='stepper-step'>1. Parse Document</span> ➔ "
-                    f"<span class='stepper-step'>2. Law Validity Check</span> ➔ "
-                    f"<span class='stepper-step'>3. Vector RAG</span> ➔ "
-                    f"<span class='stepper-step'>4. Risk Audit</span>"
-                    f"</div>"
-                    f"</div>",
-                    unsafe_allow_html=True,
-                )
-
-                if st.session_state.pending_risk_upload:
-                    action_container = st.empty()
-                    with action_container.container():
-                        st.info(
-                            "🤖 Vui lòng chọn tác vụ rà soát cho file hợp đồng này:"
-                        )
-                        c1, c2 = st.columns([1, 1], gap="medium")
-                        with c1:
-                            do_analyze = st.button(
-                                "🔍 Phân tích rủi ro ngay",
-                                use_container_width=True,
-                                type="primary",
-                                key="confirm_upload_risk",
-                            )
-                        with c2:
-                            cancel = st.button(
-                                "⛔ Hủy file",
-                                use_container_width=True,
-                                key="cancel_upload_risk",
-                            )
-
-                    if cancel:
-                        st.session_state.upload_file_name = None
-                        st.session_state.upload_tmp_path = None
-                        st.session_state.last_risk_report = None
-                        st.session_state.last_expired_alerts = []
-                        st.session_state.risk_source_name = None
-                        st.session_state.pending_risk_upload = False
-                        # Tăng key để reset widget file_uploader
-                        st.session_state["_uploader_key"] = (
-                            st.session_state.get("_uploader_key", 0) + 1
-                        )
-                        if chatbot_service:
-                            chatbot_service.attach_contract_context(
-                                session_id=st.session_state.session_id,
-                                contract_chunks=[],
-                                risk_report=[],
-                            )
-                        st.rerun()
-
-                    if do_analyze:
-                        st.session_state.pending_risk_upload = False
-                        action_container.markdown(
-                            "⏳ **Đang thực hiện Pipeline Rà soát Rủi ro...**"
-                        )
-                        if risk_assessment_service is None:
-                            st.error("Module phân tích rủi ro chưa sẵn sàng.")
-                        else:
-                            tmp_path = st.session_state.upload_tmp_path
-                            progress_bar = st.progress(0, text="Đang khởi tạo...")
-                            progress_placeholder = st.empty()
-                            accumulated = []
-
-                            try:
-                                for (
-                                    event,
-                                    data,
-                                ) in risk_assessment_service.stream_analyze_contract(
-                                    file_path_or_text=tmp_path,
-                                    session_id=st.session_state.session_id,
-                                    original_name=uploaded_file.name,
-                                ):
-                                    if event == "meta":
-                                        total_chunks = data["total"]
-                                        ea = data["expired_law_alerts"]
-                                        st.session_state.last_expired_alerts = ea
-                                        st.session_state.risk_source_name = data[
-                                            "source"
-                                        ]
-                                        progress_placeholder.markdown(
-                                            "📄 **{}** — Trích xuất thành công **{}** điều khoản".format(
-                                                data["source"], total_chunks
-                                            )
-                                        )
-
-                                    elif event == "result":
-                                        idx = data["index"]
-                                        pct = int(idx / max(data["total"], 1) * 100)
-                                        progress_bar.progress(
-                                            pct,
-                                            text="Đang rà soát {}... ({}/{})".format(
-                                                data["dieu_khoan"], idx, data["total"]
-                                            ),
-                                        )
-                                        accumulated.append(
-                                            {
-                                                "dieu_khoan": data["dieu_khoan"],
-                                                "noi_dung": data.get("noi_dung", ""),
-                                                "rui_ro": data.get("rui_ro", ""),
-                                                "can_cu": data.get("can_cu", []),
-                                            }
-                                        )
-                                        st.session_state.last_risk_report = list(
-                                            accumulated
-                                        )
-
-                                    elif event == "progress":
-                                        pct = int(
-                                            data["index"] / max(data["total"], 1) * 100
-                                        )
-                                        progress_bar.progress(
-                                            pct,
-                                            text=data.get("message", "Đang xử lý..."),
-                                        )
-
-                                    elif event == "error":
-                                        progress_bar.empty()
-                                        progress_placeholder.empty()
-                                        st.session_state.pending_risk_upload = False
-                                        st.session_state.upload_file_name = None
-                                        st.session_state.upload_tmp_path = None
-                                        st.session_state["_uploader_key"] = (
-                                            st.session_state.get("_uploader_key", 0) + 1
-                                        )
-                                        # Lưu lỗi để hiển thị sau khi rerun
-                                        st.session_state["_upload_error"] = data.get(
-                                            "message",
-                                            "File không chứa nội dung hợp đồng hợp lệ.",
-                                        )
-                                        st.rerun()
-
-                                    elif event == "done":
-                                        progress_bar.progress(
-                                            100, text="✅ Hoàn tất rà soát rủi ro!"
-                                        )
-                                        progress_placeholder.empty()
-                                        st.session_state.last_risk_report = data[
-                                            "risk_results"
-                                        ]
-                                        st.session_state.last_expired_alerts = data[
-                                            "expired_law_alerts"
-                                        ]
-                                        chunks = (
-                                            data.get("contract_chunks")
-                                            or st.session_state.get("contract_chunks")
-                                            or []
-                                        )
-                                        if chunks:
-                                            st.session_state.contract_chunks = chunks
-                                        if chatbot_service:
-                                            try:
-                                                chatbot_service.attach_contract_context(
-                                                    session_id=st.session_state.session_id,
-                                                    contract_chunks=chunks,
-                                                    risk_report=data["risk_results"]
-                                                    or [],
-                                                )
-                                            except Exception:
-                                                logger.exception(
-                                                    "Không thể đồng bộ context sang chatbot_qa."
-                                                )
-                                        st.rerun()
-
-                            except Exception:
-                                logger.exception("Lỗi khi phân tích.")
-                                st.error(
-                                    "Đã có lỗi trong quá trình rà soát. Vui lòng thử lại."
-                                )
-            # NOTE: Không xóa state khi uploader trả về None (xảy ra khi tab qua lại).
-            # State chỉ được xóa khi người dùng bấm nút "Gỡ file" hoặc "Hủy file" một cách tường minh.
+                    st.rerun()
 
     render_risk_panel(col_risk)
