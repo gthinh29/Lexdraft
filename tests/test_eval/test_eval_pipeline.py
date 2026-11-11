@@ -94,9 +94,12 @@ class TestEvaluationRunner:
 
         mock_chunks = [{"content": "Điều 301 Luật Thương mại...", "score": 0.92}]
 
-        with patch(
-            "eval.eval_runner.handle_chat", return_value=mock_chat_response
-        ), patch("eval.eval_runner.retrieval.search_context", return_value=mock_chunks):
+        with (
+            patch("eval.eval_runner.handle_chat", return_value=mock_chat_response),
+            patch(
+                "eval.eval_runner.retrieval.search_context", return_value=mock_chunks
+            ),
+        ):
             results = runner.run_inference(sample_golden_data[:1])
 
             assert len(results) == 1

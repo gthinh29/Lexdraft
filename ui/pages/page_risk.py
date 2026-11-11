@@ -401,6 +401,8 @@ def render():
 
         if st.session_state.upload_file_name:
             if not st.session_state.last_risk_report:
+                if st.session_state.get("_risk_api_error"):
+                    st.error(st.session_state.pop("_risk_api_error"))
                 st.markdown(
                     f"<div style='background:#0f172a;border:1px solid #1e293b;border-left:4px solid #38bdf8;"
                     f"border-radius:8px;padding:8px 12px;margin-bottom:8px;font-size:0.84rem;'>"
@@ -498,15 +500,26 @@ def render():
                                 elif event == "error":
                                     progress_bar.empty()
                                     progress_placeholder.empty()
-                                    st.session_state.upload_file_name = None
-                                    st.session_state.upload_tmp_path = None
-                                    st.session_state["_uploader_key"] = (
-                                        st.session_state.get("_uploader_key", 0) + 1
-                                    )
-                                    st.session_state["_upload_error"] = data.get(
-                                        "message",
-                                        "File không chứa nội dung hợp đồng hợp lệ.",
-                                    )
+                                    st.session_state.last_risk_report = None
+                                    if data.get("debug_trace"):
+                                        st.session_state.last_risk_debug_trace = (
+                                            data.get("debug_trace")
+                                        )
+                                    if data.get("keep_file"):
+                                        st.session_state["_risk_api_error"] = data.get(
+                                            "message",
+                                            "Hệ thống AI tạm thời quá tải. Vui lòng thử lại.",
+                                        )
+                                    else:
+                                        st.session_state.upload_file_name = None
+                                        st.session_state.upload_tmp_path = None
+                                        st.session_state["_uploader_key"] = (
+                                            st.session_state.get("_uploader_key", 0) + 1
+                                        )
+                                        st.session_state["_upload_error"] = data.get(
+                                            "message",
+                                            "File không chứa nội dung hợp đồng hợp lệ.",
+                                        )
                                     st.rerun()
                                 elif event == "done":
                                     progress_bar.progress(

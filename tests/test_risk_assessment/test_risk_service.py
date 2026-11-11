@@ -190,6 +190,22 @@ class TestStreamAnalyzeContract:
         # Ít nhất 1 điều khoản được phân tích
         assert len(result_events) >= 1
 
+    def test_stream_503_api_error_yields_error_instead_of_false_safe(
+        self, sample_contract_text, patched_risk_deps
+    ):
+        """Lỗi 503 UNAVAILABLE không được mặc định toàn bộ điều khoản là an toàn."""
+        mock_llm = patched_risk_deps["llm"]
+        mock_llm.generate_grounded_response.return_value = {
+            "answer": "⚠️ **Lỗi hệ thống:** Máy chủ Gemini AI đang quá tải tạm thời (Lỗi 503 UNAVAILABLE).",
+            "citations": [],
+            "refusal": True,
+            "debug_trace": {"raw_llm_response": "ERROR: 503 UNAVAILABLE"},
+        }
+        events = self._collect_events(sample_contract_text)
+        assert events[-1][0] == "error"
+        assert events[-1][1].get("keep_file") is True
+        assert not any(e[0] == "result" for e in events)
+
     def test_original_name_used_in_meta(self, sample_contract_text, patched_risk_deps):
         events = self._collect_events(
             sample_contract_text, original_name="my_contract.docx"

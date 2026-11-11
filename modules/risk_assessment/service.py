@@ -115,10 +115,26 @@ def _invoke_batch_llm_with_retry(
     total: int,
     stage_label: str,
 ):
-    """Gọi LLM theo lô kèm cơ chế tự động thử lại khi gặp giới hạn hạn mức (429)."""
+    """Gọi LLM theo lô kèm cơ chế tự động thử lại khi gặp lỗi tạm thời (429/503)."""
     retry_waits = [10, 15, 20, 30, 45, 60]
+    transient_tokens = (
+        "429",
+        "503",
+        "500",
+        "502",
+        "504",
+        "rate",
+        "quota",
+        "unavailable",
+        "high demand",
+        "overloaded",
+        "quá tải",
+        "hết hạn mức",
+    )
     raw_answer = ""
     debug_trace = None
+    error_msg = ""
+
     for attempt in range(len(retry_waits) + 1):
         try:
             llm_result = llm_client.generate_grounded_response(
@@ -126,17 +142,24 @@ def _invoke_batch_llm_with_retry(
                 retrieved_chunks=retrieved_chunks,
                 threshold=0.0,
             )
-            ans = llm_result.get("answer", "")
+            ans = (llm_result.get("answer") or "").strip()
             debug_trace = llm_result.get("debug_trace")
-            is_rate = llm_result.get("refusal") and any(
-                k in ans.lower()
-                for k in ("rate", "quota", "429", "quá tải", "hết hạn mức")
-            )
-            if not is_rate:
-                raw_answer = ans
+            is_refusal = bool(llm_result.get("refusal"))
+            raw_trace_err = str((debug_trace or {}).get("raw_llm_response", "")).lower()
+
+            if is_refusal or ans.startswith("⚠️"):
+                combined_err = f"{ans} {raw_trace_err}".lower()
+                if any(k in combined_err for k in transient_tokens):
+                    raise RuntimeError(ans or raw_trace_err)
+                error_msg = ans or "Mô hình AI không thể xử lý yêu cầu lúc này."
+                raw_answer = ""
                 break
-            raise RuntimeError(f"Rate limit: {ans}")
+
+            raw_answer = ans
+            error_msg = ""
+            break
         except Exception as e:
+            error_msg = str(e)
             if attempt < len(retry_waits):
                 wait = retry_waits[attempt]
                 logger.warning(
@@ -145,7 +168,7 @@ def _invoke_batch_llm_with_retry(
                 yield (
                     "progress",
                     {
-                        "message": f"⏳ Rate limit ({stage_label}), thử lại sau {wait}s...",
+                        "message": f"⏳ Máy chủ AI quá tải ({stage_label}), thử lại sau {wait}s...",
                         "index": 0,
                         "total": total,
                     },
@@ -154,7 +177,7 @@ def _invoke_batch_llm_with_retry(
             else:
                 logger.error("[%s] Hết retry: %s", stage_label, e)
                 raw_answer = ""
-    yield ("_llm_done", (raw_answer, debug_trace))
+    yield ("_llm_done", (raw_answer, debug_trace, error_msg))
 
 
 def _sync_chatbot_context(
@@ -320,6 +343,7 @@ def stream_analyze_contract(
 
     raw_answer = ""
     batch_debug_trace = None
+    batch_error = ""
     batch_risk_prompt = prompts.build_batch_risk_prompt(
         articles_data, expired_law_alerts
     )
@@ -327,11 +351,23 @@ def stream_analyze_contract(
         batch_risk_prompt, all_law_chunks, total, "batch_risk"
     ):
         if ev_type == "_llm_done":
-            raw_answer, batch_debug_trace = payload
+            raw_answer, batch_debug_trace, batch_error = payload
         else:
             yield (ev_type, payload)
 
     parsed = _parse_batch_markers(raw_answer, "DIEU")
+    if batch_error or (not raw_answer.strip() and not parsed):
+        yield (
+            "error",
+            {
+                "message": batch_error
+                or "Không nhận được phản hồi phân tích từ mô hình AI. Vui lòng thử lại sau ít giây.",
+                "keep_file": True,
+                "debug_trace": batch_debug_trace,
+            },
+        )
+        return
+
     risky_for_redraft: List[Dict[str, Any]] = []
     per_article_eval: List[Dict[str, Any]] = []
 
@@ -356,6 +392,7 @@ def stream_analyze_contract(
 
     redrafted_map: Dict[int, str] = {}
     redraft_debug_trace = None
+    redraft_error = ""
     if risky_for_redraft:
         yield (
             "progress",
@@ -373,7 +410,7 @@ def stream_analyze_contract(
             batch_redraft_prompt, all_law_chunks, total, "batch_redraft"
         ):
             if ev_type == "_llm_done":
-                redraft_raw, redraft_debug_trace = payload
+                redraft_raw, redraft_debug_trace, redraft_error = payload
             else:
                 yield (ev_type, payload)
         redrafted_map = {
@@ -407,5 +444,6 @@ def stream_analyze_contract(
             "contract_chunks": contract_chunks,
             "debug_trace": batch_debug_trace,
             "redraft_debug_trace": redraft_debug_trace,
+            "redraft_error": redraft_error,
         },
     )

@@ -20,11 +20,13 @@ def _render_inspector_body(debug_trace: Dict[str, Any], key_prefix: str) -> None
     filtered_cits = debug_trace.get("filtered_citations", [])
 
     score_str = f"{max_score:.3f}" if isinstance(max_score, (int, float)) else "N/A"
-    status_badge = (
-        "<span style='color:#6ee7b7;font-weight:700;'>✅ PASS</span>"
-        if passed
-        else "<span style='color:#fca5a5;font-weight:700;'>🛑 BLOCKED</span>"
-    )
+    is_api_error = isinstance(raw_resp, str) and raw_resp.startswith("ERROR:")
+    if passed:
+        status_badge = "<span style='color:#6ee7b7;font-weight:700;'>✅ PASS</span>"
+    elif is_api_error:
+        status_badge = "<span style='color:#fbbf24;font-weight:700;'>⚠️ API ERROR</span>"
+    else:
+        status_badge = "<span style='color:#fca5a5;font-weight:700;'>🛑 BLOCKED</span>"
 
     # 1 thanh thông số siêu gọn (thay thế 4 metric card cồng kềnh)
     st.markdown(

@@ -77,11 +77,24 @@ class GeminiClient:
     def generate_text(
         self,
         prompt: str,
-        max_retries: int = 3,
+        max_retries: int = 4,
         base_delay: float = 2.0,
     ) -> str:
-        """Gọi Gemini sinh văn bản với exponential backoff khi quá giới hạn tần suất."""
+        """Gọi Gemini sinh văn bản với exponential backoff khi quá tải (429/503)."""
         last_exception = None
+        transient_tokens = (
+            "429",
+            "503",
+            "500",
+            "502",
+            "504",
+            "quota",
+            "resource_exhausted",
+            "unavailable",
+            "high demand",
+            "overloaded",
+            "timeout",
+        )
         for attempt in range(max_retries):
             try:
                 response = (
@@ -99,9 +112,7 @@ class GeminiClient:
             except Exception as e:
                 last_exception = e
                 error_str = str(e).lower()
-                if not any(
-                    k in error_str for k in ("429", "quota", "resource_exhausted")
-                ):
+                if not any(k in error_str for k in transient_tokens):
                     logger.error("Lỗi khi gọi Gemini generate_content: %s", e)
                     raise
 
@@ -114,7 +125,7 @@ class GeminiClient:
                     else base_delay * (2**attempt)
                 )
                 logger.warning(
-                    "Gemini API rate limit. Chờ %.1fs (lần %d/%d)...",
+                    "Gemini API tạm thời quá tải/rate limit. Chờ %.1fs (lần %d/%d)...",
                     sleep_time,
                     attempt + 1,
                     max_retries,
@@ -122,10 +133,18 @@ class GeminiClient:
                 time.sleep(sleep_time)
 
         logger.error("Vượt quá số lần thử lại (%d): %s", max_retries, last_exception)
+        if last_exception is not None and any(
+            k in str(last_exception).lower()
+            for k in ("503", "unavailable", "high demand", "overloaded")
+        ):
+            raise RuntimeError(
+                "Máy chủ Gemini AI đang quá tải tạm thời (503 UNAVAILABLE). "
+                "Vui lòng đợi vài giây rồi bấm thử lại."
+            ) from last_exception
         raise RuntimeError(
             "Google Gemini API Free Tier Quota Exceeded (Lỗi 429: Vượt quá giới hạn gọi API). "
             "Vui lòng đợi khoảng 30-40 giây sau đó bấm thử lại."
-        )
+        ) from last_exception
 
 
 def extract_citations_from_chunks(
@@ -231,10 +250,16 @@ def _build_debug_trace(
 def _format_api_error(err: Exception) -> str:
     """Chuyển đổi ngoại lệ kỹ thuật thành thông báo thân thiện cho người dùng."""
     err_str = str(err)
+    lower = err_str.lower()
     if "404" in err_str:
         return (
             "Mô hình AI hiện tại không khả dụng hoặc đã thay đổi phiên bản trên hệ thống Google Gemini. "
             "Hệ thống đã tự động ghi nhận để điều chỉnh."
+        )
+    if any(k in lower for k in ("503", "unavailable", "high demand", "overloaded")):
+        return (
+            "Máy chủ Gemini AI đang quá tải tạm thời (Lỗi 503 UNAVAILABLE). "
+            "Vui lòng đợi vài giây rồi bấm thử lại."
         )
     if "429" in err_str or "RESOURCE_EXHAUSTED" in err_str:
         return "Hệ thống đang quá tải hoặc tạm thời hết hạn mức gọi AI (Rate Limit/Quota). Vui lòng đợi trong giây lát và thử lại."
