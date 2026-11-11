@@ -13,9 +13,11 @@ from ui.components.rag_inspector import render_rag_inspector
 from ui.state import clear_active_risk_contract, persist_drafting_keys
 
 try:
+    from modules.risk_assessment import redraft_builder
     from modules.risk_assessment import service as risk_assessment_service
 except ImportError:
     risk_assessment_service = None
+    redraft_builder = None
 
 try:
     from modules.chatbot_qa import service as chatbot_service
@@ -207,8 +209,8 @@ def render_risk_panel(target=None):
                             f"<div class='expired-banner-title'>🚨 VĂN BẢN HẾT HIỆU LỰC</div>"
                             f"<div class='expired-banner-item'><b>Văn bản viện dẫn:</b> {law_ref}</div>"
                             f"<div class='expired-banner-item'><b>Trạng thái:</b> Đã hết hiệu lực thi hành</div>"
-                            f"{f'<div class=\"expired-banner-item\"><b>Văn bản thay thế:</b> {replaced_by}</div>' if replaced_by else ''}"
-                            f"{f'<div class=\"expired-banner-item\" style=\"font-size:0.75rem;color:#fca5a5;margin-top:6px;\">ℹ️ {note}</div>' if note else ''}"
+                            f"{f'<div class="expired-banner-item"><b>Văn bản thay thế:</b> {replaced_by}</div>' if replaced_by else ''}"
+                            f"{f'<div class="expired-banner-item" style="font-size:0.75rem;color:#fca5a5;margin-top:6px;">ℹ️ {note}</div>' if note else ''}"
                             f"</div>",
                             unsafe_allow_html=True,
                         )
@@ -239,12 +241,8 @@ def _render_redraft_section(risk_report: list | None, expired_alerts: list | Non
 
     risky_items = [item for item in risk_report if _is_risky(item.get("rui_ro", ""))]
     patched_text = ""
-    if (
-        (risky_items or expired_alerts)
-        and risk_assessment_service
-        and hasattr(risk_assessment_service, "build_redrafted_contract_text")
-    ):
-        patched_text = risk_assessment_service.build_redrafted_contract_text(
+    if (risky_items or expired_alerts) and redraft_builder:
+        patched_text = redraft_builder.build_redrafted_contract_text(
             risk_results=risk_report,
             expired_law_alerts=expired_alerts,
         )
@@ -329,12 +327,8 @@ def _render_redraft_section(risk_report: list | None, expired_alerts: list | Non
                 item = risky_items[chosen_idx]
                 orig_clause = item.get("noi_dung", "").strip()
                 redrafted = item.get("redrafted_clause", "").strip()
-                if (
-                    not redrafted
-                    and risk_assessment_service
-                    and hasattr(risk_assessment_service, "extract_redrafted_clause")
-                ):
-                    redrafted = risk_assessment_service.extract_redrafted_clause(
+                if not redrafted and redraft_builder:
+                    redrafted = redraft_builder.extract_redrafted_clause(
                         item.get("rui_ro", "")
                     )
 

@@ -8,8 +8,9 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from modules.shared.chunking import chunk_by_article, extract_law_header  # noqa: E402
+from modules.shared.chunking import chunk_by_article  # noqa: E402
 from modules.shared.document_reader import read_document  # noqa: E402
+from modules.shared.law_metadata import extract_law_header  # noqa: E402
 
 # Thiết lập encoding UTF-8 cho Windows console
 if sys.platform == "win32":

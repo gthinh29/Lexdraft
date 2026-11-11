@@ -2,10 +2,10 @@
 
 from typing import Any, Dict, List
 
-from modules.drafting import retrieval
+from modules.drafting.formatter import format_drafting_user_input, format_stance_block
+from modules.drafting.taxonomy import get_stance_config
 from modules.shared.legal_rules import (
     STANDARD_LEGAL_CITATION_RULES,
-    format_drafting_user_input,
     format_law_chunks_block,
 )
 
@@ -29,7 +29,7 @@ QUY TẮC SOẠN THẢO BẮT BUỘC:
 
 DRAFTING_PROMPT_TEMPLATE = """{system_instruction}
 
-=== 1. THÔNG TIN GIAO DỊCH & THÔNG SỐ ĐẶC THÙ NGƯỜNG DÙNG CUNG CẤP ===
+=== 1. THÔNG TIN GIAO DỊCH & THÔNG SỐ ĐẶC THÙ NGƯỜI DÙNG CUNG CẤP ===
 {user_input_text}
 
 === 2. {stance_block} ===
@@ -52,15 +52,7 @@ def build_drafting_prompt(
 ) -> str:
     """Ghép dữ liệu giao dịch, chiến lược vị thế và căn cứ RAG vào mẫu Prompt soạn thảo."""
     contract_type = user_input.get("contract_type", "hợp đồng dịch vụ")
-    stance_cfg = retrieval.get_stance_config(user_input.get("stance_id", "balanced"))
-    stance_directives = "\n".join(
-        f"  * {d}" for d in stance_cfg.get("drafting_directives", [])
-    )
-    stance_block = (
-        f"CHIẾN LƯỢC VỊ THẾ BẢO VỆ PHÁP LÝ ({stance_cfg.get('label', 'Cân bằng hai bên')}):\n{stance_directives}"
-        if stance_directives
-        else ""
-    )
+    stance_cfg = get_stance_config(user_input.get("stance_id", "balanced"))
     template_text = (
         template.strip()
         if template
@@ -70,7 +62,7 @@ def build_drafting_prompt(
     return DRAFTING_PROMPT_TEMPLATE.format(
         system_instruction=DRAFTING_SYSTEM_INSTRUCTION,
         user_input_text=format_drafting_user_input(user_input),
-        stance_block=stance_block,
+        stance_block=format_stance_block(stance_cfg),
         law_context_text=format_law_chunks_block(law_context),
         template_text=template_text,
         contract_type=contract_type,

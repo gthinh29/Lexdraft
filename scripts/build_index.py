@@ -15,13 +15,13 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 import config  # noqa: E402
-from modules.shared.chunking import (  # noqa: E402
-    chunk_by_article,
+from modules.shared.chunking import chunk_by_article  # noqa: E402
+from modules.shared.document_reader import read_document  # noqa: E402
+from modules.shared.embedding import VectorDB  # noqa: E402
+from modules.shared.law_metadata import (  # noqa: E402
     extract_law_header,
     extract_template_header,
 )
-from modules.shared.document_reader import read_document  # noqa: E402
-from modules.shared.embedding import VectorDB  # noqa: E402
 
 # Thiết lập logging hỗ trợ UTF-8 trên Windows console
 if sys.platform == "win32":

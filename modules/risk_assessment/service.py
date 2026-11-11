@@ -4,7 +4,7 @@ import logging
 import re
 import time
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from modules.risk_assessment import law_validity_checker, prompts, retrieval
 from modules.risk_assessment.redraft_builder import (
@@ -23,6 +23,15 @@ __all__ = [
     "build_redrafted_contract_text",
 ]
 
+_SAFE_PHRASES = (
+    "không phát hiện rủi ro",
+    "không có rủi ro",
+    "phù hợp quy định",
+    "phù hợp với quy định",
+    "không vi phạm",
+    "không phát hiện vi phạm",
+)
+
 
 def _is_risky_text(risk_text: str) -> bool:
     """Kiểm tra đánh giá của LLM có xác định điều khoản bị rủi ro hay không."""
@@ -31,15 +40,47 @@ def _is_risky_text(risk_text: str) -> bool:
     lower = risk_text.lower()
     if "không trích xuất được" in lower:
         return False
-    safe_phrases = (
-        "không phát hiện rủi ro",
-        "không có rủi ro",
-        "phù hợp quy định",
-        "phù hợp với quy định",
-        "không vi phạm",
-        "không phát hiện vi phạm",
+    return not any(p in lower for p in _SAFE_PHRASES)
+
+
+def _load_contract_text(
+    file_path_or_text: Union[str, Path], original_name: Optional[str] = None
+) -> Tuple[str, str]:
+    """Đọc nội dung hợp đồng từ đường dẫn file hoặc chuỗi văn bản thô."""
+    path_obj = Path(str(file_path_or_text))
+    if path_obj.exists() and path_obj.is_file():
+        return original_name or path_obj.name, document_reader.read_document(path_obj)
+    return original_name or "contract_input", str(file_path_or_text)
+
+
+def _run_validity_precheck(
+    text: str, enable_llm_fallback: bool
+) -> List[Dict[str, Any]]:
+    """Chạy kiểm tra hiệu lực văn bản 3 tầng trước khi rà soát từng điều khoản."""
+    eff_chunks = retrieval.find_related_laws(
+        "hiệu lực thi hành bãi bỏ thay thế hết hiệu lực", top_k=10
     )
-    return not any(p in lower for p in safe_phrases)
+    return law_validity_checker.check_expired_laws(
+        contract_text=text,
+        law_index_chunks=eff_chunks,
+        enable_llm_fallback=enable_llm_fallback,
+    )
+
+
+def _filter_clause_citations(
+    risk_text: str, law_chunks: List[Dict[str, Any]]
+) -> List[Dict[str, Any]]:
+    """Chỉ giữ lại các căn cứ pháp lý thực sự được nhắc tới trong nhận xét rủi ro."""
+    local_citations = llm_client.extract_citations_from_chunks(law_chunks)
+    used = []
+    for c in local_citations:
+        article_lbl = c.get("article", "")
+        art_match = re.search(r"\d+", article_lbl)
+        if art_match and re.search(rf"\b[Đđ]iều\s+{art_match.group()}\b", risk_text):
+            used.append(c)
+        elif article_lbl and article_lbl.lower() in risk_text.lower():
+            used.append(c)
+    return used
 
 
 def _parse_batch_markers(raw_answer: str, marker_prefix: str) -> Dict[int, str]:
@@ -49,14 +90,11 @@ def _parse_batch_markers(raw_answer: str, marker_prefix: str) -> Dict[int, str]:
     pattern = rf"==={re.escape(marker_prefix)}_(\d+)_KET_QUA==="
     parts = re.split(pattern, raw_answer, flags=re.IGNORECASE)
     parsed: Dict[int, str] = {}
-    i = 1
-    while i + 1 < len(parts):
+    for i in range(1, len(parts) - 1, 2):
         try:
-            idx_num = int(parts[i])
-            parsed[idx_num] = parts[i + 1].strip()
+            parsed[int(parts[i])] = parts[i + 1].strip()
         except ValueError:
             pass
-        i += 2
 
     fallback_matches = re.findall(
         rf"==={re.escape(marker_prefix)}_(\d+)_KET_QUA===(.*?)(?===={re.escape(marker_prefix)}_\d+_KET_QUA===|$)",
@@ -65,9 +103,7 @@ def _parse_batch_markers(raw_answer: str, marker_prefix: str) -> Dict[int, str]:
     )
     for num_str, content in fallback_matches:
         try:
-            num = int(num_str)
-            if num not in parsed:
-                parsed[num] = content.strip()
+            parsed.setdefault(int(num_str), content.strip())
         except ValueError:
             pass
     return parsed
@@ -146,30 +182,14 @@ def analyze_contract(
     session_id: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Phân tích rủi ro pháp lý tuần tự cho một hợp đồng (file hoặc chuỗi văn bản)."""
-    path_obj = Path(str(file_path_or_text))
-    if path_obj.exists() and path_obj.is_file():
-        source_name = path_obj.name
-        text = document_reader.read_document(path_obj)
-    else:
-        source_name = "contract_input"
-        text = str(file_path_or_text)
-
+    source_name, text = _load_contract_text(file_path_or_text)
     if not text.strip():
         logger.warning("Nội dung hợp đồng rỗng, không thể phân tích rủi ro.")
         return {"expired_law_alerts": [], "risk_results": []}
 
-    hieu_luc_chunks = retrieval.find_related_laws(
-        "hiệu lực thi hành bãi bỏ thay thế hết hiệu lực", top_k=10
-    )
-    expired_law_alerts = law_validity_checker.check_expired_laws(
-        contract_text=text,
-        law_index_chunks=hieu_luc_chunks,
-        enable_llm_fallback=True,
-    )
-
+    expired_law_alerts = _run_validity_precheck(text, enable_llm_fallback=True)
     contract_chunks = chunking.chunk_by_article(
-        text=text,
-        source_metadata={"source": source_name},
+        text=text, source_metadata={"source": source_name}
     )
     if not contract_chunks:
         return {"expired_law_alerts": expired_law_alerts, "risk_results": []}
@@ -177,11 +197,9 @@ def analyze_contract(
     risk_results: List[Dict[str, Any]] = []
     for idx, chunk in enumerate(contract_chunks, 1):
         content = chunk.get("content", "").strip()
-        metadata = chunk.get("metadata", {})
-        article_label = metadata.get("article") or f"Điều khoản {idx}"
         if not content:
             continue
-
+        article_label = chunk.get("metadata", {}).get("article") or f"Điều khoản {idx}"
         law_chunks = retrieval.find_related_laws(content, top_k=3)
         prompt = prompts.build_risk_prompt(
             dieu_khoan_text=content,
@@ -192,16 +210,14 @@ def analyze_contract(
         debug_trace = None
         try:
             llm_result = llm_client.generate_grounded_response(
-                query=prompt,
-                retrieved_chunks=law_chunks,
-                threshold=0.35,
+                query=prompt, retrieved_chunks=law_chunks, threshold=0.35
             )
             risk_text = llm_result.get("answer", "")
             citations = llm_result.get("citations", [])
             debug_trace = llm_result.get("debug_trace")
         except Exception as e:
             logger.exception("Lỗi khi phân tích rủi ro cho %s: %s", article_label, e)
-            risk_text = f"Không thể phân tích điều khoản này do lỗi hệ thống: {str(e)}"
+            risk_text = f"Không thể phân tích điều khoản này do lỗi hệ thống: {e}"
             citations = []
 
         risk_results.append(
@@ -219,10 +235,7 @@ def analyze_contract(
             time.sleep(1.0)
 
     _sync_chatbot_context(session_id, contract_chunks, risk_results)
-    return {
-        "expired_law_alerts": expired_law_alerts,
-        "risk_results": risk_results,
-    }
+    return {"expired_law_alerts": expired_law_alerts, "risk_results": risk_results}
 
 
 def stream_analyze_contract(
@@ -231,14 +244,7 @@ def stream_analyze_contract(
     original_name: Optional[str] = None,
 ):
     """Phân tích rủi ro hợp đồng 2 pha theo luồng sự kiện (Stage 1: Rà soát -> Stage 2: Vá lỗi Redline)."""
-    path_obj = Path(str(file_path_or_text))
-    if path_obj.exists() and path_obj.is_file():
-        source_name = original_name or path_obj.name
-        text = document_reader.read_document(path_obj)
-    else:
-        source_name = original_name or "contract_input"
-        text = str(file_path_or_text)
-
+    source_name, text = _load_contract_text(file_path_or_text, original_name)
     if not text.strip():
         yield (
             "error",
@@ -250,18 +256,9 @@ def stream_analyze_contract(
         )
         return
 
-    hieu_luc_chunks = retrieval.find_related_laws(
-        "hiệu lực thi hành bãi bỏ thay thế hết hiệu lực", top_k=10
-    )
-    expired_law_alerts = law_validity_checker.check_expired_laws(
-        contract_text=text,
-        law_index_chunks=hieu_luc_chunks,
-        enable_llm_fallback=False,
-    )
-
+    expired_law_alerts = _run_validity_precheck(text, enable_llm_fallback=False)
     contract_chunks = chunking.chunk_by_article(
-        text=text,
-        source_metadata={"source": source_name},
+        text=text, source_metadata={"source": source_name}
     )
     total = len(contract_chunks)
     yield (
@@ -284,18 +281,17 @@ def stream_analyze_contract(
     articles_data = []
     for chunk in contract_chunks:
         content = chunk.get("content", "").strip()
+        if not content:
+            continue
         metadata = chunk.get("metadata", {})
         article_label = (
             metadata.get("article") or f"Điều khoản {len(articles_data) + 1}"
         )
-        if not content:
-            continue
-        law_chunks = retrieval.find_related_laws(content, top_k=3)
         articles_data.append(
             {
                 "label": article_label,
                 "content": content,
-                "law_chunks": law_chunks,
+                "law_chunks": retrieval.find_related_laws(content, top_k=3),
                 "metadata": metadata,
             }
         )
@@ -313,21 +309,20 @@ def stream_analyze_contract(
         },
     )
 
-    batch_risk_prompt = prompts.build_batch_risk_prompt(
-        articles_data, expired_law_alerts
-    )
-
     all_law_chunks: List[Dict] = []
-    seen = set()
+    seen_chunks = set()
     for art in articles_data:
         for lc in art["law_chunks"]:
             key = lc.get("content", "")[:80]
-            if key not in seen:
-                seen.add(key)
+            if key not in seen_chunks:
+                seen_chunks.add(key)
                 all_law_chunks.append(lc)
 
     raw_answer = ""
     batch_debug_trace = None
+    batch_risk_prompt = prompts.build_batch_risk_prompt(
+        articles_data, expired_law_alerts
+    )
     for ev_type, payload in _invoke_batch_llm_with_retry(
         batch_risk_prompt, all_law_chunks, total, "batch_risk"
     ):
@@ -337,28 +332,14 @@ def stream_analyze_contract(
             yield (ev_type, payload)
 
     parsed = _parse_batch_markers(raw_answer, "DIEU")
-
     risky_for_redraft: List[Dict[str, Any]] = []
     per_article_eval: List[Dict[str, Any]] = []
+
     for seq, art in enumerate(articles_data, 1):
         risk_text = parsed.get(
             seq, "Không phát hiện rủi ro. Điều khoản phù hợp với quy định pháp luật."
         )
-        local_citations = llm_client.extract_citations_from_chunks(
-            art.get("law_chunks", [])
-        )
-        used = []
-        for c in local_citations:
-            article_lbl = c.get("article", "")
-            art_match = re.search(r"\d+", article_lbl)
-            if art_match:
-                art_num = art_match.group()
-                if re.search(rf"\b[Đđ]iều\s+{art_num}\b", risk_text):
-                    used.append(c)
-                    continue
-            if article_lbl and article_lbl.lower() in risk_text.lower():
-                used.append(c)
-
+        used = _filter_clause_citations(risk_text, art.get("law_chunks", []))
         per_article_eval.append(
             {"seq": seq, "art": art, "risk_text": risk_text, "used": used}
         )
@@ -405,14 +386,13 @@ def stream_analyze_contract(
         seq = entry["seq"]
         art = entry["art"]
         risk_text = entry["risk_text"]
-        redrafted_clause = redrafted_map.get(seq) or extract_redrafted_clause(risk_text)
-
         item = {
             "dieu_khoan": art["label"],
             "noi_dung": art["content"],
             "rui_ro": risk_text,
             "can_cu": entry["used"],
-            "redrafted_clause": redrafted_clause,
+            "redrafted_clause": redrafted_map.get(seq)
+            or extract_redrafted_clause(risk_text),
             "local_law_chunks": art.get("law_chunks", []),
         }
         risk_results.append(item)

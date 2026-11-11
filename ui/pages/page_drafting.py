@@ -5,11 +5,11 @@ import logging
 import streamlit as st
 
 try:
-    from modules.drafting import retrieval as drafting_retrieval
     from modules.drafting import service as drafting_service
+    from modules.drafting import taxonomy as drafting_taxonomy
 except ImportError:
     drafting_service = None
-    drafting_retrieval = None
+    drafting_taxonomy = None
 
 from modules.drafting.document_utils import (
     build_docx_bytes,
@@ -34,8 +34,8 @@ def render():
     st.subheader("📝 Soạn thảo Hợp đồng theo Phân loại & Vị thế Pháp lý")
 
     taxonomy = (
-        drafting_retrieval.load_contract_taxonomy()
-        if drafting_retrieval
+        drafting_taxonomy.load_contract_taxonomy()
+        if drafting_taxonomy
         else {"categories": {}, "stances": {}}
     )
     categories = taxonomy.get("categories", {})

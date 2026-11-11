@@ -2,12 +2,12 @@
 
 from typing import Any, Dict, List, Optional
 
-from modules.shared.legal_rules import (
-    STANDARD_LEGAL_CITATION_RULES,
+from modules.chatbot_qa.formatter import (
     format_chat_context_chunks,
     format_chat_history,
     format_chat_risk_report,
 )
+from modules.shared.legal_rules import STANDARD_LEGAL_CITATION_RULES
 
 MAX_HISTORY_TURNS_IN_PROMPT = 6
 

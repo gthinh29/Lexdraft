@@ -1,7 +1,4 @@
-"""
-modules/shared/document_reader.py
-Module đọc và trích xuất nội dung văn bản thô từ file PDF và DOCX.
-"""
+"""Đọc và trích xuất nội dung văn bản thô từ file PDF, DOCX, Markdown và TXT."""
 
 import logging
 from pathlib import Path
@@ -10,27 +7,13 @@ from typing import Union
 import pdfplumber
 from docx import Document
 
-# TODO: Nếu module logger chuẩn đã có sẵn trong modules/shared/,
-# hãy thay dòng dưới bằng: from modules.shared.logger import get_logger
-# logger = get_logger(__name__)
 logger = logging.getLogger(__name__)
 
 PathLike = Union[str, Path]
 
 
 def read_pdf(file_path: PathLike) -> str:
-    """
-    Đọc toàn bộ text từ file PDF bằng pdfplumber.
-
-    Các trang không trích xuất được text (nhiều khả năng là ảnh scan)
-    sẽ bị bỏ qua và log warning, KHÔNG raise lỗi để không chặn cả pipeline.
-
-    Args:
-        file_path: đường dẫn tới file .pdf
-
-    Returns:
-        Toàn bộ text các trang, nối bằng ký tự xuống dòng.
-    """
+    """Đọc text từng trang PDF bằng pdfplumber, bỏ qua trang scan không có text."""
     file_path = Path(file_path)
     text_parts = []
 
@@ -41,8 +24,7 @@ def read_pdf(file_path: PathLike) -> str:
                 text_parts.append(page_text)
             else:
                 logger.warning(
-                    "Trang %s trong file '%s' không trích xuất được text "
-                    "(có thể là ảnh scan) - đã bỏ qua.",
+                    "Trang %s trong file '%s' không trích xuất được text (có thể là ảnh scan).",
                     page_number,
                     file_path.name,
                 )
@@ -51,66 +33,31 @@ def read_pdf(file_path: PathLike) -> str:
 
 
 def read_docx(file_path: PathLike) -> str:
-    """
-    Đọc toàn bộ text từ file DOCX bằng python-docx.
-    Chỉ lấy text ở cấp paragraph (không đọc text trong bảng/table).
-
-    Args:
-        file_path: đường dẫn tới file .docx
-
-    Returns:
-        Toàn bộ text các đoạn văn, nối bằng ký tự xuống dòng.
-    """
-    file_path = Path(file_path)
-    document = Document(file_path)
-
-    paragraphs = [p.text for p in document.paragraphs if p.text.strip()]
-    return "\n".join(paragraphs)
+    """Đọc toàn bộ đoạn văn bản từ file DOCX bằng python-docx."""
+    document = Document(Path(file_path))
+    return "\n".join(p.text for p in document.paragraphs if p.text.strip())
 
 
 def read_md(file_path: PathLike) -> str:
-    """
-    Đọc toàn bộ text từ file Markdown (.md) hoặc text (.txt) với UTF-8.
-
-    Args:
-        file_path: đường dẫn tới file .md hoặc .txt
-
-    Returns:
-        Toàn bộ nội dung text của file.
-    """
-    file_path = Path(file_path)
-    return file_path.read_text(encoding="utf-8")
+    """Đọc nội dung file Markdown hoặc text thuần theo bảng mã UTF-8."""
+    return Path(file_path).read_text(encoding="utf-8")
 
 
 def read_document(file_path: PathLike) -> str:
-    """
-    Controller: tự động chọn hàm đọc phù hợp dựa theo đuôi file (.pdf, .docx, .md).
-
-    Args:
-        file_path: đường dẫn tới file .pdf, .docx hoặc .md
-
-    Returns:
-        Text thô trích xuất từ file.
-
-    Raises:
-        FileNotFoundError: nếu file không tồn tại.
-        ValueError: nếu định dạng file không được hỗ trợ.
-    """
+    """Điều hướng đọc văn bản theo phần mở rộng (.pdf, .docx, .md, .txt)."""
     file_path = Path(file_path)
-
     if not file_path.exists():
         raise FileNotFoundError(f"Không tìm thấy file: {file_path}")
 
     suffix = file_path.suffix.lower()
-
     if suffix == ".pdf":
         return read_pdf(file_path)
-    elif suffix == ".docx":
+    if suffix == ".docx":
         return read_docx(file_path)
-    elif suffix in (".md", ".txt"):
+    if suffix in (".md", ".txt"):
         return read_md(file_path)
-    else:
-        raise ValueError(
-            f"Định dạng file không được hỗ trợ: '{suffix}' (file: {file_path.name}). "
-            "Hệ thống hỗ trợ .pdf, .docx và .md."
-        )
+
+    raise ValueError(
+        f"Định dạng file không được hỗ trợ: '{suffix}' (file: {file_path.name}). "
+        "Hệ thống hỗ trợ .pdf, .docx và .md."
+    )

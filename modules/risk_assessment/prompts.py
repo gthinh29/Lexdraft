@@ -1,10 +1,15 @@
-"""Hai hệ thống Prompt độc lập: (1) Gợi ý Rủi ro ngắn gọn 3 mục và (2) Soạn thảo Vá lỗi Redline."""
+"""Mẫu Prompt chuyên biệt: (1) Gợi ý Rủi ro 3 mục, (2) Soạn thảo Vá lỗi Redline và (3) Kiểm tra Hiệu lực Luật Cấp 3."""
 
 from typing import Any
 
+from modules.risk_assessment.formatter import (
+    format_batch_articles_block,
+    format_batch_output_example,
+    format_batch_redraft_items,
+    format_expired_warning_block,
+)
 from modules.shared.legal_rules import (
     STANDARD_LEGAL_CITATION_RULES,
-    format_expired_warning_block,
     format_law_chunks_block,
 )
 
@@ -93,13 +98,40 @@ Ví dụ định dạng:
 ===REDRAFT_{example_seq}_KET_QUA===
 <Nguyên văn điều khoản đã sửa hoàn chỉnh>"""
 
+LAW_VALIDITY_CHECK_PROMPT = """Bạn là chuyên gia pháp lý Việt Nam.
+Nhiệm vụ: Xác định xem văn bản pháp luật sau đây có còn hiệu lực tại thời điểm hiện tại không.
+
+Văn bản cần kiểm tra: "{law_name}"
+
+Hãy trả lời theo đúng định dạng JSON sau (không thêm bất kỳ nội dung nào khác):
+{{
+  "is_expired": true/false,
+  "status": "Hết hiệu lực" hoặc "Còn hiệu lực" hoặc "Không xác định",
+  "replaced_by": "Tên văn bản thay thế (nếu có)" hoặc null,
+  "reason": "Lý do ngắn gọn (1-2 câu)"
+}}
+
+Nếu không chắc chắn, hãy đặt is_expired=false và status="Không xác định".
+TUYỆT ĐỐI không bịa đặt số hiệu hay tên văn bản không có thực."""
+
+LAW_VALIDITY_BATCH_PROMPT = """Bạn là chuyên gia pháp lý Việt Nam.
+Xác định xem các văn bản pháp luật sau có còn hiệu lực không.
+
+{law_list_str}
+
+Trả lời mảng JSON (không thêm nội dung khác):
+[
+  {{"index": 1, "is_expired": true/false, "status": "Hết hiệu lực"|"Còn hiệu lực"|"Không xác định", "replaced_by": null, "reason": "..."}}
+]
+Nếu không chắc đặt is_expired=false. Không bịa số hiệu văn bản."""
+
 
 def build_risk_prompt(
     dieu_khoan_text: str,
     law_context: list[dict[str, Any]],
     expired_law_alerts: list[dict[str, Any]] | None = None,
 ) -> str:
-    """Ghép Prompt phân tích rủi ro ngắn gọn cho một Điều khoản hợp đồng đơn lẻ."""
+    """Ghép Prompt phân tích rủi ro ngắn gọn cho một điều khoản hợp đồng đơn lẻ."""
     return SINGLE_RISK_PROMPT_TEMPLATE.format(
         instruction=RISK_ASSESSMENT_INSTRUCTION,
         expired_warning_block=format_expired_warning_block(expired_law_alerts),
@@ -114,29 +146,12 @@ def build_batch_risk_prompt(
 ) -> str:
     """Ghép Prompt phân tích rủi ro ngắn gọn cho tất cả điều khoản trong 1 lần gọi LLM."""
     total = len(articles)
-    articles_block = "".join(
-        f"\n------------------------------------------------------------\n"
-        f"[DIEU_INPUT_{i}] — {art['label']}\n"
-        f"1. NỘI DUNG ĐIỀU KHOẢN:\n{art['content'].strip()}\n\n"
-        f"2. CĂN CỨ PHÁP LÝ RIÊNG CHO {art['label'].upper()}:\n{format_law_chunks_block(art.get('law_chunks', []))}\n"
-        for i, art in enumerate(articles, 1)
-    )
-    output_example = "".join(
-        f"===DIEU_{i}_KET_QUA===\n"
-        f"- **Mức độ & Nhận diện rủi ro**: ...\n"
-        f"- **Trích dẫn nội dung có vấn đề trong Hợp đồng**: ...\n"
-        f"- **Căn cứ pháp lý & Phân tích đối chiếu**: ...\n"
-        for i in range(1, min(total + 1, 3))
-    )
-    if total > 2:
-        output_example += f"... (đầy đủ đến ===DIEU_{total}_KET_QUA===)\n"
-
     return BATCH_RISK_PROMPT_TEMPLATE.format(
         instruction=RISK_ASSESSMENT_INSTRUCTION,
         expired_warning_block=format_expired_warning_block(expired_law_alerts),
         total=total,
-        articles_block=articles_block,
-        output_example=output_example,
+        articles_block=format_batch_articles_block(articles),
+        output_example=format_batch_output_example(total),
     )
 
 
@@ -161,14 +176,6 @@ def build_batch_redraft_prompt(
     expired_law_alerts: list[dict[str, Any]] | None = None,
 ) -> str:
     """Ghép Prompt soạn thảo lại hàng loạt chỉ cho các điều khoản có rủi ro."""
-    items_block = "".join(
-        f"\n------------------------------------------------------------\n"
-        f"[CAN_SUA_{item['seq']}] — {item['label']}\n"
-        f"1. NỘI DUNG GỐC:\n{item['content'].strip()}\n\n"
-        f"2. RỦI RO CẦN KHẮC PHỤC:\n{item['risk_summary'].strip()}\n\n"
-        f"3. CĂN CỨ PHÁP LÝ CHUẨN:\n{format_law_chunks_block(item.get('law_chunks', []))}\n"
-        for item in risky_articles
-    )
     markers_str = ", ".join(
         f"`===REDRAFT_{item['seq']}_KET_QUA===`" for item in risky_articles
     )
@@ -178,7 +185,7 @@ def build_batch_redraft_prompt(
         instruction=RISK_REDRAFT_INSTRUCTION,
         expired_warning_block=format_expired_warning_block(expired_law_alerts),
         total=len(risky_articles),
-        items_block=items_block,
+        items_block=format_batch_redraft_items(risky_articles),
         markers_str=markers_str,
         example_seq=example_seq,
     )
